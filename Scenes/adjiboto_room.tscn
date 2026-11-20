@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://hojv50lhx7do"]
 
 [ext_resource type="Script" uid="uid://bvxje35dlj0nx" path="res://Scripts/adjiboto_room.gd" id="1_k13sv"]
+[ext_resource type="Script" uid="uid://rlu17rqucwoq" path="res://Scripts/holes_container.gd" id="2_tacjl"]
 
 [node name="adjiboto_room" type="VBoxContainer" unique_id=323146293]
 anchors_preset = 15
@@ -58,6 +59,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 3.0
 columns = 5
+script = ExtResource("2_tacjl")
 
 [node name="btn_2_5" type="Button" parent="HBoxContainer/holes_container" unique_id=451690152]
 layout_mode = 2
@@ -135,6 +137,17 @@ grow_vertical = 2
 layout_mode = 2
 size_flags_vertical = 3
 
+[node name="message_label" type="Label" parent="Control" unique_id=1451112485]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="player_1_panel" type="Panel" parent="." unique_id=1289637704]
 layout_mode = 2
 size_flags_vertical = 3
@@ -153,3 +166,15 @@ theme_override_font_sizes/font_size = 48
 text = "PLAYER 1"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[connection signal="performed_move_on_hole" from="HBoxContainer/holes_container" to="." method="_on_holes_container_performed_move_on_hole"]
+[connection signal="pressed" from="HBoxContainer/holes_container/btn_2_5" to="HBoxContainer/holes_container" method="_on_btn_2_5_pressed"]
+[connection signal="pressed" from="HBoxContainer/holes_container/btn_2_4" to="HBoxContainer/holes_container" method="_on_btn_2_4_pressed"]
+[connection signal="pressed" from="HBoxContainer/holes_container/btn_2_3" to="HBoxContainer/holes_container" method="_on_btn_2_3_pressed"]
+[connection signal="pressed" from="HBoxContainer/holes_container/btn_2_2" to="HBoxContainer/holes_container" method="_on_btn_2_2_pressed"]
+[connection signal="pressed" from="HBoxContainer/holes_container/btn_2_1" to="HBoxContainer/holes_container" method="_on_btn_2_1_pressed"]
+[connection signal="pressed" from="HBoxContainer/holes_container/btn_1_1" to="HBoxContainer/holes_container" method="_on_btn_1_1_pressed"]
+[connection signal="pressed" from="HBoxContainer/holes_container/btn_1_2" to="HBoxContainer/holes_container" method="_on_btn_1_2_pressed"]
+[connection signal="pressed" from="HBoxContainer/holes_container/btn_1_3" to="HBoxContainer/holes_container" method="_on_btn_1_3_pressed"]
+[connection signal="pressed" from="HBoxContainer/holes_container/btn_1_4" to="HBoxContainer/holes_container" method="_on_btn_1_4_pressed"]
+[connection signal="pressed" from="HBoxContainer/holes_container/btn_1_5" to="HBoxContainer/holes_container" method="_on_btn_1_5_pressed"]

@@ -28,6 +28,7 @@ func _on_host_button_pressed() -> void:
 	multiplayer.multiplayer_peer = peer
 	
 	status_label.text = "Hosting room!"
+	Global.players.append(Global.player_name)
 
 
 func _on_join_button_pressed() -> void:
@@ -44,13 +45,20 @@ func _on_join_button_pressed() -> void:
 	
 func _on_connected_to_server():
 	status_label.text = "Successfully connected!"
+	register_player.rpc_id(1, Global.player_name)
+	
+@rpc("any_peer", "call_remote", "reliable")
+func register_player(player_name):
+	var id = multiplayer.get_remote_sender_id()
+	Global.players.append(player_name)
+	status_label.text = player_name + " joined the room!"
+	
 
 func _on_connection_failed():
 	status_label.text = "Connection failed!"
 	
 func _on_peer_connected(id : int):
 	if multiplayer.is_server():
-		status_label.text = "Someone joined the room!"
 		appear_button_to_play_game()
 		
 	print("Player connected! ID: ", id)
@@ -64,9 +72,14 @@ func appear_button_to_play_game():
 
 
 func _on_start_game_button_pressed() -> void:
+	update_global_player_array.rpc(Global.players)
 	begin_game.rpc(Global.playing_game)
 
 @rpc("any_peer", "call_local", "reliable")
 func begin_game(playing_game_index):
 	if playing_game_index == 1: #ADJIBOTO
 		get_tree().change_scene_to_file("res://Scenes/adjiboto_room.tscn")
+		
+@rpc("any_peer", "call_local", "reliable")
+func update_global_player_array(player_array):
+	Global.players = player_array

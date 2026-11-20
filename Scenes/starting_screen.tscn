@@ -53,3 +53,4 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
 
 [connection signal="pressed" from="buttons/play_btn" to="." method="_on_play_btn_pressed"]
+[connection signal="pressed" from="buttons/settings_btn" to="." method="_on_settings_btn_pressed"]

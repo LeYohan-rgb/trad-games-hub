@@ -1,0 +1,95 @@
+[gd_scene format=3 uid="uid://qwjy8ea4ygr8"]
+
+[ext_resource type="Script" uid="uid://dsyqjg6whr12b" path="res://Scripts/settings.gd" id="1_4geyq"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eyi13"]
+bg_color = Color(0.16565639, 0.16565642, 0.1656563, 1)
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+
+[node name="settings" type="VBoxContainer" unique_id=825511660]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_4geyq")
+
+[node name="Control" type="Control" parent="." unique_id=1333330998]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="go_back_btn" type="Button" parent="Control" unique_id=1098837741]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.429, 0.6)
+offset_transform_pivot_ratio = Vector2(0.5, 0)
+theme_override_styles/normal = SubResource("StyleBoxFlat_eyi13")
+
+[node name="Label" type="Label" parent="Control" unique_id=94011314]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 25
+text = "GO BACK"
+horizontal_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1755780091]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=2058318736]
+layout_mode = 2
+size_flags_vertical = 7
+theme_override_font_sizes/font_size = 48
+text = "SETTINGS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1313684740]
+layout_mode = 2
+size_flags_vertical = 7
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1606207851]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 5
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.8, 0.8)
+theme_override_font_sizes/font_size = 36
+text = "NAME"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="users_name" type="LineEdit" parent="VBoxContainer/HBoxContainer" unique_id=687517617]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 5
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.8, 0.8)
+theme_override_font_sizes/font_size = 36
+placeholder_text = "Player 1"
+alignment = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer" unique_id=991119284]
+layout_mode = 2
+size_flags_vertical = 7
+
+[node name="Control" type="Control" parent="VBoxContainer" unique_id=243999381]
+layout_mode = 2
+size_flags_vertical = 7
+size_flags_stretch_ratio = 5.0
+
+[connection signal="pressed" from="Control/go_back_btn" to="." method="_on_go_back_btn_pressed"]
+[connection signal="text_changed" from="VBoxContainer/HBoxContainer/users_name" to="." method="_on_line_edit_text_changed"]

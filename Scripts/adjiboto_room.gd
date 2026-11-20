@@ -90,12 +90,41 @@ func illegal_move_message():
 func perform_move(hole_num, player):
 	game_paused = true
 	
-	
-	if multiplayer.is_server():
-		update_game_state(hole_num, player, 0)
-	else:
-		update_game_state(hole_num, player, 1)
+	var amount_of_stones_removed = int(get_stone(player, is_the_host(), hole_num).text) - 1
+	update_game_state(hole_num, player, is_the_host())
+	await get_tree().create_timer(0.5).timeout
+	loop_through_holes(hole_num, player, is_the_host(), amount_of_stones_removed)
 
+		
+func is_the_host() -> int:
+	if multiplayer.is_server():
+		return 0
+	else:
+		return 1
+
+func get_stone_by_index(player, plr_interface, hole_num):
+	if plr_interface == 0:
+		if player == 0:
+			return hole_num
+		else:
+			return hole_num + 5
+	else:
+		if player == 0:
+			return hole_num + 5
+		else:
+			return hole_num
+func get_stone(player, plr_interface, hole_num):
+	if plr_interface == 0:
+		if player == 0:
+			return game_holes[hole_num]
+		else:
+			return game_holes[5 + hole_num]
+	else:
+		if player == 0:
+			return game_holes[5 + hole_num]
+		else:
+			return game_holes[hole_num]
+		
 func update_game_state(hole_num, player, plr_interface):
 
 	if plr_interface == 0:
@@ -116,3 +145,16 @@ func update_game_state(hole_num, player, plr_interface):
 			message_label.text = Global.players[player] + " distributed " + str(game_state[hole_num] - 1) + " stones!"
 			game_state[hole_num] = 1
 			game_holes[hole_num].text = str(1)
+
+func loop_through_holes(hole_num, plr, plr_interface, stones_removed):
+	for i in range(stones_removed):
+		prints(get_stone_by_index(plr, plr_interface, mod_10_index(hole_num + i + 1)), plr, plr_interface, mod_10_index(hole_num + 1 + i))
+		game_state[get_stone_by_index(plr, plr_interface, mod_10_index(hole_num + i + 1))] += 1
+		get_stone(plr, plr_interface, mod_10_index(hole_num + i + 1)).text = str(int(get_stone(plr, plr_interface, mod_10_index(hole_num + i + 1)).text) + 1)
+		await get_tree().create_timer(0.5).timeout
+		
+func mod_10_index(num):
+	if num % 10 == 0:
+		return 10
+	else:
+		return num % 10

@@ -4,6 +4,8 @@ extends Control
 @onready var player_2_label = $player_2_panel/Label
 @onready var message_label = $Control/message_label
 
+var modulate_color = "e8dc0e"
+
 @onready var game_holes= {
 	1: $HBoxContainer/holes_container/btn_1_1,
 	2: $HBoxContainer/holes_container/btn_1_2,
@@ -107,10 +109,10 @@ func get_stone_by_index(player, plr_interface, hole_num):
 		if player == 0:
 			return hole_num
 		else:
-			return hole_num + 5
+			return mod_10_index(5 + hole_num)
 	else:
 		if player == 0:
-			return hole_num + 5
+			return mod_10_index(5 + hole_num)
 		else:
 			return hole_num
 func get_stone(player, plr_interface, hole_num):
@@ -118,10 +120,10 @@ func get_stone(player, plr_interface, hole_num):
 		if player == 0:
 			return game_holes[hole_num]
 		else:
-			return game_holes[5 + hole_num]
+			return game_holes[mod_10_index(5 + hole_num)]
 	else:
 		if player == 0:
-			return game_holes[5 + hole_num]
+			return game_holes[mod_10_index(5 + hole_num)]
 		else:
 			return game_holes[hole_num]
 		
@@ -148,11 +150,20 @@ func update_game_state(hole_num, player, plr_interface):
 
 func loop_through_holes(hole_num, plr, plr_interface, stones_removed):
 	for i in range(stones_removed):
-		prints(get_stone_by_index(plr, plr_interface, mod_10_index(hole_num + i + 1)), plr, plr_interface, mod_10_index(hole_num + 1 + i))
 		game_state[get_stone_by_index(plr, plr_interface, mod_10_index(hole_num + i + 1))] += 1
 		get_stone(plr, plr_interface, mod_10_index(hole_num + i + 1)).text = str(int(get_stone(plr, plr_interface, mod_10_index(hole_num + i + 1)).text) + 1)
+		get_stone(plr, plr_interface, mod_10_index(hole_num + i + 1)).modulate = modulate_color
 		await get_tree().create_timer(0.5).timeout
+		get_stone(plr, plr_interface, mod_10_index(hole_num + i + 1)).modulate = "ffffff"
 		
+	game_state["game_turn"] += 1
+	if game_state["turn"] == 0:
+		game_state["turn"] = 1
+	else:
+		game_state["turn"] = 0
+	message_label.text = "It's " + Global.players[game_state["turn"]] + "'s turn!"
+	game_paused = false
+
 func mod_10_index(num):
 	if num % 10 == 0:
 		return 10

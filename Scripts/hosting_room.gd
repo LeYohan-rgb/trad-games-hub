@@ -6,10 +6,11 @@ const MAX_CLIENTS = 2
 
 var peer = ENetMultiplayerPeer.new()
 
-@onready var join_button : Button = $VBoxContainer/join_button
+@onready var join_button : Button = $VBoxContainer/room_container/join_button
 @onready var ip_input : LineEdit = $VBoxContainer/ip_input
-@onready var host_button : Button = $VBoxContainer/host_button
+@onready var host_button : Button = $VBoxContainer/room_container/host_button
 @onready var status_label : Label = $VBoxContainer/status_label
+@onready var start_game_btn : Button = $VBoxContainer/start_game_btn/start_game_button
 
 func _ready():
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
@@ -48,8 +49,24 @@ func _on_connection_failed():
 	status_label.text = "Connection failed!"
 	
 func _on_peer_connected(id : int):
+	if multiplayer.is_server():
+		status_label.text = "Someone joined the room!"
+		appear_button_to_play_game()
+		
 	print("Player connected! ID: ", id)
 	
 func _on_peer_disconnected(id : int):
 	print("Player disconnected! ID: ", id)
 	
+
+func appear_button_to_play_game():
+	start_game_btn.show()
+
+
+func _on_start_game_button_pressed() -> void:
+	begin_game.rpc(Global.playing_game)
+
+@rpc("any_peer", "call_local", "reliable")
+func begin_game(playing_game_index):
+	if playing_game_index == 1: #ADJIBOTO
+		get_tree().change_scene_to_file("res://Scenes/adjiboto_room.tscn")

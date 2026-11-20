@@ -12,4 +12,5 @@ func _process(delta: float) -> void:
 
 
 func _on_button_pressed() -> void:
+	Global.playing_game = 1
 	get_tree().change_scene_to_file("res://Scenes/hosting_room.tscn")

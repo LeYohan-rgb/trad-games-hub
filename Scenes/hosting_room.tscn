@@ -2,6 +2,11 @@
 
 [ext_resource type="Script" uid="uid://cxo8qc8ivkqmp" path="res://Scripts/hosting_room.gd" id="1_trckx"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_trckx"]
+bg_color = Color(0.16565639, 0.16565642, 0.1656563, 1)
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+
 [node name="hosting_room" type="Control" unique_id=1503287609]
 layout_mode = 3
 anchors_preset = 15
@@ -19,33 +24,84 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Control2" type="Control" parent="VBoxContainer" unique_id=618572513]
+[node name="Control3" type="Control" parent="VBoxContainer" unique_id=1672165020]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.63
+
+[node name="Button" type="Button" parent="VBoxContainer/Control3" unique_id=980419472]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.4, 0.4)
+offset_transform_pivot_ratio = Vector2(0.5, 0)
+theme_override_styles/normal = SubResource("StyleBoxFlat_trckx")
+
+[node name="Label" type="Label" parent="VBoxContainer/Control3" unique_id=1872507880]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 25
+text = "GO BACK"
+horizontal_alignment = 1
+
+[node name="start_game_btn" type="Control" parent="VBoxContainer" unique_id=618572513]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="host_button" type="Button" parent="VBoxContainer" unique_id=735895365]
+[node name="start_game_button" type="Button" parent="VBoxContainer/start_game_btn" unique_id=1492217961]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.5, 0.5)
+theme_override_font_sizes/font_size = 64
+text = "START GAME"
+
+[node name="room_container" type="HBoxContainer" parent="VBoxContainer" unique_id=1320613875]
 layout_mode = 2
+size_flags_vertical = 3
+
+[node name="host_button" type="Button" parent="VBoxContainer/room_container" unique_id=735895365]
+layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 36
 text = "Host Room"
 
+[node name="join_button" type="Button" parent="VBoxContainer/room_container" unique_id=1906317476]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 36
+text = "Join Room"
+
 [node name="ip_input" type="LineEdit" parent="VBoxContainer" unique_id=866927646]
 layout_mode = 2
 size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
 theme_override_font_sizes/font_size = 36
 text = "127.0.0.1"
 placeholder_text = "Enter host IP"
 alignment = 1
 
-[node name="join_button" type="Button" parent="VBoxContainer" unique_id=1906317476]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 36
-text = "Join Room"
-
 [node name="status_label" type="Label" parent="VBoxContainer" unique_id=1808359375]
 layout_mode = 2
 size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
 theme_override_font_sizes/font_size = 36
 text = "Not Connected"
 horizontal_alignment = 1
@@ -54,6 +110,8 @@ vertical_alignment = 1
 [node name="Control" type="Control" parent="VBoxContainer" unique_id=1331930800]
 layout_mode = 2
 size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
 
-[connection signal="pressed" from="VBoxContainer/host_button" to="." method="_on_host_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/join_button" to="." method="_on_join_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/start_game_btn/start_game_button" to="." method="_on_start_game_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/room_container/host_button" to="." method="_on_host_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/room_container/join_button" to="." method="_on_join_button_pressed"]

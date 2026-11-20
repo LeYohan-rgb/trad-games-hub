@@ -42,17 +42,30 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.5
 
-[node name="Control" type="Control" parent="HBoxContainer" unique_id=1589341485]
+[node name="adjiboto_boat_2" type="Control" parent="HBoxContainer" unique_id=1589341485]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ColorRect" type="ColorRect" parent="HBoxContainer/Control" unique_id=1352549683]
+[node name="ColorRect" type="ColorRect" parent="HBoxContainer/adjiboto_boat_2" unique_id=1352549683]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+color = Color(0.2520276, 0.25202766, 0.25202763, 1)
+
+[node name="Label" type="Label" parent="HBoxContainer/adjiboto_boat_2" unique_id=1868246715]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 48
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="holes_container" type="GridContainer" parent="HBoxContainer" unique_id=1962584302]
 layout_mode = 2
@@ -121,17 +134,30 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "10"
 
-[node name="Control2" type="Control" parent="HBoxContainer" unique_id=125021669]
+[node name="adjiboto_boat_1" type="Control" parent="HBoxContainer" unique_id=125021669]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ColorRect" type="ColorRect" parent="HBoxContainer/Control2" unique_id=1105887194]
+[node name="ColorRect2" type="ColorRect" parent="HBoxContainer/adjiboto_boat_1" unique_id=785788187]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+color = Color(0.2520276, 0.25202766, 0.25202763, 1)
+
+[node name="Label" type="Label" parent="HBoxContainer/adjiboto_boat_1" unique_id=2123416183]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 48
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Control" type="Control" parent="." unique_id=2126103981]
 layout_mode = 2

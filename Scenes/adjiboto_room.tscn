@@ -1,9 +1,145 @@
 [gd_scene format=3 uid="uid://hojv50lhx7do"]
 
-[node name="adjiboto_room" type="Control" unique_id=1092455756]
-layout_mode = 3
+[ext_resource type="Script" uid="uid://bvxje35dlj0nx" path="res://Scripts/adjiboto_room.gd" id="1_k13sv"]
+
+[node name="adjiboto_room" type="VBoxContainer" unique_id=323146293]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_k13sv")
+
+[node name="player_2_panel" type="Panel" parent="." unique_id=205336043]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="Label" type="Label" parent="player_2_panel" unique_id=2011660035]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -213.0
+offset_top = -33.5
+offset_bottom = 33.5
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 48
+text = "PLAYER 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Control2" type="Control" parent="." unique_id=317861812]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1379196086]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="Control" type="Control" parent="HBoxContainer" unique_id=1589341485]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ColorRect" type="ColorRect" parent="HBoxContainer/Control" unique_id=1352549683]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="holes_container" type="GridContainer" parent="HBoxContainer" unique_id=1962584302]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.0
+columns = 5
+
+[node name="btn_2_5" type="Button" parent="HBoxContainer/holes_container" unique_id=451690152]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="btn_2_4" type="Button" parent="HBoxContainer/holes_container" unique_id=322805794]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="btn_2_3" type="Button" parent="HBoxContainer/holes_container" unique_id=43899785]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="btn_2_2" type="Button" parent="HBoxContainer/holes_container" unique_id=2061236883]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="btn_2_1" type="Button" parent="HBoxContainer/holes_container" unique_id=35171036]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="btn_1_1" type="Button" parent="HBoxContainer/holes_container" unique_id=521882417]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="btn_1_2" type="Button" parent="HBoxContainer/holes_container" unique_id=470673280]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="btn_1_3" type="Button" parent="HBoxContainer/holes_container" unique_id=1351612371]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="btn_1_4" type="Button" parent="HBoxContainer/holes_container" unique_id=1071247957]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="btn_1_5" type="Button" parent="HBoxContainer/holes_container" unique_id=1186356288]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Control2" type="Control" parent="HBoxContainer" unique_id=125021669]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ColorRect" type="ColorRect" parent="HBoxContainer/Control2" unique_id=1105887194]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="." unique_id=2126103981]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="player_1_panel" type="Panel" parent="." unique_id=1289637704]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="Label" type="Label" parent="player_1_panel" unique_id=753498161]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -33.5
+offset_right = 213.0
+offset_bottom = 33.5
+grow_vertical = 2
+theme_override_font_sizes/font_size = 48
+text = "PLAYER 1"
+horizontal_alignment = 1
+vertical_alignment = 1

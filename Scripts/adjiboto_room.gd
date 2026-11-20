@@ -2,6 +2,22 @@ extends Control
 
 @onready var player_1_label = $player_1_panel/Label
 @onready var player_2_label = $player_2_panel/Label
+
+var game_state = {
+	1: 10,
+	2: 10,
+	3: 10,
+	4: 10,
+	5: 10,
+	6: 10,
+	7: 10,
+	8: 10,
+	9: 10,
+	10: 10,
+	"turn": 0,
+	"player_1_stones": 0,
+	"player_2_stones": 0
+}
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	

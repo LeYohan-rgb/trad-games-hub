@@ -1,25 +1,108 @@
 [gd_scene format=3 uid="uid://bs5hj0leh4dfv"]
 
+[ext_resource type="Script" uid="uid://bf2lwawyxmhab" path="res://Scripts/game_selector.gd" id="1_f5fss"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_smntn"]
+bg_color = Color(0.16565639, 0.16565642, 0.1656563, 1)
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+
 [node name="game_selector" type="VBoxContainer" unique_id=1648952728]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_f5fss")
 
-[node name="Control" type="Control" parent="." unique_id=1005714976]
+[node name="Control" type="VBoxContainer" parent="." unique_id=983064936]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ColorRect" type="ColorRect" parent="Control" unique_id=849256989]
+[node name="Control" type="Control" parent="Control" unique_id=1614506282]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Button" type="Button" parent="Control/Control" unique_id=1432181035]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.429, 0.6)
+offset_transform_pivot_ratio = Vector2(0.5, 0)
+theme_override_styles/normal = SubResource("StyleBoxFlat_smntn")
 
-[node name="Control2" type="Control" parent="." unique_id=1908460528]
+[node name="Label" type="Label" parent="Control/Control" unique_id=2125871558]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 25
+text = "GO BACK"
+horizontal_alignment = 1
+
+[node name="Control2" type="Control" parent="Control" unique_id=955501769]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Button2" type="Button" parent="Control/Control2" unique_id=1155883517]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.8, 0.8)
+
+[node name="Label" type="Label" parent="Control/Control2" unique_id=1358257427]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+text = "CHANGE DISPLAY"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="display_list" type="VBoxContainer" parent="." unique_id=839183947]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
+
+[node name="Button" type="Button" parent="display_list" unique_id=808887748]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 48
+text = "LONTU-HOLO"
+
+[node name="Button2" type="Button" parent="display_list" unique_id=630218704]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Button3" type="Button" parent="display_list" unique_id=740658616]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Button4" type="Button" parent="display_list" unique_id=2146213621]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1092798658]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+
+[connection signal="pressed" from="display_list/Button" to="." method="_on_button_pressed"]

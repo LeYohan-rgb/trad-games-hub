@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://c1bo4mskosjp"]
+
+[ext_resource type="Script" uid="uid://cxo8qc8ivkqmp" path="res://Scripts/hosting_room.gd" id="1_trckx"]
+
+[node name="hosting_room" type="Control" unique_id=1503287609]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_trckx")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1222008836]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control2" type="Control" parent="VBoxContainer" unique_id=618572513]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="host_button" type="Button" parent="VBoxContainer" unique_id=735895365]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 36
+text = "Host Room"
+
+[node name="ip_input" type="LineEdit" parent="VBoxContainer" unique_id=866927646]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 36
+text = "127.0.0.1"
+placeholder_text = "Enter host IP"
+alignment = 1
+
+[node name="join_button" type="Button" parent="VBoxContainer" unique_id=1906317476]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 36
+text = "Join Room"
+
+[node name="status_label" type="Label" parent="VBoxContainer" unique_id=1808359375]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 36
+text = "Not Connected"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Control" type="Control" parent="VBoxContainer" unique_id=1331930800]
+layout_mode = 2
+size_flags_vertical = 3
+
+[connection signal="pressed" from="VBoxContainer/host_button" to="." method="_on_host_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/join_button" to="." method="_on_join_button_pressed"]

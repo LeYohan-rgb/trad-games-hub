@@ -11,17 +11,24 @@ config_version=5
 [application]
 
 config/name="trad-games-hub"
+run/main_scene="uid://dvjubtbgy7t6v"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [display]
 
+window/size/viewport_width=720
+window/size/viewport_height=1280
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
 [dotnet]
 
 project/assembly_name="trad-games-hub"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://.godot/scenetime/plugin.cfg", "res://addons/godot_super-wakatime/plugin.cfg")
 
 [physics]
 

@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://dvjubtbgy7t6v"]
+
+[ext_resource type="Script" uid="uid://c41e7boreq4xj" path="res://Scripts/starting_screen.gd" id="1_8tbkh"]
+
+[node name="starting_screen" type="VBoxContainer" unique_id=1735198078]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8tbkh")
+
+[node name="logo" type="Control" parent="." unique_id=185862113]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="logo" unique_id=16367550]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 48
+text = "TRADITIONAL GAMES HUB"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="buttons" type="VBoxContainer" parent="." unique_id=172757661]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="play_btn" type="Button" parent="buttons" unique_id=1410089022]
+layout_mode = 2
+size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.7, 0.7)
+theme_override_font_sizes/font_size = 48
+text = "PLAY"
+
+[node name="settings_btn" type="Button" parent="buttons" unique_id=1360849529]
+layout_mode = 2
+size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.7, 0.7)
+theme_override_font_sizes/font_size = 48
+text = "SETTINGS"
+
+[node name="Control" type="Control" parent="buttons" unique_id=981609716]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+
+[connection signal="pressed" from="buttons/play_btn" to="." method="_on_play_btn_pressed"]

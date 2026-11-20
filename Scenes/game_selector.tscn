@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://bs5hj0leh4dfv"]
+
+[node name="game_selector" type="VBoxContainer" unique_id=1648952728]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="." unique_id=1005714976]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ColorRect" type="ColorRect" parent="Control" unique_id=849256989]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control2" type="Control" parent="." unique_id=1908460528]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0

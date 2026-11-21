@@ -7,6 +7,8 @@ const MAX_CLIENTS = 2
 var peer = ENetMultiplayerPeer.new()
 
 var leave_room : bool = false
+var is_connecting : bool = false
+var connected_to_room : bool = false
 
 @onready var go_back_btn = $VBoxContainer/go_back_btn
 @onready var join_button : Button = $VBoxContainer/room_container/join_button
@@ -20,8 +22,28 @@ func _ready():
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
+	multiplayer.server_disconnected.connect(_on_server_disconnected)
+	
+func _process(delta: float) -> void:
+	if multiplayer.is_server():
+		print(multiplayer.get_peers())
 	
 func _on_host_button_pressed() -> void:
+	if is_connecting:
+		multiplayer.multiplayer_peer = null
+		is_connecting = false
+		for child in go_back_btn.get_children():
+			child.show()
+		host_button.text = "Host Room"
+		status_label.text = "Connection cancelled!"
+		join_button.show()
+		return
+		
+	if connected_to_room:
+		leave_current_room()
+		return
+		
+		
 	if leave_room == true:
 		leave_room = false
 		for child in go_back_btn.get_children():
@@ -55,16 +77,26 @@ func _on_host_button_pressed() -> void:
 func _on_join_button_pressed() -> void:
 	var ip = ip_input.text
 	
+	peer = ENetMultiplayerPeer.new()
+	
 	var error = peer.create_client(ip, PORT)
 	
 	if error != OK:
 		status_label.text = 'Failed to join room!'
 		return
 		
+	is_connecting = true
+	for child in go_back_btn.get_children():
+		child.hide()
+	host_button.text = "Cancel Connection"
 	multiplayer.multiplayer_peer = peer
 	status_label.text = "Connecting..."
+	join_button.hide()
 	
 func _on_connected_to_server():
+	connected_to_room = true
+	is_connecting = false
+	host_button.text = "Leave Room"
 	status_label.text = "Successfully connected!"
 	register_player.rpc_id(1, Global.player_name)
 	
@@ -76,16 +108,22 @@ func register_player(player_name):
 	
 
 func _on_connection_failed():
+	is_connecting = false
+	multiplayer.multiplayer_peer = null
+	host_button.text = "Host Room"
 	status_label.text = "Connection failed!"
+	join_button.show()
 	
 func _on_peer_connected(id : int):
 	if multiplayer.is_server():
+		connected_to_room = true
 		appear_button_to_play_game()
 		
-	print("Player connected! ID: ", id)
 	
 func _on_peer_disconnected(id : int):
-	print("Player disconnected! ID: ", id)
+	start_game_btn.hide()
+	print("disconnecttttttttttttt")
+	status_label.text = " disconnected!"
 	
 
 func appear_button_to_play_game():
@@ -104,3 +142,29 @@ func begin_game(playing_game_index):
 @rpc("any_peer", "call_local", "reliable")
 func update_global_player_array(player_array):
 	Global.players = player_array
+	
+func _on_server_disconnected():
+	leave_current_room()
+	status_label.text = "Host disconnected!"
+
+func leave_current_room():
+	if peer:
+		peer.close()
+		
+	multiplayer.multiplayer_peer = null
+
+	
+	leave_room = false
+	is_connecting = false
+	connected_to_room = false
+	
+	Global.players.clear()
+	
+	host_button.text = "Host Room"
+	status_label.text = "Not Connected"
+	
+	join_button.show()
+	start_game_btn.hide()
+	
+	for child in go_back_btn.get_children():
+		child.show()

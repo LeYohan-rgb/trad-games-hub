@@ -401,15 +401,14 @@ func go_to_next_turn():
 
 	if Global.is_debugging:
 		if game_state["game_turn"] == 12:
-			game_state["player_2_stones"] = 45
+			game_state["player_2_stones"] = 30
 			if multiplayer.is_server():
-				plr_2_stones_lbl.text = str(45)
+				plr_2_stones_lbl.text = str(30)
 				for i in range(6,11):
 					game_state[i] = 1
 					game_holes[i].text = '1'
-				
 			else:
-				plr_1_stones_lbl.text = str(45)
+				plr_1_stones_lbl.text = str(30)
 				for i in range(1,6):
 					game_state[i] = 1
 					game_holes[i].text = '1'

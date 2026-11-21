@@ -24,12 +24,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Control3" type="Control" parent="VBoxContainer" unique_id=1672165020]
+[node name="go_back_btn" type="Control" parent="VBoxContainer" unique_id=1672165020]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.63
 
-[node name="Button" type="Button" parent="VBoxContainer/Control3" unique_id=980419472]
+[node name="Button" type="Button" parent="VBoxContainer/go_back_btn" unique_id=980419472]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -43,7 +43,7 @@ offset_transform_scale = Vector2(0.4, 0.4)
 offset_transform_pivot_ratio = Vector2(0.5, 0)
 theme_override_styles/normal = SubResource("StyleBoxFlat_trckx")
 
-[node name="Label" type="Label" parent="VBoxContainer/Control3" unique_id=1872507880]
+[node name="Label" type="Label" parent="VBoxContainer/go_back_btn" unique_id=1872507880]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

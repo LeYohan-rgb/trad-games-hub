@@ -6,6 +6,9 @@ const MAX_CLIENTS = 2
 
 var peer = ENetMultiplayerPeer.new()
 
+var leave_room : bool = false
+
+@onready var go_back_btn = $VBoxContainer/go_back_btn
 @onready var join_button : Button = $VBoxContainer/room_container/join_button
 @onready var ip_input : LineEdit = $VBoxContainer/ip_input
 @onready var host_button : Button = $VBoxContainer/room_container/host_button
@@ -19,6 +22,18 @@ func _ready():
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	
 func _on_host_button_pressed() -> void:
+	if leave_room == true:
+		leave_room = false
+		for child in go_back_btn.get_children():
+			child.show()
+		host_button.text = "Host Room"
+		status_label.text = "Not Connected"
+		join_button.show()
+		multiplayer.multiplayer_peer = null
+		return
+		
+	peer = ENetMultiplayerPeer.new()
+	
 	var error = peer.create_server(PORT, MAX_CLIENTS)
 	
 	if error != OK:
@@ -27,7 +42,13 @@ func _on_host_button_pressed() -> void:
 		
 	multiplayer.multiplayer_peer = peer
 	
+	for child in go_back_btn.get_children():
+		child.hide()
+		
 	status_label.text = "Hosting room!"
+	join_button.hide()
+	host_button.text = "Leave Room"
+	leave_room = true
 	Global.players.append(Global.player_name)
 
 

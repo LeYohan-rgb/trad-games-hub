@@ -26,7 +26,7 @@ func _ready():
 	
 func _process(delta: float) -> void:
 	if multiplayer.is_server():
-		print(multiplayer.get_peers())
+		prints(Global.players, multiplayer.get_unique_id())
 	
 func _on_host_button_pressed() -> void:
 	if is_connecting:
@@ -122,8 +122,10 @@ func _on_peer_connected(id : int):
 	
 func _on_peer_disconnected(id : int):
 	start_game_btn.hide()
-	print("disconnecttttttttttttt")
-	status_label.text = " disconnected!"
+	if Global.players.size() > 1:
+		status_label.text = Global.players[1] + " disconnected!"
+		Global.players.pop_back()
+	connected_to_room = false
 	
 
 func appear_button_to_play_game():
@@ -145,6 +147,7 @@ func update_global_player_array(player_array):
 	
 func _on_server_disconnected():
 	leave_current_room()
+	connected_to_room = false
 	status_label.text = "Host disconnected!"
 
 func leave_current_room():

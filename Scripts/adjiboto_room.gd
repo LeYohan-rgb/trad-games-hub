@@ -178,7 +178,9 @@ func update_game_state(hole_num, player, plr_interface):
 
 func loop_through_holes(hole_num, plr, plr_interface, stones_removed):
 	#DEBUG VALUE: 0.01 MAX
-	var time_per_stone = clamp(0.1, 5.0 / stones_removed, 0.01)
+	var time_per_stone = clamp(0.1, 5.0 / stones_removed, 0.5)
+	if Global.is_debugging:
+		time_per_stone = 0.01
 	var modulate_color = modulate_color_1 if game_state["turn"] == 0 else modulate_color_2
 	var ending_hole
 	
@@ -272,7 +274,7 @@ func refill_time():
 			
 			if multiplayer.is_server(): #refill client (the other)
 				game_state["player_2_stones"] -= (10 - game_state[5 + 1 + i])
-				plr_2_stones_lbl.text = str(int(plr_2_stones_lbl) - (10 - game_state[5 + 1 + i]))
+				plr_2_stones_lbl.text = str(game_state["player_2_stones"])
 				game_holes[5 + i + 1].text = "10"
 				game_state[5 + i + 1] = 10
 				game_holes[5 + i + 1].modulate = modulate_color # change color accordingly
@@ -281,7 +283,7 @@ func refill_time():
 				
 			else: #refill client (my own)
 				game_state["player_2_stones"] -= (10 - game_state[1 + i])
-				plr_1_stones_lbl.text = str(int(plr_1_stones_lbl) - (10 - game_state[1 + i]))
+				plr_1_stones_lbl.text = str(game_state["player_2_stones"])
 				game_state[i + 1] = 10
 				game_holes[i + 1].text = "10"
 				game_holes[i + 1].modulate = modulate_color # change color accordingly
@@ -291,7 +293,7 @@ func refill_time():
 
 			if multiplayer.is_server(): #refill host (my own)
 				game_state["player_1_stones"] -= (10 - game_state[1 + i])
-				plr_1_stones_lbl.text = str(int(plr_1_stones_lbl) - (10 - game_state[1 + i]))
+				plr_1_stones_lbl.text = str(game_state["player_1_stones"])
 				game_state[i + 1] = 10
 				game_holes[i + 1].text = "10"
 				game_holes[i + 1].modulate = modulate_color # change color accordingly
@@ -300,21 +302,24 @@ func refill_time():
 					
 			else: #refill client (the other)
 				game_state["player_1_stones"] -= (10 - game_state[5 + 1 + i])
-				plr_2_stones_lbl.text = str(int(plr_2_stones_lbl) - (10 - game_state[5 + 1 + i]))
+				plr_2_stones_lbl.text = str(game_state["player_1_stones"])
 				game_state[5 + i + 1] = 10
 				game_holes[5 + i + 1].text = "10"
 				game_holes[5 + i + 1].modulate = modulate_color # change color accordingly
 				await get_tree().create_timer(0.5).timeout
 				game_holes[5 + i + 1].modulate = "ffffff"
 	
+
+	
 func end_game():
 	message_label.text = Global.players[opposite_turn()] + " has no legal moves left!"
 	await get_tree().create_timer(2.0).timeout
 	# CHECK IF DRAW
 	if game_state["player_" + return_opp_player_index_from_one_to_two() + "_stones"] >= calculate_stones_left():
+		modulate_player_boat(0) #highlight the boat
+		
 		message_label.text = "But they have enough stones to refill all of their holes!"
 			
-		modulate_player_boat(0) #highlight the boat
 		
 		await refill_time() #refill all holes back
 		
@@ -338,14 +343,14 @@ func modulate_player_boat(on_or_off):
 	if on_or_off == 0: #if 0, modulate!
 		if game_state["turn"] == 0:
 			if multiplayer.is_server():
-				plr_2_stones_bg.self_modulate.a = 0.7
+				plr_2_stones_bg.self_modulate.a = 0.5
 			else:
-				plr_1_stones_bg.self_modulate.a = 0.7
+				plr_1_stones_bg.self_modulate.a = 0.5
 		else:
 			if multiplayer.is_server():
-				plr_1_stones_bg.self_modulate.a = 0.7
+				plr_1_stones_bg.self_modulate.a = 0.5
 			else:
-				plr_2_stones_bg.self_modulate.a = 0.7
+				plr_2_stones_bg.self_modulate.a = 0.5
 	else: #if not, then un-modulate.
 		if game_state["turn"] == 0:
 			if multiplayer.is_server():
@@ -393,21 +398,21 @@ func is_in_a_capture_sequence(num) -> bool:
 		return false
 
 func go_to_next_turn():
-#DEBUG MECHANISM TO END THE GAME QUICKLY
-	if game_state["game_turn"] == 12:
-		game_state["player_2_stones"] = 50
-		if multiplayer.is_server():
-			plr_2_stones_lbl.text = str(50)
-			for i in range(6,11):
-				game_state[i] = 0
-				game_holes[i].text = '0'
-			
-		else:
-			plr_1_stones_lbl.text = str(50)
-			for i in range(1,6):
-				game_state[i] = 0
-				game_holes[i].text = '0'
-#DEBUG MECHANISM TO END THE GAME QUICKLY
+
+	if Global.is_debugging:
+		if game_state["game_turn"] == 12:
+			game_state["player_2_stones"] = 45
+			if multiplayer.is_server():
+				plr_2_stones_lbl.text = str(45)
+				for i in range(6,11):
+					game_state[i] = 1
+					game_holes[i].text = '1'
+				
+			else:
+				plr_1_stones_lbl.text = str(45)
+				for i in range(1,6):
+					game_state[i] = 1
+					game_holes[i].text = '1'
 	
 	
 	game_state["game_turn"] += 1

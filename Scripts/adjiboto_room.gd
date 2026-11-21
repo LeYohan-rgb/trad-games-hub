@@ -156,20 +156,20 @@ func update_game_state(hole_num, player, plr_interface):
 
 	if plr_interface == 0:
 		if player == 0:
-			message_label.text = Global.players[player] + " distributed " + str(game_state[hole_num] - 1) + " stones!"
+			message_label.text = Global.players[player] + " distributed 1 out of " + str(game_state[hole_num] - 1) + " stones!"
 			game_state[hole_num] = 1
 			game_holes[hole_num].text = str(1)
 		else:
-			message_label.text = Global.players[player] + " distributed " + str(game_state[5 + hole_num] - 1) + " stones!"
+			message_label.text = Global.players[player] + " distributed 1 out of " + str(game_state[5 + hole_num] - 1) + " stones!"
 			game_state[5 + hole_num] = 1
 			game_holes[5 + hole_num].text = str(1)
 	else:
 		if player == 0:
-			message_label.text = Global.players[player] + " distributed " + str(game_state[5 + hole_num] - 1) + " stones!"
+			message_label.text = Global.players[player] + " distributed 1 out of " + str(game_state[5 + hole_num] - 1) + " stones!"
 			game_state[5 + hole_num] = 1
 			game_holes[5 + hole_num].text = str(1)
 		else:
-			message_label.text = Global.players[player] + " distributed " + str(game_state[hole_num] - 1) + " stones!"
+			message_label.text = Global.players[player] + " distributed 1 out of " + str(game_state[hole_num] - 1) + " stones!"
 			game_state[hole_num] = 1
 			game_holes[hole_num].text = str(1)
 
@@ -181,6 +181,7 @@ func loop_through_holes(hole_num, plr, plr_interface, stones_removed):
 	for i in range(stones_removed):
 		game_state[get_stone_by_index(plr, plr_interface, mod_10_index(hole_num + i + 1))] += 1
 		get_stone(plr, plr_interface, mod_10_index(hole_num + i + 1)).text = str(int(get_stone(plr, plr_interface, mod_10_index(hole_num + i + 1)).text) + 1)
+		message_label.text = Global.players[plr] + " distributed " + str(1 + i) + " out of " + str(stones_removed) + " stones!"
 		get_stone(plr, plr_interface, mod_10_index(hole_num + i + 1)).modulate = modulate_color
 		await get_tree().create_timer(time_per_stone).timeout
 		get_stone(plr, plr_interface, mod_10_index(hole_num + i + 1)).modulate = "ffffff"
@@ -209,7 +210,6 @@ func loop_through_holes(hole_num, plr, plr_interface, stones_removed):
 	
 	#CHECK IF A PLAYER HAS NO LEGAL MOVES LEFT
 	check_if_legal_moves_left()
-	go_to_next_turn()
 	
 func check_if_legal_moves_left():
 	var no_legal_moves = true
@@ -235,10 +235,35 @@ func check_if_legal_moves_left():
 					no_legal_moves = false
 					
 	if no_legal_moves == true: #END GAME
-		pass 
+		end_game()
+	else:
+		go_to_next_turn()
+	
+func end_game():
+	message_label.text = Global.players[opposite_turn()] + " has no legal moves left!"
+	await get_tree().create_timer(2.0).timeout
+	# CHECK IF DRAW
+	if game_state["player_" + return_opp_player_index_from_one_to_two() + "_stones"] >= 50:
+		if game_state["player_" + return_opp_player_index_from_one_to_two() + "_stones"] == 50:
+			message_label.text = "But they have exactly half of the total stones!"
+		else:
+			message_label.text = "But they have more than half of the total stones!"
+		await get_tree().create_timer(2.0).timeout
 	else:
 		pass
-	
+
+func return_opp_player_index_from_one_to_two() -> String:
+	if game_state["turn"] == 0:
+		return "2"
+	else:
+		return "2"
+		
+func opposite_turn():
+	if game_state["turn"] == 0:
+		return 1
+	else:
+		return 0
+		
 func catched_stones_by_plr(stones_catched):
 	if game_state["turn"] == 0:
 		if multiplayer.is_server():

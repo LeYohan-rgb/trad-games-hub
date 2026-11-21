@@ -6,6 +6,7 @@ extends Control
 
 @onready var plr_1_stones_lbl = $HBoxContainer/adjiboto_boat_1/Label
 @onready var plr_2_stones_lbl = $HBoxContainer/adjiboto_boat_2/Label
+@onready var turn_lbl = $Control2/turn_panel/turn_lbl
 
 var modulate_color_1 = "e8dc0e"
 var modulate_color_2 = "00f3fd"
@@ -86,7 +87,7 @@ func is_move_legal(hole_num, player):
 	if game_state[hole_num] > 1:
 		
 		#10 TURN RULE
-		if hole_num in holes_used_in_first_stage:
+		if hole_num in holes_used_in_first_stage and game_state["game_turn"] <= 10:
 			illegal_move_message_first_stage()
 			return
 		
@@ -232,6 +233,7 @@ func is_in_a_capture_sequence(num) -> bool:
 
 func go_to_next_turn():
 	game_state["game_turn"] += 1
+	update_turn_counter()
 	if game_state["turn"] == 0:
 		game_state["turn"] = 1
 	else:
@@ -244,3 +246,10 @@ func mod_10_index(num):
 		return 10
 	else:
 		return num % 10
+		
+func update_turn_counter():
+	turn_lbl.text = "TURN " + str(game_state["game_turn"])
+	
+	if game_state["game_turn"] == 11:
+		for i in range(1, 6):
+			game_holes[i].self_modulate.a = 1

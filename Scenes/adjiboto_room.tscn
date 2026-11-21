@@ -3,6 +3,10 @@
 [ext_resource type="Script" uid="uid://bvxje35dlj0nx" path="res://Scripts/adjiboto_room.gd" id="1_k13sv"]
 [ext_resource type="Script" uid="uid://rlu17rqucwoq" path="res://Scripts/holes_container.gd" id="2_tacjl"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jague"]
+bg_color = Color(0.17283267, 0.17283267, 0.17283258, 1)
+corner_radius_bottom_right = 100
+
 [node name="adjiboto_room" type="VBoxContainer" unique_id=323146293]
 anchors_preset = 15
 anchor_right = 1.0
@@ -36,6 +40,22 @@ vertical_alignment = 1
 [node name="Control2" type="Control" parent="." unique_id=317861812]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="turn_panel" type="Panel" parent="Control2" unique_id=89935022]
+layout_mode = 0
+offset_right = 195.0
+offset_bottom = 76.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_jague")
+
+[node name="turn_lbl" type="Label" parent="Control2/turn_panel" unique_id=865011529]
+layout_mode = 0
+offset_left = 22.0
+offset_top = -9.0
+offset_right = 291.0
+offset_bottom = 80.0
+theme_override_font_sizes/font_size = 32
+text = "TURN 1"
+vertical_alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1379196086]
 layout_mode = 2

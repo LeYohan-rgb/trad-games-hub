@@ -8,6 +8,9 @@ extends Control
 @onready var plr_2_stones_lbl = $HBoxContainer/adjiboto_boat_2/Label
 @onready var turn_lbl = $Control2/turn_panel/turn_lbl
 
+@onready var plr_2_stones_bg = $HBoxContainer/adjiboto_boat_2/ColorRect
+@onready var plr_1_stones_bg = $HBoxContainer/adjiboto_boat_1/ColorRect
+
 var modulate_color_1 = "e8dc0e"
 var modulate_color_2 = "00f3fd"
 var catch_modulate_color = "ff0000"
@@ -238,20 +241,114 @@ func check_if_legal_moves_left():
 		end_game()
 	else:
 		go_to_next_turn()
+
+func calculate_stones_left():
+	
+	var stones_remaining : int = 0
+	if game_state["turn"] == 0: #WE CALCULATE THE CLIENT'S BALLS
+		if multiplayer.is_server(): #Calculate the client's balls
+			for i in range(6, 11):
+				stones_remaining += game_state[i]
+				
+		else: #calculate my own balls (the client)
+			for i in range(1, 6):
+				stones_remaining += game_state[i]
+	else: #WE CALCULATE THE HOST'S BALLS
+		if multiplayer.is_server(): #Calculate my own balls (the host)
+			for i in range(1, 6):
+				stones_remaining += game_state[i]
+				
+		else: #calculate host's balls
+			for i in range(6, 11):
+				stones_remaining += game_state[i]
+				
+	return (50 - stones_remaining)
+	
+func refill_time():
+	var modulate_color = modulate_color_2 if game_state["turn"] == 0 else modulate_color_1
+	for i in range(5):
+		if game_state["turn"] == 0: #WE REFILL THE CLIENT'S BALLS
+			if multiplayer.is_server(): #refill client (the other)
+				game_state[5 + i + 1] += (10 - game_state[5 + i + 1])
+				game_holes[5 + i + 1].text = str(10 - game_state[5 + i + 1])
+				game_holes[5 + i + 1].modulate = modulate_color # change color accordingly
+				await get_tree().create_timer(0.5).timeout
+				game_holes[5 + i + 1].modulate = "ffffff"
+				
+			else: #refill client (my own)
+				game_state[i + 1] += (10 - game_state[i + 1])
+				game_holes[i + 1].text = str(10 - game_state[i + 1])
+				game_holes[i + 1].modulate = modulate_color # change color accordingly
+				await get_tree().create_timer(0.5).timeout
+				game_holes[i + 1].modulate = "ffffff"
+		else: #WE REFILL THE HOST'S BALLS
+			if multiplayer.is_server(): #refill host (my own)
+				game_state[i + 1] += (10 - game_state[i + 1])
+				game_holes[i + 1].text = str(10 - game_state[i + 1])
+				game_holes[i + 1].modulate = modulate_color # change color accordingly
+				await get_tree().create_timer(0.5).timeout
+				game_holes[i + 1].modulate = "ffffff"
+					
+			else: #refill client (the other)
+				game_state[5 + i + 1] += (10 - game_state[5 + i + 1])
+				game_holes[5 + i + 1].text = str(10 - game_state[5 + i + 1])
+				game_holes[5 + i + 1].modulate = modulate_color # change color accordingly
+				await get_tree().create_timer(0.5).timeout
+				game_holes[5 + i + 1].modulate = "ffffff"
 	
 func end_game():
 	message_label.text = Global.players[opposite_turn()] + " has no legal moves left!"
 	await get_tree().create_timer(2.0).timeout
 	# CHECK IF DRAW
-	if game_state["player_" + return_opp_player_index_from_one_to_two() + "_stones"] >= 50:
-		if game_state["player_" + return_opp_player_index_from_one_to_two() + "_stones"] == 50:
-			message_label.text = "But they have exactly half of the total stones!"
-		else:
-			message_label.text = "But they have more than half of the total stones!"
+	if game_state["player_" + return_opp_player_index_from_one_to_two() + "_stones"] >= calculate_stones_left():
+		message_label.text = "But they have enough stones to refill all of their holes!"
+			
+		modulate_player_boat(0) #highlight the boat
+		
+		await refill_time() #refill all holes back
+		
+		modulate_player_boat(1)
+		
+		message_label.text = "The game ends in a draw!"
+		
 		await get_tree().create_timer(2.0).timeout
+		end_the_game_and_enter_end_screen(2) #0 host wins, 1 client wins, 2 draw
+		
+		message_label.text = Global.players[opposite_turn()] + " can refill !"
 	else:
-		pass
+		message_label.text = "They do not have enough stones to refill all of their holes!"
+		await get_tree().create_timer(2.0).timeout
+		message_label.text = Global.players[game_state["turn"]] + " wins the game!"
+		await get_tree().create_timer(2.0).timeout
+		end_the_game_and_enter_end_screen(game_state["turn"])
+		
+func end_the_game_and_enter_end_screen(outcome : int):
+	pass
 
+func modulate_player_boat(on_or_off):
+	if on_or_off == 0: #if 0, modulate!
+		if game_state["turn"] == 0:
+			if multiplayer.is_server():
+				plr_1_stones_bg.self_modulate.a = 0.8
+			else:
+				plr_2_stones_bg.self_modulate.a = 0.8
+		else:
+			if multiplayer.is_server():
+				plr_2_stones_bg.self_modulate.a = 0.8
+			else:
+				plr_1_stones_bg.self_modulate.a = 0.8
+	else: #if not, then un-modulate.
+		if game_state["turn"] == 0:
+			if multiplayer.is_server():
+				plr_1_stones_bg.self_modulate.a = 1
+			else:
+				plr_2_stones_bg.self_modulate.a = 1
+		else:
+			if multiplayer.is_server():
+				plr_2_stones_bg.self_modulate.a = 1
+			else:
+				plr_1_stones_bg.self_modulate.a = 1
+		
 func return_opp_player_index_from_one_to_two() -> String:
 	if game_state["turn"] == 0:
 		return "2"

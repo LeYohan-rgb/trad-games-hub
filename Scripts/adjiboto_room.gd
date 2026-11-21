@@ -206,8 +206,38 @@ func loop_through_holes(hole_num, plr, plr_interface, stones_removed):
 			iterative_capture += 1
 		else:
 			can_capture = false
-
+	
+	#CHECK IF A PLAYER HAS NO LEGAL MOVES LEFT
+	check_if_legal_moves_left()
 	go_to_next_turn()
+	
+func check_if_legal_moves_left():
+	var no_legal_moves = true
+	#if the current turn is the 1st player, check if THE CLIENT has moves left
+	if game_state["turn"] == 0:
+		if multiplayer.is_server():
+			for i in range(6,11): #For the host POV, check if the client has moves left
+				if game_state[i] >= 2:
+					no_legal_moves = false
+		else:
+			for i in range(1,6): #for the client POV, check if themselves have moves left
+				if game_state[i] >= 2:
+					no_legal_moves = false
+				
+	else:
+		if multiplayer.is_server():
+			for i in range(1,6): #for the host POV, check if themselves have moves left
+				if game_state[i] >= 2:
+					no_legal_moves = false
+		else:
+			for i in range(6,11): #for the client POV, check if the host has moves left
+				if game_state[i] >= 2:
+					no_legal_moves = false
+					
+	if no_legal_moves == true: #END GAME
+		pass 
+	else:
+		pass
 	
 func catched_stones_by_plr(stones_catched):
 	if game_state["turn"] == 0:

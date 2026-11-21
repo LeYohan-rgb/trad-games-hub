@@ -11,6 +11,8 @@ var modulate_color_1 = "e8dc0e"
 var modulate_color_2 = "00f3fd"
 var catch_modulate_color = "ff0000"
 
+var holes_used_in_first_stage = []
+
 @onready var game_holes= {
 	1: $HBoxContainer/holes_container/btn_1_1,
 	2: $HBoxContainer/holes_container/btn_1_2,
@@ -82,6 +84,16 @@ func _on_holes_container_performed_move_on_hole(hole_num: Variant) -> void:
 func is_move_legal(hole_num, player):
 	#STILL NOT ADDED THE 10 TURN RULE YET
 	if game_state[hole_num] > 1:
+		
+		#10 TURN RULE
+		if hole_num in holes_used_in_first_stage:
+			illegal_move_message_first_stage()
+			return
+		
+		if game_state["game_turn"] <= 10:
+			holes_used_in_first_stage.append(hole_num)
+			game_holes[hole_num].self_modulate.a = 0.8
+			
 		perform_move.rpc(hole_num, player)
 	else:
 		illegal_move_message()
@@ -89,6 +101,13 @@ func is_move_legal(hole_num, player):
 func illegal_move_message():
 	game_paused = true
 	message_label.text = "You must play a hole with more than one stone!"
+	await get_tree().create_timer(2.0).timeout
+	message_label.text = "It's " + Global.players[game_state["turn"]] + "'s turn!"
+	game_paused = false
+	
+func illegal_move_message_first_stage():
+	game_paused = true
+	message_label.text = "You must play each of the holes before playing the same hole!"
 	await get_tree().create_timer(2.0).timeout
 	message_label.text = "It's " + Global.players[game_state["turn"]] + "'s turn!"
 	game_paused = false
@@ -191,11 +210,19 @@ func loop_through_holes(hole_num, plr, plr_interface, stones_removed):
 	
 func catched_stones_by_plr(stones_catched):
 	if game_state["turn"] == 0:
-		game_state["player_1_stones"] += stones_catched
-		plr_1_stones_lbl.text = str(int(plr_1_stones_lbl.text) + stones_catched)
+		if multiplayer.is_server():
+			game_state["player_1_stones"] += stones_catched
+			plr_1_stones_lbl.text = str(int(plr_1_stones_lbl.text) + stones_catched)
+		else:
+			game_state["player_1_stones"] += stones_catched
+			plr_2_stones_lbl.text = str(int(plr_2_stones_lbl.text) + stones_catched)
 	else:
-		game_state["player_2_stones"] += stones_catched
-		plr_2_stones_lbl.text = str(int(plr_2_stones_lbl.text) + stones_catched)
+		if multiplayer.is_server():
+			game_state["player_2_stones"] += stones_catched
+			plr_2_stones_lbl.text = str(int(plr_2_stones_lbl.text) + stones_catched)
+		else:
+			game_state["player_2_stones"] += stones_catched
+			plr_1_stones_lbl.text = str(int(plr_1_stones_lbl.text) + stones_catched)
 
 func is_in_a_capture_sequence(num) -> bool:
 	if num == 1 or num == 3 or num == 5:

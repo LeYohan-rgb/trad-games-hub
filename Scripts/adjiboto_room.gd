@@ -20,6 +20,7 @@ var modulate_color_1 = "e8dc0e"
 var modulate_color_2 = "00f3fd"
 var catch_modulate_color = "ff0000"
 var opposite_player_disconnected : bool = false
+var plr_disconnected_index : int = 0
 
 
 
@@ -512,17 +513,19 @@ func opp_plr(num):
 	else:
 		return 0
 
-
-func _on_quit_game_btn_pressed() -> void:
-	if game_paused == true:
-		return
-	
+func quit_game_btn():
 	reset_all_variables()
 	
 	announce_disconnected_player.rpc()
 	multiplayer.multiplayer_peer.close()
 	multiplayer.multiplayer_peer = null
 	get_tree().change_scene_to_file("res://Scenes/game_selector.tscn")
+	
+func _on_quit_game_btn_pressed() -> void:
+	if game_paused == true:
+		return
+		
+	quit_game_btn()
 	
 @rpc("any_peer", "call_remote", "reliable")
 func announce_disconnected_player():
@@ -545,13 +548,25 @@ func reset_all_variables():
 	Global.after_leaving_a_game()
 
 func _on_peer_disconnected(id : int) -> void:
+	plr_disconnected_index = 1
 	opposite_player_disconnected = true
 	
 func _on_server_disconnected():
+	plr_disconnected_index = 0
 	opposite_player_disconnected = true
+	
 
 func go_to_player_disconnected_announce():
 	if opposite_player_disconnected == false:
 		return
 	disconnected_lbl.show()
-	disconnected_lbl.text = Global.players[1] + " disconnected."
+	disconnected_lbl.text = Global.players[plr_disconnected_index] + " disconnected."
+
+
+func _on_win_quit_game_btn_pressed() -> void:
+	quit_game_btn()
+
+
+func _on_replay_btn_pressed() -> void:
+	if opposite_player_disconnected:
+		return

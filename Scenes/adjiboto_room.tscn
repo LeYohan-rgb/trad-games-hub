@@ -154,7 +154,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="quit_game_btn" type="Button" parent="Control2/winning_panel/HBoxContainer" unique_id=99227714]
+[node name="win_quit_game_btn" type="Button" parent="Control2/winning_panel/HBoxContainer" unique_id=99227714]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 25
@@ -180,6 +180,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -19.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.19793725, 0.19793725, 0.19793719, 1)
@@ -272,6 +273,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_bottom = 19.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.19607843, 0.19607843, 0.19607843, 1)
@@ -326,6 +328,8 @@ vertical_alignment = 1
 [connection signal="pressed" from="Control2/pause_button" to="." method="_on_pause_button_pressed"]
 [connection signal="pressed" from="Control2/pause_panel/quit_game_btn" to="." method="_on_quit_game_btn_pressed"]
 [connection signal="pressed" from="Control2/pause_panel/resign_btn" to="." method="_on_resign_btn_pressed"]
+[connection signal="pressed" from="Control2/winning_panel/HBoxContainer/win_quit_game_btn" to="." method="_on_win_quit_game_btn_pressed"]
+[connection signal="pressed" from="Control2/winning_panel/HBoxContainer/replay_btn" to="." method="_on_replay_btn_pressed"]
 [connection signal="performed_move_on_hole" from="HBoxContainer/holes_container" to="." method="_on_holes_container_performed_move_on_hole"]
 [connection signal="pressed" from="HBoxContainer/holes_container/btn_2_5" to="HBoxContainer/holes_container" method="_on_btn_2_5_pressed"]
 [connection signal="pressed" from="HBoxContainer/holes_container/btn_2_4" to="HBoxContainer/holes_container" method="_on_btn_2_4_pressed"]

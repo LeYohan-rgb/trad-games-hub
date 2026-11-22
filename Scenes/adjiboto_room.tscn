@@ -38,6 +38,24 @@ text = "PLAYER 1"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="disconnected_lbl" type="Label" parent="player_2_panel" unique_id=406928572]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -355.0
+offset_top = -43.0
+offset_right = 355.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 25
+text = "Player disconnected."
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Control2" type="Control" parent="." unique_id=317861812]
 layout_mode = 2
 size_flags_vertical = 3
@@ -71,6 +89,7 @@ icon = ExtResource("2_p61nw")
 expand_icon = true
 
 [node name="pause_panel" type="VBoxContainer" parent="Control2" unique_id=1228387858]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5

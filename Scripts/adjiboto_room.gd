@@ -9,6 +9,7 @@ extends Control
 @onready var turn_lbl = $Control2/turn_panel/turn_lbl
 @onready var pause_panel = $Control2/pause_panel
 @onready var pause_btn = $Control2/pause_button
+@onready var disconnected_lbl = $player_2_panel/disconnected_lbl
 
 @onready var plr_2_stones_bg = $HBoxContainer/adjiboto_boat_2/ColorRect
 @onready var plr_1_stones_bg = $HBoxContainer/adjiboto_boat_1/ColorRect
@@ -67,7 +68,8 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	if opposite_player_disconnected:
+		go_to_player_disconnected_announce()
 
 func set_up():
 	message_label.text = "It's " + Global.players[0] + "'s turn!"
@@ -78,9 +80,13 @@ func set_up():
 		player_1_label.text = Global.players[1]
 		player_2_label.text = Global.players[0]
 
-
 func _on_holes_container_performed_move_on_hole(hole_num: Variant) -> void:
 	if game_paused == true:
+		return
+		
+	#CHECK IF THE PLAYER DISCONNECTED
+	if opposite_player_disconnected:
+		message_label.text = "..."
 		return
 		
 		
@@ -463,6 +469,9 @@ func _on_pause_button_pressed() -> void:
 
 
 func _on_resign_btn_pressed() -> void:
+	if opposite_player_disconnected: #obv if the opp player disconnected, you can't possibly resign
+		return
+		
 	if game_paused == true:
 		return
 		
@@ -495,15 +504,19 @@ func _on_quit_game_btn_pressed() -> void:
 		return
 	
 	reset_all_variables()
-	multiplayer.multiplayer_peer = null
+	
 	announce_disconnected_player.rpc()
-	get_tree().change_scene_to_file("res://Scenes/hosting_room.tscn")
+	multiplayer.multiplayer_peer.close()
+	multiplayer.multiplayer_peer = null
+	get_tree().change_scene_to_file("res://Scenes/game_selector.tscn")
 	
 @rpc("any_peer", "call_remote", "reliable")
 func announce_disconnected_player():
 	opposite_player_disconnected = true
 	
 func reset_all_variables():
+	opposite_player_disconnected = false
+	disconnected_lbl.hide()
 	pause_panel.hide()
 	pause_btn.icon = load("res://Graphics/general_icons/pause_icon.png")
 	holes_used_in_first_stage = []
@@ -516,8 +529,14 @@ func reset_all_variables():
 	game_paused = false
 	Global.after_leaving_a_game()
 
-func _on_peer_disconnected():
-	pass
+func _on_peer_disconnected(id : int) -> void:
+	opposite_player_disconnected = true
 	
 func _on_server_disconnected():
-	pass
+	opposite_player_disconnected = true
+
+func go_to_player_disconnected_announce():
+	if opposite_player_disconnected == false:
+		return
+	disconnected_lbl.show()
+	disconnected_lbl.text = Global.players[1] + " disconnected."

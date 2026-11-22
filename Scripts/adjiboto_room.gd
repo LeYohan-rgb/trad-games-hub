@@ -583,6 +583,10 @@ func _on_replay_btn_pressed() -> void:
 	if opposite_player_disconnected and replay_agreement[is_the_host()] == false:
 		return
 	
+	#IF BOTH PLAYERS WANT TO PLAY AGAIN, THIS BUTTON SERVES NO PURPOSE
+	if replay_agreement == [true, true]:
+		return
+	
 	win_quit_game_btn.hide()
 	if replay_agreement[is_the_host()] == false:
 		send_replay_request.rpc(is_the_host(), true)
@@ -606,6 +610,11 @@ func _on_replay_btn_pressed() -> void:
 @rpc("any_peer", "call_remote", "reliable")
 func send_replay_request(player_requesting : int, play_again : bool):
 	if play_again:
+		if replay_agreement == [true, true]:
+			disconnected_lbl.text = Global.players[player_requesting] + " wants to play again."
+			before_new_match.rpc()
+			return
+			
 		replay_agreement[player_requesting] = true
 		disconnected_lbl.show()
 		disconnected_lbl.text = Global.players[player_requesting] + " wants to play again."
@@ -613,3 +622,11 @@ func send_replay_request(player_requesting : int, play_again : bool):
 		replay_agreement[player_requesting] = false
 		disconnected_lbl.show()
 		disconnected_lbl.text = Global.players[player_requesting] + " canceled their request."
+
+@rpc("any_peer", "call_local", "reliable")
+func before_new_match():
+	replay_btn.text = "STARTING NEW MATCH..."
+	await get_tree().create_timer(2.0).timeout
+	reset_all_variables()
+	set_up()
+	

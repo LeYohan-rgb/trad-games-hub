@@ -7,6 +7,8 @@ extends Control
 @onready var plr_1_stones_lbl = $HBoxContainer/adjiboto_boat_1/Label
 @onready var plr_2_stones_lbl = $HBoxContainer/adjiboto_boat_2/Label
 @onready var turn_lbl = $Control2/turn_panel/turn_lbl
+@onready var pause_panel = $Control2/pause_panel
+@onready var pause_btn = $Control2/pause_button
 
 @onready var plr_2_stones_bg = $HBoxContainer/adjiboto_boat_2/ColorRect
 @onready var plr_1_stones_bg = $HBoxContainer/adjiboto_boat_1/ColorRect
@@ -14,6 +16,8 @@ extends Control
 var modulate_color_1 = "e8dc0e"
 var modulate_color_2 = "00f3fd"
 var catch_modulate_color = "ff0000"
+
+
 
 var holes_used_in_first_stage = []
 
@@ -47,6 +51,7 @@ var game_state = {
 	"game_turn": 1,
 }
 
+var is_pausing_game = false
 var game_paused = false
 
 # Called when the node enters the scene tree for the first time.
@@ -435,3 +440,47 @@ func update_turn_counter():
 	if game_state["game_turn"] == 11:
 		for i in range(1, 6):
 			game_holes[i].self_modulate.a = 1
+
+
+func _on_pause_button_pressed() -> void:
+	if is_pausing_game:
+		pause_panel.hide()
+		is_pausing_game = false
+		pause_btn.icon = load("res://Graphics/general_icons/pause_icon.png")
+		return
+	
+	is_pausing_game = true
+	pause_panel.show()
+	pause_btn.icon = load("res://Graphics/general_icons/resume_icon.png")
+	
+	
+		
+		
+
+
+func _on_resign_btn_pressed() -> void:
+	if game_paused == true:
+		return
+		
+	is_pausing_game = false
+	game_paused = true
+	pause_panel.hide()
+	pause_btn.icon = load("res://Graphics/general_icons/pause_icon.png")
+	if multiplayer.is_server():
+		resign_signal.rpc(0)
+	else:
+		resign_signal.rpc(1)
+		
+@rpc("any_peer", "call_local", "reliable")
+func resign_signal(player_resign):
+	game_paused = true
+	message_label.text = Global.players[player_resign] + " wants to resign!"
+	await get_tree().create_timer(2.0).timeout
+	message_label.text = Global.players[opp_plr(player_resign)] + " wins the game!"
+	await get_tree().create_timer(2.0).timeout
+
+func opp_plr(num):
+	if num == 0:
+		return 1
+	else:
+		return 0

@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://hojv50lhx7do"]
 
 [ext_resource type="Script" uid="uid://bvxje35dlj0nx" path="res://Scripts/adjiboto_room.gd" id="1_k13sv"]
+[ext_resource type="Texture2D" uid="uid://ud8p3ts34nga" path="res://Graphics/general_icons/pause_icon.png" id="2_p61nw"]
 [ext_resource type="Script" uid="uid://rlu17rqucwoq" path="res://Scripts/holes_container.gd" id="2_tacjl"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jague"]
@@ -56,6 +57,46 @@ offset_bottom = 80.0
 theme_override_font_sizes/font_size = 32
 text = "TURN 1"
 vertical_alignment = 1
+
+[node name="pause_button" type="Button" parent="Control2" unique_id=2034116435]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -75.0
+offset_bottom = 77.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 32
+icon = ExtResource("2_p61nw")
+expand_icon = true
+
+[node name="pause_panel" type="VBoxContainer" parent="Control2" unique_id=1228387858]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -231.0
+offset_top = -86.5
+offset_right = 231.0
+offset_bottom = 86.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="quit_game_btn" type="Button" parent="Control2/pause_panel" unique_id=1306577378]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
+text = "QUIT GAME"
+
+[node name="resign_btn" type="Button" parent="Control2/pause_panel" unique_id=1746206388]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
+text = "RESIGN"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1379196086]
 layout_mode = 2
@@ -214,6 +255,8 @@ text = "PLAYER 1"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[connection signal="pressed" from="Control2/pause_button" to="." method="_on_pause_button_pressed"]
+[connection signal="pressed" from="Control2/pause_panel/resign_btn" to="." method="_on_resign_btn_pressed"]
 [connection signal="performed_move_on_hole" from="HBoxContainer/holes_container" to="." method="_on_holes_container_performed_move_on_hole"]
 [connection signal="pressed" from="HBoxContainer/holes_container/btn_2_5" to="HBoxContainer/holes_container" method="_on_btn_2_5_pressed"]
 [connection signal="pressed" from="HBoxContainer/holes_container/btn_2_4" to="HBoxContainer/holes_container" method="_on_btn_2_4_pressed"]

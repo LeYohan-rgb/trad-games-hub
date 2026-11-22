@@ -25,8 +25,7 @@ func _ready():
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	
 func _process(delta: float) -> void:
-	if multiplayer.is_server():
-		prints(Global.players, multiplayer.get_unique_id())
+	pass
 	
 func _on_host_button_pressed() -> void:
 	if is_connecting:

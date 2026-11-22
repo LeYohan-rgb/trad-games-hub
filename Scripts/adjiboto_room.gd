@@ -12,6 +12,8 @@ extends Control
 @onready var disconnected_lbl = $player_2_panel/disconnected_lbl
 @onready var winning_panel = $Control2/winning_panel
 @onready var winning_lbl = $Control2/winning_panel/Panel/winning_lbl
+@onready var win_quit_game_btn = $Control2/winning_panel/HBoxContainer/win_quit_game_btn
+@onready var replay_btn = $Control2/winning_panel/HBoxContainer/replay_btn
 
 @onready var plr_2_stones_bg = $HBoxContainer/adjiboto_boat_2/ColorRect
 @onready var plr_1_stones_bg = $HBoxContainer/adjiboto_boat_1/ColorRect
@@ -25,6 +27,7 @@ var plr_disconnected_index : int = 0
 
 
 var holes_used_in_first_stage = []
+var replay_agreement = [false, false]
 
 @onready var game_holes= {
 	1: $HBoxContainer/holes_container/btn_1_1,
@@ -74,6 +77,7 @@ func _process(delta: float) -> void:
 		go_to_player_disconnected_announce()
 
 func set_up():
+	winning_panel.hide()
 	message_label.text = "It's " + Global.players[0] + "'s turn!"
 	if multiplayer.is_server():
 		player_1_label.text = Global.players[0]
@@ -535,11 +539,17 @@ func reset_all_variables():
 	opposite_player_disconnected = false
 	winning_panel.hide()
 	disconnected_lbl.hide()
+	disconnected_lbl.text = ""
+	replay_btn.show()
+	replay_btn.text = "PLAY AGAIN"
+	win_quit_game_btn.show()
+	win_quit_game_btn.text = "QUIT GAME"
 	pause_panel.hide()
 	pause_btn.icon = load("res://Graphics/general_icons/pause_icon.png")
 	holes_used_in_first_stage = []
 	plr_1_stones_lbl.text = "0"
 	plr_2_stones_lbl.text = "0"
+	replay_agreement = [false, false]
 	for i in range(1, 11):
 		game_holes[i].text = "0"
 	game_state = {1: 10, 2: 10, 3: 10, 4: 10, 5: 10, 6: 10, 7: 10, 8: 10, 9: 10, 10: 10, "turn": 0, "player_1_stones": 0, "player_2_stones": 0, "game_turn": 1,}
@@ -548,10 +558,12 @@ func reset_all_variables():
 	Global.after_leaving_a_game()
 
 func _on_peer_disconnected(id : int) -> void:
+	replay_agreement[1] = false
 	plr_disconnected_index = 1
 	opposite_player_disconnected = true
 	
 func _on_server_disconnected():
+	replay_agreement[0] = false
 	plr_disconnected_index = 0
 	opposite_player_disconnected = true
 	
@@ -568,5 +580,36 @@ func _on_win_quit_game_btn_pressed() -> void:
 
 
 func _on_replay_btn_pressed() -> void:
-	if opposite_player_disconnected:
+	if opposite_player_disconnected and replay_agreement[is_the_host()] == false:
 		return
+	
+	win_quit_game_btn.hide()
+	if replay_agreement[is_the_host()] == false:
+		send_replay_request.rpc(is_the_host(), true)
+		replay_agreement[is_the_host()] = true
+		replay_btn.text = "CANCEL REQUEST"
+		disconnected_lbl.show()
+		disconnected_lbl.text = "Waiting for " + Global.players[opp_plr(is_the_host())] + "..."
+		win_quit_game_btn.hide()
+	else:
+		win_quit_game_btn.show()
+		disconnected_lbl.hide()
+		
+		#IF DISCONNECTED, THEN DO NOT HIDE THE LABEL
+		if not opposite_player_disconnected:
+			disconnected_lbl.text = ""
+			
+		replay_btn.text = "PLAY AGAIN"
+		replay_agreement[is_the_host()] = false
+		send_replay_request.rpc(is_the_host(), false)
+	
+@rpc("any_peer", "call_remote", "reliable")
+func send_replay_request(player_requesting : int, play_again : bool):
+	if play_again:
+		replay_agreement[player_requesting] = true
+		disconnected_lbl.show()
+		disconnected_lbl.text = Global.players[player_requesting] + " wants to play again."
+	else:
+		replay_agreement[player_requesting] = false
+		disconnected_lbl.show()
+		disconnected_lbl.text = Global.players[player_requesting] + " canceled their request."

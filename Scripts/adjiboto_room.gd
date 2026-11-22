@@ -10,6 +10,8 @@ extends Control
 @onready var pause_panel = $Control2/pause_panel
 @onready var pause_btn = $Control2/pause_button
 @onready var disconnected_lbl = $player_2_panel/disconnected_lbl
+@onready var winning_panel = $Control2/winning_panel
+@onready var winning_lbl = $Control2/winning_panel/Panel/winning_lbl
 
 @onready var plr_2_stones_bg = $HBoxContainer/adjiboto_boat_2/ColorRect
 @onready var plr_1_stones_bg = $HBoxContainer/adjiboto_boat_1/ColorRect
@@ -58,7 +60,6 @@ var game_paused = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	
 	
 	if Global.game_mode == 0:
 		multiplayer.peer_disconnected.connect(_on_peer_disconnected)
@@ -352,7 +353,19 @@ func end_game():
 		end_the_game_and_enter_end_screen(game_state["turn"])
 		
 func end_the_game_and_enter_end_screen(outcome : int):
-	pass
+	pause_panel.hide()
+	pause_btn.hide()
+	winning_panel.show()
+	
+	if outcome == 0:
+		winning_lbl.text = Global.players[0] + " WINS!"
+		winning_lbl.add_theme_color_override("font_color", Color(modulate_color_1))
+	if outcome == 1:
+		winning_lbl.text = Global.players[1] + " WINS!"
+		winning_lbl.add_theme_color_override("font_color", Color(modulate_color_2))
+	if outcome == 2:
+		winning_lbl.text = "DRAW"
+		winning_lbl.add_theme_color_override("font_color", Color("#ffffff"))
 
 func modulate_player_boat(on_or_off):
 	if on_or_off == 0: #if 0, modulate!
@@ -491,6 +504,7 @@ func resign_signal(player_resign):
 	await get_tree().create_timer(2.0).timeout
 	message_label.text = Global.players[opp_plr(player_resign)] + " wins the game!"
 	await get_tree().create_timer(2.0).timeout
+	end_the_game_and_enter_end_screen(opp_plr(player_resign))
 
 func opp_plr(num):
 	if num == 0:
@@ -516,6 +530,7 @@ func announce_disconnected_player():
 	
 func reset_all_variables():
 	opposite_player_disconnected = false
+	winning_panel.hide()
 	disconnected_lbl.hide()
 	pause_panel.hide()
 	pause_btn.icon = load("res://Graphics/general_icons/pause_icon.png")

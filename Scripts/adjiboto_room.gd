@@ -16,6 +16,7 @@ extends Control
 var modulate_color_1 = "e8dc0e"
 var modulate_color_2 = "00f3fd"
 var catch_modulate_color = "ff0000"
+var opposite_player_disconnected : bool = false
 
 
 
@@ -57,7 +58,10 @@ var game_paused = false
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	
+	
 	if Global.game_mode == 0:
+		multiplayer.peer_disconnected.connect(_on_peer_disconnected)
+		multiplayer.server_disconnected.connect(_on_server_disconnected)
 		set_up()
 
 
@@ -484,3 +488,36 @@ func opp_plr(num):
 		return 1
 	else:
 		return 0
+
+
+func _on_quit_game_btn_pressed() -> void:
+	if game_paused == true:
+		return
+	
+	reset_all_variables()
+	multiplayer.multiplayer_peer = null
+	announce_disconnected_player.rpc()
+	get_tree().change_scene_to_file("res://Scenes/hosting_room.tscn")
+	
+@rpc("any_peer", "call_remote", "reliable")
+func announce_disconnected_player():
+	opposite_player_disconnected = true
+	
+func reset_all_variables():
+	pause_panel.hide()
+	pause_btn.icon = load("res://Graphics/general_icons/pause_icon.png")
+	holes_used_in_first_stage = []
+	plr_1_stones_lbl.text = "0"
+	plr_2_stones_lbl.text = "0"
+	for i in range(1, 11):
+		game_holes[i].text = "0"
+	game_state = {1: 10, 2: 10, 3: 10, 4: 10, 5: 10, 6: 10, 7: 10, 8: 10, 9: 10, 10: 10, "turn": 0, "player_1_stones": 0, "player_2_stones": 0, "game_turn": 1,}
+	is_pausing_game = false
+	game_paused = false
+	Global.after_leaving_a_game()
+
+func _on_peer_disconnected():
+	pass
+	
+func _on_server_disconnected():
+	pass

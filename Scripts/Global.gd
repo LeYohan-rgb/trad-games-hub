@@ -6,3 +6,9 @@ var playing_game : int = 0
 var players :Array[String] = []
 var is_debugging : bool = false
 #1 - ADJIBOTO
+
+
+func after_leaving_a_game():
+	players = []
+	playing_game = 0
+	

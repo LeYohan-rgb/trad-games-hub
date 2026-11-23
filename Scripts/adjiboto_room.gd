@@ -1,5 +1,7 @@
 extends Control
 
+signal game_resumed
+
 @onready var player_1_label = $player_1_panel/Label
 @onready var player_2_label = $player_2_panel/Label
 @onready var message_label = $Control/message_label
@@ -24,6 +26,7 @@ var modulate_color_2 = "00f3fd"
 var catch_modulate_color = "ff0000"
 var opposite_player_disconnected : bool = false
 var plr_disconnected_index : int = 0
+var bot_wait_time : float = 5.0
 
 
 var going_to_replay : bool = false
@@ -86,6 +89,8 @@ func set_up():
 	winning_panel.hide()
 	
 	if Global.game_mode == 1:
+		if Global.is_debugging:
+			bot_wait_time = 1.0
 		game_paused = true
 		message_label.text = "Who makes the first move?"
 		player_choser.show()
@@ -110,10 +115,13 @@ func _on_holes_container_performed_move_on_hole(hole_num: Variant) -> void:
 		message_label.text = "..."
 		return
 		
-	if Global.game_mode == 1 and bot_turn != game_state["turn"]:
-		is_move_legal(hole_num, 0)
-		return
-		
+	if Global.game_mode == 1:
+		if bot_turn != game_state["turn"]:
+			is_move_legal(hole_num, 0)
+			return
+		else:
+			return
+			
 	if multiplayer.is_server() and game_state["turn"] == 0 and game_paused == false:
 		is_move_legal(hole_num, 0)
 			
@@ -152,10 +160,12 @@ func illegal_move_message():
 	if Global.game_mode == 1: #WHEN PLAYING WITH BOT
 		message_label.text = "It's " + Global.player_name + "'s turn!"
 		game_paused = false
+		game_resumed.emit()
 		return
 		
 	message_label.text = "It's " + Global.players[game_state["turn"]] + "'s turn!"
 	game_paused = false
+	game_resumed.emit()
 	
 func illegal_move_message_first_stage():
 	game_paused = true
@@ -165,10 +175,12 @@ func illegal_move_message_first_stage():
 	if Global.game_mode == 1: #WHEN PLAYING WITH BOT
 		message_label.text = "It's " + Global.player_name + "'s turn!"
 		game_paused = false
+		game_resumed.emit()
 		return
 		
 	message_label.text = "It's " + Global.players[game_state["turn"]] + "'s turn!"
 	game_paused = false
+	game_resumed.emit()
 
 @rpc("any_peer", "call_local", "reliable")
 func perform_move(hole_num, player):
@@ -220,14 +232,21 @@ func update_game_state(hole_num, player, plr_interface):
 
 	if plr_interface == 0:
 		if player == 0:
-			message_label.text = Global.players[player] + " distributed 1 out of " + str(game_state[hole_num] - 1) + " stones!"
+			if Global.game_mode == 1:
+				message_label.text = return_player_or_bot_str(player, true) + " distributed 1 out of " + str(game_state[hole_num] - 1) + " stones!"
+			else:
+				message_label.text = Global.players[player] + " distributed 1 out of " + str(game_state[hole_num] - 1) + " stones!"
 			game_state[hole_num] = 1
 			game_holes[hole_num].text = str(1)
 		else:
-			message_label.text = Global.players[player] + " distributed 1 out of " + str(game_state[5 + hole_num] - 1) + " stones!"
+			if Global.game_mode == 1:
+				message_label.text = return_player_or_bot_str(player, true) + " distributed 1 out of " + str(game_state[5 + hole_num] - 1) + " stones!"
+			else:
+				message_label.text = Global.players[player] + " distributed 1 out of " + str(game_state[5 + hole_num] - 1) + " stones!"
 			game_state[5 + hole_num] = 1
 			game_holes[5 + hole_num].text = str(1)
 	else:
+		print("THIS IS RUNNING")
 		if player == 0:
 			message_label.text = Global.players[player] + " distributed 1 out of " + str(game_state[5 + hole_num] - 1) + " stones!"
 			game_state[5 + hole_num] = 1
@@ -551,18 +570,19 @@ func is_in_a_capture_sequence(num) -> bool:
 func go_to_next_turn():
 
 	if Global.is_debugging:
-		if game_state["game_turn"] == 12:
-			game_state["player_2_stones"] = 30
-			if multiplayer.is_server():
-				plr_2_stones_lbl.text = str(30)
-				for i in range(6,11):
-					game_state[i] = 1
-					game_holes[i].text = '1'
-			else:
-				plr_1_stones_lbl.text = str(30)
-				for i in range(1,6):
-					game_state[i] = 1
-					game_holes[i].text = '1'
+		pass
+#		if game_state["game_turn"] == 12:
+#			game_state["player_2_stones"] = 30
+#			if multiplayer.is_server():
+#				plr_2_stones_lbl.text = str(30)
+#				for i in range(6,11):
+#					game_state[i] = 1
+#					game_holes[i].text = '1'
+#			else:
+#				plr_1_stones_lbl.text = str(30)
+#				for i in range(1,6):
+#					game_state[i] = 1
+#					game_holes[i].text = '1'
 	
 	
 	game_state["game_turn"] += 1
@@ -574,9 +594,12 @@ func go_to_next_turn():
 		
 	if Global.game_mode == 1:
 		message_label.text = "It's " + return_player_or_bot_str(return_player_or_bot_turn(), false) + "'s turn!"
+		if game_state["turn"] == bot_turn:
+			bot_move()
 	else:
 		message_label.text = "It's " + Global.players[game_state["turn"]] + "'s turn!"
 	game_paused = false
+	game_resumed.emit()
 
 func mod_10_index(num):
 	if num % 10 == 0:
@@ -803,10 +826,11 @@ func set_up_first_game_turn_bot(turn : int):
 	player_choser.hide()
 	if bot_turn == 0:
 		message_label.text = "It's the BOT's turn!"
-		#then add a function for the bot to start thinking
+		bot_move()
 	else:
 		message_label.text = "It's " + Global.player_name + "'s turn!"
 	game_paused = false
+	game_resumed.emit()
 	
 func return_player_or_bot_str(plr : int, is_capitalized : bool) -> String:
 	if plr == 0:
@@ -854,7 +878,7 @@ func end_game_bot():
 	message_label.text = return_player_or_bot_str(opposite_turn_for_bot_mode(), true) + " has no legal moves left!"
 	await get_tree().create_timer(2.0).timeout
 	# CHECK IF DRAW
-	if game_state["player_" + return_bot_index_from_one_to_two(opposite_turn_for_bot_mode()) + "_stones"] >= calculate_stones_left():
+	if game_state["player_" + str(return_bot_index_from_one_to_two(opposite_turn_for_bot_mode())) + "_stones"] >= calculate_stones_left():
 		modulate_player_boat_bot(0) #highlight the boat
 		
 		message_label.text = "But they have enough stones to refill all of their holes!"
@@ -900,4 +924,15 @@ func modulate_player_boat_bot(on_or_off):
 				plr_1_stones_bg.self_modulate.a = 1
 
 func bot_move():
-	pass
+	var chosen_index = 1
+	for i in range(1, 6):
+		if game_state[5 + i] > 1:
+			chosen_index = i
+			break
+			
+	await get_tree().create_timer(bot_wait_time).timeout
+	
+	if game_paused:
+		await game_resumed
+		
+	perform_move(chosen_index, 1)

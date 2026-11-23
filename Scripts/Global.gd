@@ -9,6 +9,5 @@ var is_debugging : bool = true #ORIGIANL PROPORTION WAS 720 X 1280
 
 #1 - ADJIBOTO
 func after_leaving_a_game():
-	players = []
 	playing_game = 0
 	

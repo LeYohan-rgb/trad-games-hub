@@ -132,9 +132,6 @@ func appear_button_to_play_game():
 
 
 func _on_start_game_button_pressed() -> void:
-	print("START BUTTON PRESSED")
-	print("Multiplayer peer: ", multiplayer.multiplayer_peer)
-	print("Is connected: ", multiplayer.multiplayer_peer.get_connection_status())
 	
 	update_global_player_array.rpc(Global.players)
 	begin_game.rpc(Global.playing_game)

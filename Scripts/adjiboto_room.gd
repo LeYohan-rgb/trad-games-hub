@@ -25,7 +25,7 @@ var opposite_player_disconnected : bool = false
 var plr_disconnected_index : int = 0
 
 
-
+var going_to_replay : bool = false
 var holes_used_in_first_stage = []
 var replay_agreement = [false, false]
 
@@ -536,6 +536,7 @@ func announce_disconnected_player():
 	opposite_player_disconnected = true
 	
 func reset_all_variables():
+	pause_btn.show()
 	opposite_player_disconnected = false
 	winning_panel.hide()
 	disconnected_lbl.hide()
@@ -551,10 +552,13 @@ func reset_all_variables():
 	plr_2_stones_lbl.text = "0"
 	replay_agreement = [false, false]
 	for i in range(1, 11):
-		game_holes[i].text = "0"
+		game_holes[i].text = "10"
 	game_state = {1: 10, 2: 10, 3: 10, 4: 10, 5: 10, 6: 10, 7: 10, 8: 10, 9: 10, 10: 10, "turn": 0, "player_1_stones": 0, "player_2_stones": 0, "game_turn": 1,}
 	is_pausing_game = false
 	game_paused = false
+	if not going_to_replay:
+		Global.players = []
+	going_to_replay = false
 	Global.after_leaving_a_game()
 
 func _on_peer_disconnected(id : int) -> void:
@@ -589,18 +593,18 @@ func _on_replay_btn_pressed() -> void:
 	
 	win_quit_game_btn.hide()
 	if replay_agreement[is_the_host()] == false:
-		send_replay_request.rpc(is_the_host(), true)
 		replay_agreement[is_the_host()] = true
 		replay_btn.text = "CANCEL REQUEST"
+		send_replay_request.rpc(is_the_host(), true)
 		disconnected_lbl.show()
 		disconnected_lbl.text = "Waiting for " + Global.players[opp_plr(is_the_host())] + "..."
 		win_quit_game_btn.hide()
 	else:
 		win_quit_game_btn.show()
-		disconnected_lbl.hide()
 		
 		#IF DISCONNECTED, THEN DO NOT HIDE THE LABEL
 		if not opposite_player_disconnected:
+			disconnected_lbl.hide()
 			disconnected_lbl.text = ""
 			
 		replay_btn.text = "PLAY AGAIN"
@@ -610,12 +614,13 @@ func _on_replay_btn_pressed() -> void:
 @rpc("any_peer", "call_remote", "reliable")
 func send_replay_request(player_requesting : int, play_again : bool):
 	if play_again:
+		
+		replay_agreement[player_requesting] = true
 		if replay_agreement == [true, true]:
 			disconnected_lbl.text = Global.players[player_requesting] + " wants to play again."
 			before_new_match.rpc()
 			return
 			
-		replay_agreement[player_requesting] = true
 		disconnected_lbl.show()
 		disconnected_lbl.text = Global.players[player_requesting] + " wants to play again."
 	else:
@@ -627,6 +632,16 @@ func send_replay_request(player_requesting : int, play_again : bool):
 func before_new_match():
 	replay_btn.text = "STARTING NEW MATCH..."
 	await get_tree().create_timer(2.0).timeout
+	
+	if opposite_player_disconnected:
+		replay_btn.text = "PLAY AGAIN"
+		win_quit_game_btn.show()
+		disconnected_lbl.show()
+		disconnected_lbl.text = Global.players[plr_disconnected_index] + " disconnected."
+		replay_agreement = [false, false]
+		return
+		
+	going_to_replay = true
 	reset_all_variables()
 	set_up()
 	

@@ -930,18 +930,61 @@ func modulate_player_boat_bot(on_or_off):
 				plr_1_stones_bg.self_modulate.a = 1
 
 func bot_move():
+	var simulated_game_state = game_state.duplicate()
 	var chosen_index = 1
+	var move_outcomes = [0.0, 0.0, 0.0, 0.0, 0.0]
+	
+	if game_state["game_turn"] > 10:
+		holes_used_in_first_stage_bot = []
+	
 	for i in range(1, 6):
-		if game_state[5 + i] > 1:
-			chosen_index = i
-			break
-			
+		if game_state[5 + i] > 1 and not (i in holes_used_in_first_stage_bot): 
+			move_outcomes[i - 1] = evaluate_bot_move(5 + i, simulated_game_state)
+		
+	#CHOSE THE MOVE
+	if game_state["game_turn"] <= 10:
+		holes_used_in_first_stage_bot.append(chosen_index)
+		
 	await get_tree().create_timer(bot_wait_time).timeout
 	
 	if game_paused:
 		await game_resumed
 		
-	perform_move(chosen_index, 1)
+	perform_move(2, 1)
+	
+func evaluate_bot_move(move_index, game_simulaton) -> float:
+	var previous_simulation = game_simulaton.duplicate()
+	var my_simulation = game_simulaton.duplicate()
+	var removed_stones = game_simulaton[move_index] - 1
+	var my_simulation_last_hole_played
+	
+	my_simulation[move_index] = 1
+	for i in range(1, removed_stones + 1):
+		my_simulation[return_bot_hole_cycle(move_index + i)] += 1
+		if i == removed_stones:
+			my_simulation_last_hole_played = return_bot_hole_cycle(move_index + i)
+			
+	var can_capture = true
+	var capture_i = 1
+	while can_capture:
+		if my_simulation[return_bot_hole_cycle(my_simulation_last_hole_played + capture_i)] in [1, 3, 5] and game_state["game_turn"] != 1:
+			my_simulation["player_2_stones"] += my_simulation[return_bot_hole_cycle(my_simulation_last_hole_played + capture_i)]
+			my_simulation[return_bot_hole_cycle(my_simulation_last_hole_played + capture_i)] = 0
+			capture_i += 1
+		else:
+			can_capture = false
+	
+	prints(my_simulation, previous_simulation, move_index)
+	#DONE!!!, NOW, LET'S EVALUATE:
+	
+		
+	return 0.0
+
+func return_bot_hole_cycle(num : int) -> int:
+	if (num % 10) == 0:
+		return 10
+	else:
+		return num % 10
 
 func calculate_stones_left_bot():
 	

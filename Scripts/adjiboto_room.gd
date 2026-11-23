@@ -642,6 +642,11 @@ func _on_resign_btn_pressed() -> void:
 	game_paused = true
 	pause_panel.hide()
 	pause_btn.icon = load("res://Graphics/general_icons/pause_icon.png")
+	
+	if Global.game_mode == 1:
+		resign_signal_bot()
+		return
+		
 	if multiplayer.is_server():
 		resign_signal.rpc(0)
 	else:
@@ -747,6 +752,7 @@ func _on_replay_btn_pressed() -> void:
 		going_to_replay = true
 		reset_all_variables()
 		set_up()
+		return
 		
 	
 	win_quit_game_btn.hide()
@@ -878,7 +884,7 @@ func end_game_bot():
 	message_label.text = return_player_or_bot_str(opposite_turn_for_bot_mode(), true) + " has no legal moves left!"
 	await get_tree().create_timer(2.0).timeout
 	# CHECK IF DRAW
-	if game_state["player_" + str(return_bot_index_from_one_to_two(opposite_turn_for_bot_mode())) + "_stones"] >= calculate_stones_left():
+	if game_state["player_" + str(return_bot_index_from_one_to_two(opposite_turn_for_bot_mode())) + "_stones"] >= calculate_stones_left_bot():
 		modulate_player_boat_bot(0) #highlight the boat
 		
 		message_label.text = "But they have enough stones to refill all of their holes!"
@@ -895,7 +901,7 @@ func end_game_bot():
 	else:
 		message_label.text = "They do not have enough stones to refill all of their holes!"
 		await get_tree().create_timer(2.0).timeout
-		message_label.text = return_player_or_bot_str(opposite_turn_for_bot_mode(), true) + " wins the game!"
+		message_label.text = return_player_or_bot_str(return_player_or_bot_turn(), true) + " wins the game!"
 		await get_tree().create_timer(2.0).timeout
 		end_the_game_and_enter_end_screen(game_state["turn"])
 
@@ -936,3 +942,37 @@ func bot_move():
 		await game_resumed
 		
 	perform_move(chosen_index, 1)
+
+func calculate_stones_left_bot():
+	
+	var stones_remaining : int = 0
+	if game_state["turn"] == 0: 
+		if bot_turn == 0: #Calculate the player's balls
+			for i in range(1, 6):
+				stones_remaining += game_state[i]
+				
+		else: #calculate the bot's balls
+			for i in range(6, 11):
+				stones_remaining += game_state[i]
+	else: 
+		if bot_turn == 0: #Calculate the bot's balls
+			for i in range(6, 11):
+				stones_remaining += game_state[i]
+				
+		else: #Calculate the player's balls
+			for i in range(1, 6):
+				stones_remaining += game_state[i]
+				
+	return (50 - stones_remaining)
+
+func resign_signal_bot():
+	game_paused = true
+	message_label.text = Global.player_name + " wants to resign!"
+	await get_tree().create_timer(2.0).timeout
+	message_label.text = "The BOT wins the game!"
+	await get_tree().create_timer(2.0).timeout
+	pause_panel.hide()
+	pause_btn.hide()
+	winning_panel.show()
+	winning_lbl.text = "THE BOT WINS!"
+	winning_lbl.add_theme_color_override("font_color", Color(modulate_color_2))

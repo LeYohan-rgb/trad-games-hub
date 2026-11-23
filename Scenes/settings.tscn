@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dsyqjg6whr12b" path="res://Scripts/settings.gd" id="1_4geyq"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eyi13"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4geyq"]
 bg_color = Color(0.16565639, 0.16565642, 0.1656563, 1)
 corner_radius_bottom_right = 50
 corner_radius_bottom_left = 50
@@ -19,30 +19,22 @@ script = ExtResource("1_4geyq")
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="go_back_btn" type="Button" parent="Control" unique_id=1098837741]
+[node name="go_back_btn" type="Button" parent="Control" unique_id=1600628966]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -110.25
+offset_right = 110.25
+offset_bottom = 65.0
 grow_horizontal = 2
-grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 offset_transform_enabled = true
-offset_transform_scale = Vector2(0.429, 0.6)
 offset_transform_pivot_ratio = Vector2(0.5, 0)
-theme_override_styles/normal = SubResource("StyleBoxFlat_eyi13")
-
-[node name="Label" type="Label" parent="Control" unique_id=94011314]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 theme_override_font_sizes/font_size = 25
+theme_override_styles/normal = SubResource("StyleBoxFlat_4geyq")
 text = "GO BACK"
-horizontal_alignment = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1755780091]
 layout_mode = 2

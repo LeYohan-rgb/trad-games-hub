@@ -171,3 +171,7 @@ func leave_current_room():
 	
 	for child in go_back_btn.get_children():
 		child.show()
+
+
+func _on_go_back_btn_pressed() -> void:
+	get_tree().change_scene_to_file("res://Scenes/choosing_game_mode.tscn")

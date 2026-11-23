@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bf2lwawyxmhab" path="res://Scripts/game_selector.gd" id="1_f5fss"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_smntn"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f5fss"]
 bg_color = Color(0.16565639, 0.16565642, 0.1656563, 1)
 corner_radius_bottom_right = 50
 corner_radius_bottom_left = 50
@@ -23,30 +23,22 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Button" type="Button" parent="Control/Control" unique_id=1432181035]
+[node name="go_back_btn" type="Button" parent="Control/Control" unique_id=499362352]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -110.25
+offset_right = 110.25
+offset_bottom = 65.0
 grow_horizontal = 2
-grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 offset_transform_enabled = true
-offset_transform_scale = Vector2(0.429, 0.6)
 offset_transform_pivot_ratio = Vector2(0.5, 0)
-theme_override_styles/normal = SubResource("StyleBoxFlat_smntn")
-
-[node name="Label" type="Label" parent="Control/Control" unique_id=2125871558]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 theme_override_font_sizes/font_size = 25
+theme_override_styles/normal = SubResource("StyleBoxFlat_f5fss")
 text = "GO BACK"
-horizontal_alignment = 1
 
 [node name="Control2" type="Control" parent="Control" unique_id=955501769]
 layout_mode = 2
@@ -72,7 +64,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 32
-text = "CHANGE DISPLAY"
+text = "Game List"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -94,6 +86,8 @@ layout_mode = 2
 size_flags_vertical = 3
 offset_transform_enabled = true
 offset_transform_scale = Vector2(0.7, 0.7)
+theme_override_font_sizes/font_size = 64
+text = "Komikan"
 
 [node name="Button3" type="Button" parent="display_list" unique_id=740658616]
 layout_mode = 2
@@ -113,4 +107,5 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
 
+[connection signal="pressed" from="Control/Control/go_back_btn" to="." method="_on_go_back_btn_pressed"]
 [connection signal="pressed" from="display_list/Button" to="." method="_on_button_pressed"]

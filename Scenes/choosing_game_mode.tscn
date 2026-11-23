@@ -1,0 +1,102 @@
+[gd_scene format=3 uid="uid://d3pnypbqdklbi"]
+
+[ext_resource type="Script" uid="uid://bntehavm6cuhm" path="res://Scripts/choosing_game_mode.gd" id="1_g4xfu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ggksx"]
+bg_color = Color(0.16565639, 0.16565642, 0.1656563, 1)
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+
+[node name="choosing_game_mode" type="VBoxContainer" unique_id=1792356791]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_g4xfu")
+
+[node name="Control" type="VBoxContainer" parent="." unique_id=144327167]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Control" type="Control" parent="Control" unique_id=1327919450]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="go_back_btn" type="Button" parent="Control/Control" unique_id=508129640]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -110.25
+offset_right = 110.25
+offset_bottom = 65.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_pivot_ratio = Vector2(0.5, 0)
+theme_override_font_sizes/font_size = 25
+theme_override_styles/normal = SubResource("StyleBoxFlat_ggksx")
+text = "GO BACK"
+
+[node name="Control2" type="Control" parent="." unique_id=1374737087]
+layout_mode = 2
+size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.9, 0.9)
+
+[node name="Panel" type="Panel" parent="Control2" unique_id=1206836484]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="Control2/Panel" unique_id=709050053]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 48
+text = "Choose a game mode."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="display_list" type="VBoxContainer" parent="." unique_id=1521132944]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+
+[node name="mult_btn" type="Button" parent="display_list" unique_id=1856101427]
+layout_mode = 2
+size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.7, 0.7)
+theme_override_font_sizes/font_size = 64
+text = "MULTIPLAYER"
+
+[node name="Button2" type="HBoxContainer" parent="display_list" unique_id=750880317]
+layout_mode = 2
+size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.7, 0.7)
+
+[node name="bot_btn" type="Button" parent="display_list/Button2" unique_id=815145532]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 64
+text = "BOT"
+autowrap_mode = 2
+
+[node name="Control3" type="Control" parent="." unique_id=527103512]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+
+[connection signal="pressed" from="Control/Control/go_back_btn" to="." method="_on_go_back_btn_pressed"]
+[connection signal="pressed" from="display_list/mult_btn" to="." method="_on_mult_btn_pressed"]
+[connection signal="pressed" from="display_list/Button2/bot_btn" to="." method="_on_bot_btn_pressed"]

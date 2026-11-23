@@ -65,7 +65,11 @@ var game_paused = false
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	
+	if Global.game_mode == 1:
+		set_script(load("res://Scripts/adjiboto_room_bot.gd"))
+		set_up()
 	if Global.game_mode == 0:
+		set_script(load("res://Scripts/adjiboto_room.gd"))
 		multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 		multiplayer.server_disconnected.connect(_on_server_disconnected)
 		set_up()
@@ -78,6 +82,13 @@ func _process(delta: float) -> void:
 
 func set_up():
 	winning_panel.hide()
+	
+	if Global.game_mode == 1:
+		message_label.text = "It's " + Global.player_name + "'s turn!"
+		player_1_label.text = Global.player_name
+		player_2_label.text = "BOT"
+		return
+		
 	message_label.text = "It's " + Global.players[0] + "'s turn!"
 	if multiplayer.is_server():
 		player_1_label.text = Global.players[0]

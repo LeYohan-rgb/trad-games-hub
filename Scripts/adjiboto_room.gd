@@ -13,6 +13,7 @@ extends Control
 @onready var winning_panel = $Control2/winning_panel
 @onready var winning_lbl = $Control2/winning_panel/Panel/winning_lbl
 @onready var win_quit_game_btn = $Control2/winning_panel/HBoxContainer/win_quit_game_btn
+@onready var player_choser = $Control/first_plr_choser
 @onready var replay_btn = $Control2/winning_panel/HBoxContainer/replay_btn
 
 @onready var plr_2_stones_bg = $HBoxContainer/adjiboto_boat_2/ColorRect
@@ -27,7 +28,9 @@ var plr_disconnected_index : int = 0
 
 var going_to_replay : bool = false
 var holes_used_in_first_stage = []
+var holes_used_in_first_stage_bot = []
 var replay_agreement = [false, false]
+var bot_turn : int = 0
 
 @onready var game_holes= {
 	1: $HBoxContainer/holes_container/btn_1_1,
@@ -83,7 +86,9 @@ func set_up():
 	winning_panel.hide()
 	
 	if Global.game_mode == 1:
-		message_label.text = "It's " + Global.player_name + "'s turn!"
+		game_paused = true
+		message_label.text = "Who makes the first move?"
+		player_choser.show()
 		player_1_label.text = Global.player_name
 		player_2_label.text = "BOT"
 		return
@@ -105,6 +110,9 @@ func _on_holes_container_performed_move_on_hole(hole_num: Variant) -> void:
 		message_label.text = "..."
 		return
 		
+	if Global.game_mode == 1 and bot_turn != game_state["turn"]:
+		is_move_legal(hole_num, 0)
+		return
 		
 	if multiplayer.is_server() and game_state["turn"] == 0 and game_paused == false:
 		is_move_legal(hole_num, 0)
@@ -113,7 +121,6 @@ func _on_holes_container_performed_move_on_hole(hole_num: Variant) -> void:
 	if not multiplayer.is_server() and game_state["turn"] == 1 and game_paused == false:
 		is_move_legal(hole_num, 1)
 		#THE CLIENT PLAYED!
-		pass
 	
 
 func is_move_legal(hole_num, player):
@@ -129,6 +136,10 @@ func is_move_legal(hole_num, player):
 			holes_used_in_first_stage.append(hole_num)
 			game_holes[hole_num].self_modulate.a = 0.8
 			
+		if Global.game_mode == 1:
+			perform_move(hole_num, 0)
+			return
+			
 		perform_move.rpc(hole_num, player)
 	else:
 		illegal_move_message()
@@ -137,6 +148,12 @@ func illegal_move_message():
 	game_paused = true
 	message_label.text = "You must play a hole with more than one stone!"
 	await get_tree().create_timer(2.0).timeout
+	
+	if Global.game_mode == 1: #WHEN PLAYING WITH BOT
+		message_label.text = "It's " + Global.player_name + "'s turn!"
+		game_paused = false
+		return
+		
 	message_label.text = "It's " + Global.players[game_state["turn"]] + "'s turn!"
 	game_paused = false
 	
@@ -144,12 +161,25 @@ func illegal_move_message_first_stage():
 	game_paused = true
 	message_label.text = "You must play each of the holes before playing the same hole!"
 	await get_tree().create_timer(2.0).timeout
+	
+	if Global.game_mode == 1: #WHEN PLAYING WITH BOT
+		message_label.text = "It's " + Global.player_name + "'s turn!"
+		game_paused = false
+		return
+		
 	message_label.text = "It's " + Global.players[game_state["turn"]] + "'s turn!"
 	game_paused = false
 
 @rpc("any_peer", "call_local", "reliable")
 func perform_move(hole_num, player):
 	game_paused = true
+	
+	if Global.game_mode == 1: #WHEN PLAYING BOT
+		var amount_of_stones_removed = int(get_stone(player, 0, hole_num).text) - 1
+		update_game_state(hole_num, player, 0)
+		await get_tree().create_timer(0.5).timeout
+		loop_through_holes(hole_num, player, 0, amount_of_stones_removed)
+		return
 	
 	var amount_of_stones_removed = int(get_stone(player, is_the_host(), hole_num).text) - 1
 	update_game_state(hole_num, player, is_the_host())
@@ -218,7 +248,12 @@ func loop_through_holes(hole_num, plr, plr_interface, stones_removed):
 	for i in range(stones_removed):
 		game_state[get_stone_by_index(plr, plr_interface, mod_10_index(hole_num + i + 1))] += 1
 		get_stone(plr, plr_interface, mod_10_index(hole_num + i + 1)).text = str(int(get_stone(plr, plr_interface, mod_10_index(hole_num + i + 1)).text) + 1)
-		message_label.text = Global.players[plr] + " distributed " + str(1 + i) + " out of " + str(stones_removed) + " stones!"
+		
+		if Global.game_mode == 1: # IF PLAYING BOT
+			message_label.text = return_player_or_bot_str(plr, true) + " distributed " + str(1 + i) + " out of " + str(stones_removed) + " stones!"
+		else:
+			message_label.text = Global.players[plr] + " distributed " + str(1 + i) + " out of " + str(stones_removed) + " stones!"
+		
 		get_stone(plr, plr_interface, mod_10_index(hole_num + i + 1)).modulate = modulate_color
 		await get_tree().create_timer(time_per_stone).timeout
 		get_stone(plr, plr_interface, mod_10_index(hole_num + i + 1)).modulate = "ffffff"
@@ -233,7 +268,12 @@ func loop_through_holes(hole_num, plr, plr_interface, stones_removed):
 		var stones_catched = game_state[get_stone_by_index(plr, plr_interface, mod_10_index(hole_num + stones_removed + 1 + iterative_capture))]
 		if is_in_a_capture_sequence(stones_catched) and game_state["game_turn"] != 1:
 			get_stone(plr, plr_interface, mod_10_index(hole_num + stones_removed + 1 + iterative_capture)).modulate = catch_modulate_color
-			message_label.text = Global.players[game_state["turn"]] + "captures " + str(stones_catched) + " stones!"
+			
+			if Global.game_mode == 1:
+				message_label.text = return_player_or_bot_str(plr, true) + " captures " + str(stones_catched) + " stones!"
+			else:
+				message_label.text = Global.players[game_state["turn"]] + " captures " + str(stones_catched) + " stones!"
+				
 			await get_tree().create_timer(1.0).timeout
 			
 			#CATCHED
@@ -250,6 +290,33 @@ func loop_through_holes(hole_num, plr, plr_interface, stones_removed):
 	
 func check_if_legal_moves_left():
 	var no_legal_moves = true
+	
+	#FOR THE BOT:
+	if Global.game_mode == 1:
+		if game_state["turn"] == 0: 
+			if bot_turn == 0: #CHECK FOR THE PLAYER
+				for i in range(1,6):
+					if game_state[i] >= 2:
+						no_legal_moves = false
+			else: #CHECK FOR THE BOT
+				for i in range(6,11):
+					if game_state[i] >= 2:
+						no_legal_moves = false
+		else:
+			if bot_turn == 0: #CHECK FOR THE BOT
+				for i in range(6,11):
+					if game_state[i] >= 2:
+						no_legal_moves = false
+			else: #CHECK FOR THE PLAYER
+				for i in range(1,6):
+					if game_state[i] >= 2:
+						no_legal_moves = false
+		
+		if no_legal_moves == true: #END GAME
+			end_game_bot() #still not yet botosized
+		else:
+			go_to_next_turn() #still not yet botosized
+		return
 	#if the current turn is the 1st player, check if THE CLIENT has moves left
 	if game_state["turn"] == 0:
 		if multiplayer.is_server():
@@ -343,6 +410,10 @@ func refill_time():
 
 	
 func end_game():
+	
+	if Global.game_mode == 1:
+		message_label.text = return_player_or_bot_str(opposite_turn_for_bot_mode(), true) + " has no legal moves left!"
+	
 	message_label.text = Global.players[opposite_turn()] + " has no legal moves left!"
 	await get_tree().create_timer(2.0).timeout
 	# CHECK IF DRAW
@@ -371,6 +442,26 @@ func end_the_game_and_enter_end_screen(outcome : int):
 	pause_panel.hide()
 	pause_btn.hide()
 	winning_panel.show()
+	
+	if Global.game_mode == 1:
+		if outcome == 0:
+			if bot_turn == 0:
+				winning_lbl.text = "THE BOT WINS!"
+				winning_lbl.add_theme_color_override("font_color", Color(modulate_color_2))
+			else:
+				winning_lbl.text = Global.player_name + " WINS!"
+				winning_lbl.add_theme_color_override("font_color", Color(modulate_color_1))
+		if outcome == 1:
+			if bot_turn == 0:
+				winning_lbl.text = Global.player_name + " WINS!"
+				winning_lbl.add_theme_color_override("font_color", Color(modulate_color_1))
+			else:
+				winning_lbl.text = "THE BOT WINS!"
+				winning_lbl.add_theme_color_override("font_color", Color(modulate_color_2))
+		if outcome == 2:
+			winning_lbl.text = "DRAW"
+			winning_lbl.add_theme_color_override("font_color", Color("#ffffff"))
+		return
 	
 	if outcome == 0:
 		winning_lbl.text = Global.players[0] + " WINS!"
@@ -419,6 +510,23 @@ func opposite_turn():
 		return 0
 		
 func catched_stones_by_plr(stones_catched):
+	if Global.game_mode == 1:
+		if game_state["turn"] == 0:
+			if bot_turn == 0:
+				game_state["player_2_stones"] += stones_catched
+				plr_2_stones_lbl.text = str(int(plr_2_stones_lbl.text) + stones_catched)
+			else:
+				game_state["player_1_stones"] += stones_catched
+				plr_1_stones_lbl.text = str(int(plr_1_stones_lbl.text) + stones_catched)
+		else:
+			if bot_turn == 0:
+				game_state["player_1_stones"] += stones_catched
+				plr_1_stones_lbl.text = str(int(plr_1_stones_lbl.text) + stones_catched)
+			else:
+				game_state["player_2_stones"] += stones_catched
+				plr_2_stones_lbl.text = str(int(plr_2_stones_lbl.text) + stones_catched)
+		return
+	
 	if game_state["turn"] == 0:
 		if multiplayer.is_server():
 			game_state["player_1_stones"] += stones_catched
@@ -463,7 +571,11 @@ func go_to_next_turn():
 		game_state["turn"] = 1
 	else:
 		game_state["turn"] = 0
-	message_label.text = "It's " + Global.players[game_state["turn"]] + "'s turn!"
+		
+	if Global.game_mode == 1:
+		message_label.text = "It's " + return_player_or_bot_str(return_player_or_bot_turn(), false) + "'s turn!"
+	else:
+		message_label.text = "It's " + Global.players[game_state["turn"]] + "'s turn!"
 	game_paused = false
 
 func mod_10_index(num):
@@ -546,6 +658,8 @@ func announce_disconnected_player():
 	opposite_player_disconnected = true
 	
 func reset_all_variables():
+	bot_turn = 0
+	player_choser.hide()
 	pause_btn.show()
 	opposite_player_disconnected = false
 	winning_panel.hide()
@@ -558,6 +672,7 @@ func reset_all_variables():
 	pause_panel.hide()
 	pause_btn.icon = load("res://Graphics/general_icons/pause_icon.png")
 	holes_used_in_first_stage = []
+	holes_used_in_first_stage_bot = []
 	plr_1_stones_lbl.text = "0"
 	plr_2_stones_lbl.text = "0"
 	replay_agreement = [false, false]
@@ -600,6 +715,16 @@ func _on_replay_btn_pressed() -> void:
 	#IF BOTH PLAYERS WANT TO PLAY AGAIN, THIS BUTTON SERVES NO PURPOSE
 	if replay_agreement == [true, true]:
 		return
+		
+	if Global.game_mode == 1:
+		win_quit_game_btn.hide()
+		replay_agreement = [true, true]
+		replay_btn.text = "STARTING NEW MATCH..."
+		await get_tree().create_timer(2.0).timeout
+		going_to_replay = true
+		reset_all_variables()
+		set_up()
+		
 	
 	win_quit_game_btn.hide()
 	if replay_agreement[is_the_host()] == false:
@@ -655,3 +780,124 @@ func before_new_match():
 	reset_all_variables()
 	set_up()
 	
+#---------------------BOT FUNCTIONS----------------------
+
+func _on_bot_btn_pressed() -> void:
+	bot_turn = 0
+	set_up_first_game_turn_bot(bot_turn)
+
+
+func _on_randomize_plr_btn_pressed() -> void:
+	var choices = [0, 1]
+	choices.shuffle()
+	
+	bot_turn = choices[0]
+	set_up_first_game_turn_bot(bot_turn)
+
+
+func _on_plr_chosen_btn_pressed() -> void:
+	bot_turn = 1
+	set_up_first_game_turn_bot(bot_turn)
+	
+func set_up_first_game_turn_bot(turn : int):
+	player_choser.hide()
+	if bot_turn == 0:
+		message_label.text = "It's the BOT's turn!"
+		#then add a function for the bot to start thinking
+	else:
+		message_label.text = "It's " + Global.player_name + "'s turn!"
+	game_paused = false
+	
+func return_player_or_bot_str(plr : int, is_capitalized : bool) -> String:
+	if plr == 0:
+		return Global.player_name
+	else:
+		if is_capitalized:
+			return "The BOT"
+		else:
+			return "the BOT"
+
+func return_player_or_bot_turn() -> int:
+	if game_state["turn"] == 0 and bot_turn == 0:
+		return 1
+	if game_state["turn"] == 1 and bot_turn == 1:
+		return 1
+	if game_state["turn"] == 0 and bot_turn == 1:
+		return 0
+	if game_state["turn"] == 1 and bot_turn == 0:
+		return 0
+	else:
+		return 0
+		
+func opposite_turn_for_bot_mode() -> int:
+	var current_plr = 0
+	
+	if game_state["turn"] == 0 and bot_turn == 0:
+		current_plr = 1
+	if game_state["turn"] == 1 and bot_turn == 1:
+		current_plr = 1
+	if game_state["turn"] == 0 and bot_turn == 1:
+		current_plr = 0
+	if game_state["turn"] == 1 and bot_turn == 0:
+		current_plr = 0
+		
+	return opp_plr(current_plr)
+
+func return_bot_index_from_one_to_two(plr):
+	if plr == 0: # the player
+		return 1
+	else: #the bot
+		return 2
+			
+func end_game_bot():
+	
+	message_label.text = return_player_or_bot_str(opposite_turn_for_bot_mode(), true) + " has no legal moves left!"
+	await get_tree().create_timer(2.0).timeout
+	# CHECK IF DRAW
+	if game_state["player_" + return_bot_index_from_one_to_two(opposite_turn_for_bot_mode()) + "_stones"] >= calculate_stones_left():
+		modulate_player_boat_bot(0) #highlight the boat
+		
+		message_label.text = "But they have enough stones to refill all of their holes!"
+			
+		
+		await refill_time() #refill all holes back
+		
+		modulate_player_boat_bot(1)
+		
+		message_label.text = "The game ends in a draw!"
+		
+		await get_tree().create_timer(2.0).timeout
+		end_the_game_and_enter_end_screen(2) #0 host wins, 1 client wins, 2 draw
+	else:
+		message_label.text = "They do not have enough stones to refill all of their holes!"
+		await get_tree().create_timer(2.0).timeout
+		message_label.text = return_player_or_bot_str(opposite_turn_for_bot_mode(), true) + " wins the game!"
+		await get_tree().create_timer(2.0).timeout
+		end_the_game_and_enter_end_screen(game_state["turn"])
+
+func modulate_player_boat_bot(on_or_off):
+	if on_or_off == 0: #if 0, modulate!
+		if game_state["turn"] == 0:
+			if bot_turn == 0:
+				plr_1_stones_bg.self_modulate.a = 0.5
+			else:
+				plr_2_stones_bg.self_modulate.a = 0.5
+		else:
+			if bot_turn == 0:
+				plr_2_stones_bg.self_modulate.a = 0.5
+			else:
+				plr_1_stones_bg.self_modulate.a = 0.5
+	else: #if not, then un-modulate.
+		if game_state["turn"] == 0:
+			if bot_turn == 0:
+				plr_1_stones_bg.self_modulate.a = 1
+			else:
+				plr_2_stones_bg.self_modulate.a = 1
+		else:
+			if bot_turn == 0:
+				plr_2_stones_bg.self_modulate.a = 1
+			else:
+				plr_1_stones_bg.self_modulate.a = 1
+
+func bot_move():
+	pass

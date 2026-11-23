@@ -298,12 +298,41 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 46.0
+offset_bottom = -151.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 32
+text = "Who makes the first move?"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
+
+[node name="first_plr_choser" type="HBoxContainer" parent="Control" unique_id=1821482371]
+visible = false
+layout_mode = 0
+offset_left = 91.0
+offset_top = 226.0
+offset_right = 627.0
+offset_bottom = 304.0
+
+[node name="bot_btn" type="Button" parent="Control/first_plr_choser" unique_id=491677960]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+text = "BOT"
+
+[node name="randomize_plr_btn" type="Button" parent="Control/first_plr_choser" unique_id=1987692712]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+text = "RANDOMIZE"
+
+[node name="plr_chosen_btn" type="Button" parent="Control/first_plr_choser" unique_id=945266169]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+text = "PLAYER 1"
 
 [node name="player_1_panel" type="Panel" parent="." unique_id=1289637704]
 layout_mode = 2
@@ -340,3 +369,6 @@ vertical_alignment = 1
 [connection signal="pressed" from="HBoxContainer/holes_container/btn_1_3" to="HBoxContainer/holes_container" method="_on_btn_1_3_pressed"]
 [connection signal="pressed" from="HBoxContainer/holes_container/btn_1_4" to="HBoxContainer/holes_container" method="_on_btn_1_4_pressed"]
 [connection signal="pressed" from="HBoxContainer/holes_container/btn_1_5" to="HBoxContainer/holes_container" method="_on_btn_1_5_pressed"]
+[connection signal="pressed" from="Control/first_plr_choser/bot_btn" to="." method="_on_bot_btn_pressed"]
+[connection signal="pressed" from="Control/first_plr_choser/randomize_plr_btn" to="." method="_on_randomize_plr_btn_pressed"]
+[connection signal="pressed" from="Control/first_plr_choser/plr_chosen_btn" to="." method="_on_plr_chosen_btn_pressed"]

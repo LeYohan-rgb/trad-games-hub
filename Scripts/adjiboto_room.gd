@@ -66,10 +66,9 @@ var game_paused = false
 func _ready() -> void:
 	
 	if Global.game_mode == 1:
-		set_script(load("res://Scripts/adjiboto_room_bot.gd"))
 		set_up()
+		
 	if Global.game_mode == 0:
-		set_script(load("res://Scripts/adjiboto_room.gd"))
 		multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 		multiplayer.server_disconnected.connect(_on_server_disconnected)
 		set_up()

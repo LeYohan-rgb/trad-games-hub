@@ -929,18 +929,31 @@ func modulate_player_boat_bot(on_or_off):
 			else:
 				plr_1_stones_bg.self_modulate.a = 1
 
-func choose_most_favorable_move(move_array) -> int:
+func choose_most_favorable_move(move_array, bot_or_plr) -> int:
 	var my_custom_array = [[move_array[0], 0], [move_array[1], 1], [move_array[2], 2], [move_array[3], 3], [move_array[4], 4]]
 	my_custom_array.shuffle()
 	my_custom_array.sort_custom(func(a, b): return a[0] > b[0])
 	
-	return my_custom_array[0][1]
+	if bot_or_plr == 0:
+		return my_custom_array[0][1]
+	else:
+		return my_custom_array[0][0]
+		
+func choose_most_favorable_move_player(move_array, bot_or_plr) -> float:
+	var my_custom_array = [[move_array[0], 0], [move_array[1], 1], [move_array[2], 2], [move_array[3], 3], [move_array[4], 4]]
+	my_custom_array.shuffle()
+	my_custom_array.sort_custom(func(a, b): return a[0] > b[0])
+	
+	if bot_or_plr == 0:
+		return my_custom_array[0][1]
+	else:
+		return my_custom_array[0][0]
 	
 
 func bot_move():
 	var simulated_game_state = game_state.duplicate()
 	var chosen_index = 1
-	var move_outcomes = [0.0, 0.0, 0.0, 0.0, 0.0]
+	var move_outcomes = [-1.0, -1.0, -1.0, -1.0, -1.0]
 	
 	if game_state["game_turn"] > 10:
 		holes_used_in_first_stage_bot = []
@@ -948,10 +961,9 @@ func bot_move():
 	for i in range(1, 6):
 		if game_state[5 + i] > 1 and not (i in holes_used_in_first_stage_bot): 
 			move_outcomes[i - 1] = simulate_move(5 + i, simulated_game_state, 0)
-			
-	print(move_outcomes)
 		
-	chosen_index = choose_most_favorable_move(move_outcomes) + 1
+	chosen_index = choose_most_favorable_move(move_outcomes, 0) + 1
+	prints(move_outcomes, "bot", chosen_index, "chosen_index")
 		
 	#CHOSE THE MOVE
 	if game_state["game_turn"] <= 10:
@@ -985,7 +997,10 @@ func simulate_move(move_index, game_simulaton, bot_or_plr : int) -> float:
 	var capture_i = 1
 	while can_capture:
 		if my_simulation[return_bot_hole_cycle(my_simulation_last_hole_played + capture_i)] in [1, 3, 5] and game_state["game_turn"] != 1:
-			my_simulation["player_2_stones"] += my_simulation[return_bot_hole_cycle(my_simulation_last_hole_played + capture_i)]
+			if bot_or_plr == 0:
+				my_simulation["player_2_stones"] += my_simulation[return_bot_hole_cycle(my_simulation_last_hole_played + capture_i)]
+			else:
+				my_simulation["player_1_stones"] += my_simulation[return_bot_hole_cycle(my_simulation_last_hole_played + capture_i)]
 			my_simulation[return_bot_hole_cycle(my_simulation_last_hole_played + capture_i)] = 0
 			capture_i += 1
 		else:
@@ -1008,15 +1023,36 @@ func simulate_move(move_index, game_simulaton, bot_or_plr : int) -> float:
 				bot_ran_out_of_legal_moves = false
 		my_evaluation_index[2] = bot_ran_out_of_legal_moves
 		
-		
 		#EVALUATION FOR THE PLAYER
-		var player_move_outcomes = [0.0, 0.0, 0.0, 0.0, 0.0]
+		var player_move_outcomes = [-1.0, -1.0, -1.0, -1.0, -1.0]
+		var worst_case_scenario_plr_index = 0
 		for i in range(1, 6):
-			if game_state[5 + i] > 1 and not (i in holes_used_in_first_stage_bot): 
+			if my_simulation[i] > 1 and not (i in holes_used_in_first_stage and (game_state["game_turn"] + 1) <= 10): 
 				player_move_outcomes[i - 1] = simulate_move(i, my_simulation, 1)
-	
-	prints("my evaluation index", my_evaluation_index)
-	return evaluate_position(my_evaluation_index, 0)
+		prints("player_move_outcomes", player_move_outcomes, "bot_move_in_this_scenario", evaluate_position(my_evaluation_index, 0))
+				
+		worst_case_scenario_plr_index = choose_most_favorable_move_player(player_move_outcomes, 1)
+		return (evaluate_position(my_evaluation_index, 0) - worst_case_scenario_plr_index)
+				
+		
+	else:
+		#CAPTURE SCORE
+		my_evaluation_index[0] =  my_simulation["player_1_stones"] - previous_simulation["player_1_stones"]
+		#PLAYER LEGAL MOVE SCORE
+		var ran_out_of_legal_moves = true
+		for i in range(1,6):
+			if my_simulation[i] > 1:
+				ran_out_of_legal_moves = false
+		my_evaluation_index[1] = ran_out_of_legal_moves
+		#BOT LEGAL MOVE SCORE
+		var bot_ran_out_of_legal_moves = true
+		for i in range(6,11):
+			if my_simulation[i] > 1:
+				bot_ran_out_of_legal_moves = false
+		my_evaluation_index[2] = bot_ran_out_of_legal_moves
+		return evaluate_position(my_evaluation_index, 1)
+		
+
 	
 func evaluate_position(position_given : Array, bot_or_plr) -> float:
 	#for the array. [0] is the capture score. [1] is if the player ran out of legal moves. [2] is if bots ran out.
@@ -1027,12 +1063,18 @@ func evaluate_position(position_given : Array, bot_or_plr) -> float:
 			return 1.0
 			
 		if position_given[2] == true: #For the bot, if the bot runs out of moves, it is NOT a valuable outcome
-			return 0.0
+			return -1.0
 			
-		return clamp(0.01, position_given[0] / 50.0, 0.99)
+		return position_given[0] / 50.0
 		
 	else: #will code depth 2 later
-		return 0.0
+		if position_given[1] == true: #For the player, if the player ran out of moves, that's a horrible outcome.
+			return -1.0
+			
+		if position_given[2] == true: #For the player, if the bot runs out of moves, it IS INDEED a valuable outcome
+			return 1.0
+			
+		return position_given[0] / 50.0
 
 func return_bot_hole_cycle(num : int) -> int:
 	if (num % 10) == 0:

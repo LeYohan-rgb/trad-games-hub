@@ -573,16 +573,18 @@ func go_to_next_turn():
 		pass
 #		if game_state["game_turn"] == 12:
 #			game_state["player_2_stones"] = 30
-#			if multiplayer.is_server():
-#				plr_2_stones_lbl.text = str(30)
-#				for i in range(6,11):
-#					game_state[i] = 1
-#					game_holes[i].text = '1'
-#			else:
-#				plr_1_stones_lbl.text = str(30)
-#				for i in range(1,6):
-#					game_state[i] = 1
-#					game_holes[i].text = '1'
+#			plr_2_stones_lbl.text = str(30)
+#			game_state[1] = 1
+#			game_holes[1].text = '1'
+#			game_state[3] = 20
+#			game_holes[3].text = '20'
+#			game_state[2] = 1
+#			game_holes[2].text = '1'
+#			game_state[5] = 2
+#			game_holes[5].text = '2'
+#			for i in range(6,11):
+#				game_state[i] = 0
+#				game_holes[i].text = '0'
 	
 	
 	game_state["game_turn"] += 1
@@ -934,6 +936,17 @@ func choose_most_favorable_move(move_array, bot_or_plr) -> int:
 	my_custom_array.shuffle()
 	my_custom_array.sort_custom(func(a, b): return a[0] > b[0])
 	
+	#AVOID CHOOSING ILLEGAL MOVES. I.E [-1, -1, -1, -1, -2]
+	if my_custom_array[0][0] == -1.0:
+		for i in range(5):
+			if my_custom_array[i][0] == -1.0:
+				continue
+			else:
+				if bot_or_plr == 0:
+					return my_custom_array[i][1]
+				else:
+					return my_custom_array[i][0]
+	
 	if bot_or_plr == 0:
 		return my_custom_array[0][1]
 	else:
@@ -943,6 +956,17 @@ func choose_most_favorable_move_player(move_array, bot_or_plr) -> float:
 	var my_custom_array = [[move_array[0], 0], [move_array[1], 1], [move_array[2], 2], [move_array[3], 3], [move_array[4], 4]]
 	my_custom_array.shuffle()
 	my_custom_array.sort_custom(func(a, b): return a[0] > b[0])
+	
+	#AVOID CHOOSING ILLEGAL MOVES. I.E [-1, -1, -1, -1, -2]
+	if my_custom_array[0][0] == -1.0:
+		for i in range(5):
+			if my_custom_array[i][0] == -1.0:
+				continue
+			else:
+				if bot_or_plr == 0:
+					return my_custom_array[i][1]
+				else:
+					return my_custom_array[i][0]
 	
 	if bot_or_plr == 0:
 		return my_custom_array[0][1]
@@ -1065,7 +1089,7 @@ func evaluate_position(position_given : Array, bot_or_plr) -> float:
 		if position_given[2] == true: #For the bot, if the bot runs out of moves, it is NOT a valuable outcome
 			return -1.0
 			
-		return position_given[0] / 50.0
+		return clamp(0.0, position_given[0] / 50.0, 0.99)
 		
 	else: #will code depth 2 later
 		if position_given[1] == true: #For the player, if the player ran out of moves, that's a horrible outcome.
@@ -1074,7 +1098,7 @@ func evaluate_position(position_given : Array, bot_or_plr) -> float:
 		if position_given[2] == true: #For the player, if the bot runs out of moves, it IS INDEED a valuable outcome
 			return 1.0
 			
-		return position_given[0] / 50.0
+		return clamp(0.0, position_given[0] / 50.0, 0.99)
 
 func return_bot_hole_cycle(num : int) -> int:
 	if (num % 10) == 0:

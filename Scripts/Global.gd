@@ -34,7 +34,7 @@ The game is used to entertain the dead during the ten-day period preceding buria
 The boards are only carved by old widowed men. They are made in two shapes, those having straight tops, and those in which the tops are curved. A village should have both types, so that if a person was fond of one kind of board dies, the people can play for a time on the other and there will be a lessened danger of his ghost coming to play with them. Although the Bush-Negroes are fine wood-carvers, the Saramacca boards are of the roughest. This is because of the sacred character of the game which is not one which can be hurried in playing. It must entail some effort and even pain to bring it to perfection.
 
 REFERENCE FOR THE GAME RULES:
-90. Adjiboto, an African Game of the Bush-Negroes of Dutch Guiana (Melville J. Herskovits)
+90. Adjiboto, an African Game of the Bush-Negroes of Dutch Guiana (Melville J. Herskovits, Vol. 29 (Jul., 1929), pp. 122-127)
 
 REFERENCE FOR THE GAME HISTORY:
 https://mancala.fandom.com/wiki/Adji-boto"

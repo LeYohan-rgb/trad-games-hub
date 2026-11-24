@@ -3,7 +3,7 @@ extends VBoxContainer
 var is_showing_desc : bool = false
 var game_showing : int = 0
 @onready var desc_box = $desc_box
-@onready var display_list = $display_list
+@onready var display_list = $ScrollContainer/display_list
 @onready var text_lbl = $desc_box/Panel2/text_container/ScrollContainer/text_lbl
 @onready var title_lbl = $Control/Control2/Label
 @onready var game_image = $desc_box/image_panel

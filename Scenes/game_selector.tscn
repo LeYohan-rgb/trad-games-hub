@@ -71,33 +71,156 @@ text = "Game List"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="display_list" type="VBoxContainer" parent="." unique_id=839183947]
-visible = false
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=611798401]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.25
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer" unique_id=1143961981]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1754253320]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="OptionButton" type="OptionButton" parent="VBoxContainer/HBoxContainer" unique_id=1627774746]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+alignment = 1
+selected = 0
+item_count = 4
+popup/item_0/text = "--any--"
+popup/item_0/id = 0
+popup/item_1/text = "Ancient"
+popup/item_1/id = 1
+popup/item_2/text = "Medieval"
+popup/item_2/id = 2
+popup/item_3/text = "Modern"
+popup/item_3/id = 3
+
+[node name="OptionButton2" type="OptionButton" parent="VBoxContainer/HBoxContainer" unique_id=801891095]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+alignment = 1
+selected = 0
+item_count = 10
+popup/item_0/text = "--any--"
+popup/item_0/id = 0
+popup/item_1/text = "Africa"
+popup/item_1/id = 1
+popup/item_2/text = "America"
+popup/item_2/id = 2
+popup/item_3/text = "Asia"
+popup/item_3/id = 3
+popup/item_4/text = "Australia and NZ"
+popup/item_4/id = 4
+popup/item_5/text = "Caribbean"
+popup/item_5/id = 5
+popup/item_6/text = "Europe"
+popup/item_6/id = 6
+popup/item_7/text = "Melanesia"
+popup/item_7/id = 7
+popup/item_8/text = "Micronesia"
+popup/item_8/id = 8
+popup/item_9/text = "Polynesia"
+popup/item_9/id = 9
+
+[node name="OptionButton3" type="OptionButton" parent="VBoxContainer/HBoxContainer" unique_id=1769908041]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+alignment = 1
+selected = 0
+item_count = 10
+popup/item_0/text = "--any--"
+popup/item_0/id = 0
+popup/item_1/text = "Board"
+popup/item_1/id = 1
+popup/item_2/text = "Hunt"
+popup/item_2/id = 2
+popup/item_3/text = "Race"
+popup/item_3/id = 3
+popup/item_4/text = "Sow"
+popup/item_4/id = 4
+popup/item_5/text = "Space"
+popup/item_5/id = 5
+popup/item_6/text = "War"
+popup/item_6/id = 6
+popup/item_7/text = "Math"
+popup/item_7/id = 7
+popup/item_8/text = "Puzzle"
+popup/item_8/id = 8
+popup/item_9/text = "Reconstruction"
+popup/item_9/id = 9
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer" unique_id=1635723238]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer2" unique_id=1724635661]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Period"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="VBoxContainer/HBoxContainer2" unique_id=898883311]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Region"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="VBoxContainer/HBoxContainer2" unique_id=1847335315]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Category"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=107380201]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
+horizontal_scroll_mode = 0
 
-[node name="adjiboto_container" type="VBoxContainer" parent="display_list" unique_id=1908942210]
+[node name="display_list" type="VBoxContainer" parent="ScrollContainer" unique_id=839183947]
+custom_minimum_size = Vector2(720, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="adjiboto_container" type="VBoxContainer" parent="ScrollContainer/display_list" unique_id=1908942210]
+custom_minimum_size = Vector2(0, 175)
 layout_mode = 2
 size_flags_vertical = 3
 offset_transform_enabled = true
 offset_transform_scale = Vector2(0.75, 0.75)
 
-[node name="Button" type="Button" parent="display_list/adjiboto_container" unique_id=808887748]
+[node name="Button" type="Button" parent="ScrollContainer/display_list/adjiboto_container" unique_id=808887748]
 layout_mode = 2
 size_flags_vertical = 3
 offset_transform_enabled = true
 theme_override_font_sizes/font_size = 64
 text = "Adjiboto"
 
-[node name="adjiboto_desc" type="Button" parent="display_list/adjiboto_container" unique_id=812789011]
+[node name="adjiboto_desc" type="Button" parent="ScrollContainer/display_list/adjiboto_container" unique_id=812789011]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.25
 theme_override_font_sizes/font_size = 25
 text = "DESCRIPTION"
 
-[node name="Button2" type="Button" parent="display_list" unique_id=630218704]
+[node name="Button2" type="Button" parent="ScrollContainer/display_list" unique_id=630218704]
+custom_minimum_size = Vector2(0, 175)
 layout_mode = 2
 size_flags_vertical = 3
 offset_transform_enabled = true
@@ -105,19 +228,64 @@ offset_transform_scale = Vector2(0.75, 0.75)
 theme_override_font_sizes/font_size = 64
 text = "Komikan"
 
-[node name="Button3" type="Button" parent="display_list" unique_id=740658616]
+[node name="Button3" type="Button" parent="ScrollContainer/display_list" unique_id=740658616]
+custom_minimum_size = Vector2(0, 175)
 layout_mode = 2
 size_flags_vertical = 3
 offset_transform_enabled = true
 offset_transform_scale = Vector2(0.75, 0.75)
 
-[node name="Button4" type="Button" parent="display_list" unique_id=2146213621]
+[node name="Button4" type="Button" parent="ScrollContainer/display_list" unique_id=2146213621]
+custom_minimum_size = Vector2(0, 175)
+layout_mode = 2
+size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.75, 0.75)
+
+[node name="Button5" type="Button" parent="ScrollContainer/display_list" unique_id=55701535]
+custom_minimum_size = Vector2(0, 175)
+layout_mode = 2
+size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.75, 0.75)
+
+[node name="Button6" type="Button" parent="ScrollContainer/display_list" unique_id=1543350340]
+custom_minimum_size = Vector2(0, 175)
+layout_mode = 2
+size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.75, 0.75)
+
+[node name="Button7" type="Button" parent="ScrollContainer/display_list" unique_id=1459766469]
+custom_minimum_size = Vector2(0, 175)
+layout_mode = 2
+size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.75, 0.75)
+
+[node name="Button8" type="Button" parent="ScrollContainer/display_list" unique_id=1923618704]
+custom_minimum_size = Vector2(0, 175)
+layout_mode = 2
+size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.75, 0.75)
+
+[node name="Button9" type="Button" parent="ScrollContainer/display_list" unique_id=170655137]
+custom_minimum_size = Vector2(0, 175)
+layout_mode = 2
+size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.75, 0.75)
+
+[node name="Button10" type="Button" parent="ScrollContainer/display_list" unique_id=2052113158]
+custom_minimum_size = Vector2(0, 175)
 layout_mode = 2
 size_flags_vertical = 3
 offset_transform_enabled = true
 offset_transform_scale = Vector2(0.75, 0.75)
 
 [node name="desc_box" type="VBoxContainer" parent="." unique_id=1092798658]
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
@@ -187,7 +355,7 @@ vertical_alignment = 1
 autowrap_mode = 2
 
 [connection signal="pressed" from="Control/Control/go_back_btn" to="." method="_on_go_back_btn_pressed"]
-[connection signal="pressed" from="display_list/adjiboto_container/Button" to="." method="_on_button_pressed"]
-[connection signal="pressed" from="display_list/adjiboto_container/adjiboto_desc" to="." method="_on_adjiboto_desc_pressed"]
+[connection signal="pressed" from="ScrollContainer/display_list/adjiboto_container/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="ScrollContainer/display_list/adjiboto_container/adjiboto_desc" to="." method="_on_adjiboto_desc_pressed"]
 [connection signal="pressed" from="desc_box/Panel2/HBoxContainer/game_rules_btn" to="." method="_on_game_rules_btn_pressed"]
 [connection signal="pressed" from="desc_box/Panel2/HBoxContainer/history_btn" to="." method="_on_history_btn_pressed"]

@@ -8,6 +8,7 @@ var game_showing : int = 0
 @onready var search_section = $VBoxContainer
 @onready var title_lbl = $Control/Control2/Label
 @onready var game_image = $desc_box/image_panel
+@onready var search_bar_line = $VBoxContainer/game_search_bar
 
 #INDEXES
 var period_index = 0
@@ -72,11 +73,7 @@ func _on_game_rules_btn_pressed() -> void:
 
 
 func _on_game_search_bar_text_changed(new_text: String) -> void:
-	for game in Global.list_of_available_games:
-		if game.to_lower().contains(new_text.to_lower()):
-			game_buttons[game].show()
-		else:
-			game_buttons[game].hide()
+	sort_everything()
 
 func _on_period_sort_btn_item_selected(index: int) -> void:
 	period_index = index
@@ -86,6 +83,16 @@ func sort_everything():
 	
 	for game in Global.list_of_available_games:
 		game_buttons[game].show()
+		
+	#SEARCH BY NAME
+	if search_bar_line.text == "":
+		pass
+	else:
+		for game in Global.list_of_available_games:
+			if game.to_lower().contains(search_bar_line.text.to_lower()):
+				game_buttons[game].show()
+			else:
+				game_buttons[game].hide()
 				
 	#PERIOD
 	if period_index == 0:
@@ -116,7 +123,7 @@ func sort_everything():
 				game_buttons[game].show()
 			else:
 				game_buttons[game].hide()
-	
+
 func _on_region_sort_btn_item_selected(index: int) -> void:
 	region_index = index
 	sort_everything()

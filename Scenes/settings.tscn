@@ -73,6 +73,7 @@ offset_transform_scale = Vector2(0.8, 0.8)
 theme_override_font_sizes/font_size = 36
 placeholder_text = "Player 1"
 alignment = 1
+max_length = 10
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer" unique_id=991119284]
 layout_mode = 2

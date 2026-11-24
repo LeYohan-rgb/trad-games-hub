@@ -6,9 +6,52 @@ var playing_game : int = 0
 var players :Array[String] = []
 var is_debugging : bool = false #ORIGIANL PROPORTION WAS 720 X 1280
 
+var list_of_available_games = [
+	"Adjiboto"
+]
+
+var game_dictionary : Dictionary = {
+	"Adjiboto" : {
+		"period": ["Modern"],
+		"region": ["America"],
+		"category": ["Board", "Sow"],
+	},
+}
+
+var period_index : Dictionary = {
+	1: "Ancient",
+	2: "Medieval",
+	3: "Modern"
+}
+
+var region_index : Dictionary = {
+	1: "Africa",
+	2: "America",
+	3: "Asia",
+	4: "Australia and NZ",
+	5: "Caribbean",
+	6: "Europe",
+	7: "Melanesia",
+	8: "Micronesia",
+	9: "Polynesia"
+}
+
+var category_index : Dictionary = {
+	1: "Board",
+	2: "Hunt",
+	3: "Race",
+	4: "Sow",
+	5: "Space",
+	6: "War",
+	7: "Math",
+	8: "Puzzle",
+	9: "Reconstruction"
+}
+
 var game_names : Dictionary = {
 	1: "Adjiboto",
 }
+
 var game_rules : Dictionary = {
 	1: "It is played on a 2x5 board with 10 stones in each hole. Each player has a store called boto at their right hand and five corresponding holes in front of them.
 

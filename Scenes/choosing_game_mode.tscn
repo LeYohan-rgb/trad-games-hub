@@ -92,10 +92,19 @@ theme_override_font_sizes/font_size = 64
 text = "BOT"
 autowrap_mode = 2
 
+[node name="Button" type="Button" parent="display_list" unique_id=1759756371]
+layout_mode = 2
+size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_scale = Vector2(0.7, 0.7)
+theme_override_font_sizes/font_size = 64
+text = "LOCAL (IN DEVELOPMENT)"
+autowrap_mode = 2
+
 [node name="Control3" type="Control" parent="." unique_id=527103512]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 3.0
+size_flags_stretch_ratio = 2.0
 
 [connection signal="pressed" from="Control/Control/go_back_btn" to="." method="_on_go_back_btn_pressed"]
 [connection signal="pressed" from="display_list/mult_btn" to="." method="_on_mult_btn_pressed"]

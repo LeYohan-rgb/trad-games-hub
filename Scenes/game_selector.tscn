@@ -72,6 +72,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="display_list" type="VBoxContainer" parent="." unique_id=839183947]
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
@@ -117,7 +118,6 @@ offset_transform_enabled = true
 offset_transform_scale = Vector2(0.75, 0.75)
 
 [node name="desc_box" type="VBoxContainer" parent="." unique_id=1092798658]
-visible = false
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
@@ -158,21 +158,32 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
 
-[node name="text_lbl" type="Label" parent="desc_box/Panel2/text_container" unique_id=1406111964]
+[node name="ScrollContainer" type="ScrollContainer" parent="desc_box/Panel2/text_container" unique_id=176461245]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -327.0
-offset_top = -336.5
-offset_right = 327.0
-offset_bottom = 336.5
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 16.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="text_lbl" type="Label" parent="desc_box/Panel2/text_container/ScrollContainer" unique_id=1406111964]
+custom_minimum_size = Vector2(700, 0)
+layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Adjiboto is a game blah blah blah"
+text = "Adjiboto (\"pebble boat\") is a mancala-style game played by the Saramaccans, a tribe of Bush-Negroes formed by escaped slaves, who live in the upper Saramacca river in Surinam. The game was first observed in the early twentieth century in Beidotti village, and it resembles mancala games known in Benin, West Africa.
+
+The game is used to entertain the dead during the ten-day period preceding burial in the kre wosu, or house of mourning. The play is only carried out during the daylight hours because in the night the yorkas, or ghosts of the dead, would come and eventually carry away spritis.
+
+The boards are only carved by old widowed men. They are made in two shapes, those having straight tops, and those in which the tops are curved. A village should have both types, so that if a person was fond of one kind of board dies, the people can play for a time on the other and there will be a lessened danger of his ghost coming to play with them. Although the Bush-Negroes are fine wood-carvers, the Saramacca boards are of the roughest. This is because of the sacred character of the game which is not one which can be hurried in playing. It must entail some effort and even pain to bring it to perfection.
+
+REFERENCE FOR THE GAME RULES:
+90. Adjiboto, an African Game of the Bush-Negroes of Dutch Guiana (Melville J. Herskovits)
+
+REFERENCE FOR THE GAME HISTORY:
+https://mancala.fandom.com/wiki/Adji-boto"
+horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 2
 
 [connection signal="pressed" from="Control/Control/go_back_btn" to="." method="_on_go_back_btn_pressed"]

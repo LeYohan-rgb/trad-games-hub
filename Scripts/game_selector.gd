@@ -4,12 +4,12 @@ var is_showing_desc : bool = false
 var game_showing : int = 0
 @onready var desc_box = $desc_box
 @onready var display_list = $display_list
-@onready var text_lbl = $desc_box/Panel2/text_container/text_lbl
+@onready var text_lbl = $desc_box/Panel2/text_container/ScrollContainer/text_lbl
 @onready var title_lbl = $Control/Control2/Label
 @onready var game_image = $desc_box/image_panel
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	unshow_desc_box()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

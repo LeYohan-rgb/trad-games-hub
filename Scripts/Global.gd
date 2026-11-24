@@ -14,7 +14,7 @@ var game_rules : Dictionary = {
 }
 
 var game_history : Dictionary = {
-	1: "",
+	1: "Adjiboto was seen in Guyana.",
 }
 #1 - ADJIBOTO
 func after_leaving_a_game():

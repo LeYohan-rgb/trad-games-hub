@@ -8,6 +8,8 @@ bg_color = Color(0.16565639, 0.16565642, 0.1656563, 1)
 corner_radius_bottom_right = 50
 corner_radius_bottom_left = 50
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jague"]
+
 [node name="game_selector" type="VBoxContainer" unique_id=1648952728]
 anchors_preset = 15
 anchor_right = 1.0
@@ -70,7 +72,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="display_list" type="VBoxContainer" parent="." unique_id=839183947]
-visible = false
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
@@ -116,18 +117,20 @@ offset_transform_enabled = true
 offset_transform_scale = Vector2(0.75, 0.75)
 
 [node name="desc_box" type="VBoxContainer" parent="." unique_id=1092798658]
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
 
-[node name="image_panel" type="Panel" parent="desc_box" unique_id=606973169]
+[node name="image_panel" type="Button" parent="desc_box" unique_id=359644660]
 layout_mode = 2
 size_flags_vertical = 3
-
-[node name="game_image" type="Sprite2D" parent="desc_box/image_panel" unique_id=853764690]
-position = Vector2(358, 144.5)
-scale = Vector2(5.5625, 2.2265625)
-texture = ExtResource("2_afr2y")
+theme_override_colors/icon_disabled_color = Color(1, 1, 1, 1)
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_jague")
+disabled = true
+icon = ExtResource("2_afr2y")
+icon_alignment = 1
+expand_icon = true
 
 [node name="Panel2" type="VBoxContainer" parent="desc_box" unique_id=1422384701]
 layout_mode = 2
@@ -175,4 +178,5 @@ autowrap_mode = 2
 [connection signal="pressed" from="Control/Control/go_back_btn" to="." method="_on_go_back_btn_pressed"]
 [connection signal="pressed" from="display_list/adjiboto_container/Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="display_list/adjiboto_container/adjiboto_desc" to="." method="_on_adjiboto_desc_pressed"]
+[connection signal="pressed" from="desc_box/Panel2/HBoxContainer/game_rules_btn" to="." method="_on_game_rules_btn_pressed"]
 [connection signal="pressed" from="desc_box/Panel2/HBoxContainer/history_btn" to="." method="_on_history_btn_pressed"]

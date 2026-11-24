@@ -6,7 +6,7 @@ var game_showing : int = 0
 @onready var display_list = $display_list
 @onready var text_lbl = $desc_box/Panel2/text_container/text_lbl
 @onready var title_lbl = $Control/Control2/Label
-@onready var game_image = $desc_box/image_panel/game_image
+@onready var game_image = $desc_box/image_panel
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.
@@ -39,6 +39,7 @@ func show_desc_box(game_shown : int):
 	display_list.hide()
 	desc_box.show()
 	
+	game_image.icon = load("res://Graphics/game_rules_images/"+Global.game_names[game_shown]+".png")
 	text_lbl.text = Global.game_rules[game_shown]
 
 func unshow_desc_box():
@@ -49,4 +50,10 @@ func unshow_desc_box():
 
 
 func _on_history_btn_pressed() -> void:
+	game_image.icon = load("res://Graphics/history_images/"+Global.game_names[game_showing]+".png")
 	text_lbl.text = Global.game_history[game_showing]
+
+
+func _on_game_rules_btn_pressed() -> void:
+	game_image.icon = load("res://Graphics/game_rules_images/"+Global.game_names[game_showing]+".png")
+	text_lbl.text = Global.game_rules[game_showing]

@@ -6,7 +6,16 @@ var playing_game : int = 0
 var players :Array[String] = []
 var is_debugging : bool = true #ORIGIANL PROPORTION WAS 720 X 1280
 
+var game_names : Dictionary = {
+	1: "Adjiboto",
+}
+var game_rules : Dictionary = {
+	1: "Adjiboto is a charming game.",
+}
 
+var game_history : Dictionary = {
+	1: "",
+}
 #1 - ADJIBOTO
 func after_leaving_a_game():
 	playing_game = 0

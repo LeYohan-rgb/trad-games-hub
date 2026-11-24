@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bs5hj0leh4dfv"]
 
 [ext_resource type="Script" uid="uid://bf2lwawyxmhab" path="res://Scripts/game_selector.gd" id="1_f5fss"]
+[ext_resource type="Texture2D" uid="uid://ddvxn5kn08rrg" path="res://icon.svg" id="2_afr2y"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f5fss"]
 bg_color = Color(0.16565639, 0.16565642, 0.1656563, 1)
@@ -44,7 +45,7 @@ text = "GO BACK"
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Button2" type="Button" parent="Control/Control2" unique_id=1155883517]
+[node name="Button2" type="Panel" parent="Control/Control2" unique_id=1629142640]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -69,23 +70,36 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="display_list" type="VBoxContainer" parent="." unique_id=839183947]
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
 
-[node name="Button" type="Button" parent="display_list" unique_id=808887748]
+[node name="adjiboto_container" type="VBoxContainer" parent="display_list" unique_id=1908942210]
 layout_mode = 2
 size_flags_vertical = 3
 offset_transform_enabled = true
-offset_transform_scale = Vector2(0.7, 0.7)
+offset_transform_scale = Vector2(0.75, 0.75)
+
+[node name="Button" type="Button" parent="display_list/adjiboto_container" unique_id=808887748]
+layout_mode = 2
+size_flags_vertical = 3
+offset_transform_enabled = true
 theme_override_font_sizes/font_size = 64
 text = "Adjiboto"
+
+[node name="adjiboto_desc" type="Button" parent="display_list/adjiboto_container" unique_id=812789011]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.25
+theme_override_font_sizes/font_size = 25
+text = "DESCRIPTION"
 
 [node name="Button2" type="Button" parent="display_list" unique_id=630218704]
 layout_mode = 2
 size_flags_vertical = 3
 offset_transform_enabled = true
-offset_transform_scale = Vector2(0.7, 0.7)
+offset_transform_scale = Vector2(0.75, 0.75)
 theme_override_font_sizes/font_size = 64
 text = "Komikan"
 
@@ -93,19 +107,72 @@ text = "Komikan"
 layout_mode = 2
 size_flags_vertical = 3
 offset_transform_enabled = true
-offset_transform_scale = Vector2(0.7, 0.7)
+offset_transform_scale = Vector2(0.75, 0.75)
 
 [node name="Button4" type="Button" parent="display_list" unique_id=2146213621]
 layout_mode = 2
 size_flags_vertical = 3
 offset_transform_enabled = true
-offset_transform_scale = Vector2(0.7, 0.7)
+offset_transform_scale = Vector2(0.75, 0.75)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1092798658]
-visible = false
+[node name="desc_box" type="VBoxContainer" parent="." unique_id=1092798658]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
 
+[node name="image_panel" type="Panel" parent="desc_box" unique_id=606973169]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="game_image" type="Sprite2D" parent="desc_box/image_panel" unique_id=853764690]
+position = Vector2(358, 144.5)
+scale = Vector2(5.5625, 2.2265625)
+texture = ExtResource("2_afr2y")
+
+[node name="Panel2" type="VBoxContainer" parent="desc_box" unique_id=1422384701]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="desc_box/Panel2" unique_id=859784704]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="game_rules_btn" type="Button" parent="desc_box/Panel2/HBoxContainer" unique_id=50793340]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
+text = "GAME RULES"
+
+[node name="history_btn" type="Button" parent="desc_box/Panel2/HBoxContainer" unique_id=1525190406]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
+text = "HISTORY"
+
+[node name="text_container" type="Panel" parent="desc_box/Panel2" unique_id=160878667]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+
+[node name="text_lbl" type="Label" parent="desc_box/Panel2/text_container" unique_id=1406111964]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -327.0
+offset_top = -336.5
+offset_right = 327.0
+offset_bottom = 336.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+text = "Adjiboto is a game blah blah blah"
+autowrap_mode = 2
+
 [connection signal="pressed" from="Control/Control/go_back_btn" to="." method="_on_go_back_btn_pressed"]
-[connection signal="pressed" from="display_list/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="display_list/adjiboto_container/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="display_list/adjiboto_container/adjiboto_desc" to="." method="_on_adjiboto_desc_pressed"]
+[connection signal="pressed" from="desc_box/Panel2/HBoxContainer/history_btn" to="." method="_on_history_btn_pressed"]

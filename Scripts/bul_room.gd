@@ -23,7 +23,7 @@ var game_state : Dictionary = { #THE GAME STATE IS RELATIVE. [no, my_or_opp, dir
 	"opp_captured" : 0
 }
 
-var row_nodes : Dictionary = { #THIS IS RELATIVE TOO
+@onready var row_nodes : Dictionary = { #THIS IS RELATIVE TOO
 	1: $main_container/board_container/Row1,
 	2: $main_container/board_container/Row2,
 	3: $main_container/board_container/Row3,
@@ -74,15 +74,21 @@ func return_is_the_host_str() -> String:
 		
 func set_up_the_board(current_game_state): #everything dealing with game state is relative
 	if Global.game_mode == 0:
-		if multiplayer.is_server(): #host POV
-			for i in range(1,14):
-				if i in [1, 13]:
-					row_nodes[i].get_node("Sprite2D").texture = load("res://Graphics/bul_game/" + return_is_the_host_str() +  "_pieces_" + str(current_game_state[i][0]) + ".png")
+		for i in range(1,14):
+			if i in [1, 13]:
+				row_nodes[i].get_node("Sprite2D").texture = load("res://Graphics/bul_game/" + return_is_the_host_str() +  "_pieces_" + str(current_game_state[i][0]) + ".png")
+			else:
+				if current_game_state[i][0] >= 1:
+					row_nodes[i].get_node("Sprite2D").texture = load("res://Graphics/bul_game/" + return_white_or_black_mode_2(i) +"_row_1_" + return_is_the_host_str() + ".png")
 				else:
-					pass
-		else: #client POV
-			pass
-	
+					row_nodes[i].get_node("Sprite2D").texture = load("res://Graphics/bul_game/" + return_white_or_black_mode_2(i) + "_row_0.png")
+
+func return_white_or_black_mode_2(num) -> String:
+	if num % 2 == 0:
+		return "black"
+	else:
+		return "white"
+		
 func reset_all_variables():
 	game_paused = false
 	

@@ -23,7 +23,8 @@ func _on_bot_btn_pressed() -> void:
 	#GO TO ADJIBOTO BOT
 	if Global.playing_game == 1:
 		get_tree().change_scene_to_file("res://Scenes/adjiboto_room.tscn")
-
+	if Global.playing_game == 2:
+		get_tree().change_scene_to_file("res://Scenes/bul_room.tscn")
 
 func _on_go_back_btn_pressed() -> void:
 	get_tree().change_scene_to_file("res://Scenes/game_selector.tscn")

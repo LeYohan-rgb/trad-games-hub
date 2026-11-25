@@ -3,6 +3,20 @@
 [ext_resource type="Script" uid="uid://baby5xptbu4aj" path="res://Scripts/bul_room.gd" id="1_2eaeg"]
 [ext_resource type="Texture2D" uid="uid://bgu3dya37klo2" path="res://Graphics/bul_game/null_piece.png" id="2_drqac"]
 [ext_resource type="Texture2D" uid="uid://ud8p3ts34nga" path="res://Graphics/general_icons/pause_icon.png" id="3_dg6wr"]
+[ext_resource type="Texture2D" uid="uid://qhsmtpa68gsr" path="res://Graphics/bul_game/stick_up.png" id="3_woo1q"]
+[ext_resource type="Texture2D" uid="uid://bouwt5rcwl453" path="res://Graphics/bul_game/stick_down.png" id="4_karr0"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jague"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_adqv7"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ydtpf"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m31fn"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_45nwq"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wmdsf"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dg6wr"]
 
@@ -242,25 +256,77 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
 
-[node name="stick_1" type="Panel" parent="main_container/sticks_container/VBoxContainer" unique_id=1718377085]
+[node name="HBoxContainer" type="HBoxContainer" parent="main_container/sticks_container/VBoxContainer" unique_id=1118055574]
 layout_mode = 2
-size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="stick_2" type="Panel" parent="main_container/sticks_container/VBoxContainer" unique_id=229843463]
+[node name="stick_1" type="Button" parent="main_container/sticks_container/VBoxContainer/HBoxContainer" unique_id=1121663226]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_colors/icon_disabled_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxEmpty_jague")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_adqv7")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_ydtpf")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_m31fn")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_45nwq")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wmdsf")
+disabled = true
+icon = ExtResource("3_woo1q")
+icon_alignment = 1
+expand_icon = true
+
+[node name="stick_2" type="Button" parent="main_container/sticks_container/VBoxContainer/HBoxContainer" unique_id=1022597540]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_colors/icon_disabled_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxEmpty_jague")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_adqv7")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_ydtpf")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_m31fn")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_45nwq")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wmdsf")
+disabled = true
+icon = ExtResource("4_karr0")
+icon_alignment = 1
+expand_icon = true
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="main_container/sticks_container/VBoxContainer" unique_id=954573939]
+layout_mode = 2
 size_flags_vertical = 3
 
-[node name="stick_3" type="Panel" parent="main_container/sticks_container/VBoxContainer" unique_id=396259640]
+[node name="stick_3" type="Button" parent="main_container/sticks_container/VBoxContainer/HBoxContainer2" unique_id=530744401]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_colors/icon_disabled_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxEmpty_jague")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_adqv7")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_ydtpf")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_m31fn")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_45nwq")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wmdsf")
+disabled = true
+icon = ExtResource("4_karr0")
+icon_alignment = 1
+expand_icon = true
 
-[node name="stick_4" type="Panel" parent="main_container/sticks_container/VBoxContainer" unique_id=438528657]
+[node name="stick_4" type="Button" parent="main_container/sticks_container/VBoxContainer/HBoxContainer2" unique_id=1500028800]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_colors/icon_disabled_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxEmpty_jague")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_adqv7")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_ydtpf")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_m31fn")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_45nwq")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wmdsf")
+disabled = true
+icon = ExtResource("3_woo1q")
+icon_alignment = 1
+expand_icon = true
 
 [node name="throw_btn" type="Button" parent="main_container/sticks_container/VBoxContainer" unique_id=1089594756]
 layout_mode = 2

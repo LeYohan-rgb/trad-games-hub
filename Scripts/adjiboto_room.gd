@@ -34,6 +34,7 @@ var bot_wait_time : float = 3.0
 var max_time_per_stone : float = 0.25
 
 
+var game_started : bool = false
 var going_to_replay : bool = false
 var holes_used_in_first_stage = []
 var holes_used_in_first_stage_bot = []
@@ -736,7 +737,11 @@ func quit_game_btn():
 	
 func _on_quit_game_btn_pressed() -> void:
 	if game_paused == true:
-		return
+		if game_started == false and opposite_player_disconnected:
+			quit_game_btn()
+			return
+		else:	
+			return
 		
 	quit_game_btn()
 	
@@ -759,6 +764,7 @@ func reset_all_variables():
 	entire_screen.hide()
 	entire_screen.modulate.a = entire_screen_fade_out
 	pause_panel.hide()
+	game_started = false
 	pause_btn.icon = load("res://Graphics/general_icons/pause_icon.png")
 	holes_used_in_first_stage = []
 	holes_used_in_first_stage_bot = []
@@ -773,8 +779,8 @@ func reset_all_variables():
 	is_pausing_game = false
 	game_paused = false
 	if not going_to_replay:
-		Global.players = []
-		Global.players_game_modes = []
+		Global.players = ["", ""]
+		Global.players_game_modes = [0, 0]
 	going_to_replay = false
 	Global.after_leaving_a_game()
 
@@ -886,6 +892,7 @@ func set_up_multiplayer_first_turn(whose_turn : int, was_manual : bool):
 		await get_tree().create_timer(2.0).timeout
 		game_paused = false
 	message_label.text = "It's " + Global.players[whose_turn] + "'s turn!"
+	game_started = true
 	
 		
 
@@ -939,6 +946,7 @@ func set_up_first_game_turn_bot(turn : int):
 		message_label.text = "It's " + Global.player_name + "'s turn!"
 	game_paused = false
 	game_resumed.emit()
+	game_started = true
 	
 func return_player_or_bot_str(plr : int, is_capitalized : bool) -> String:
 	if plr == 0:

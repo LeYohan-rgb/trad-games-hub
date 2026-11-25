@@ -89,252 +89,291 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 3.0
 
-[node name="HBoxContainer" type="Panel" parent="main_container/board_container" unique_id=114139248]
+[node name="Row13" type="Panel" parent="main_container/board_container" unique_id=114139248]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Button" type="Button" parent="main_container/board_container/HBoxContainer" unique_id=613915924]
-layout_mode = 0
-offset_right = 531.0
-offset_bottom = 66.0
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 36
-alignment = 0
-icon_alignment = 1
-expand_icon = true
-
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/HBoxContainer" unique_id=1532766503]
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row13" unique_id=1532766503]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("2_i7i8d")
 
-[node name="HBoxContainer2" type="Panel" parent="main_container/board_container" unique_id=377302498]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Button" type="Button" parent="main_container/board_container/HBoxContainer2" unique_id=566727423]
+[node name="Button" type="Button" parent="main_container/board_container/Row13" unique_id=1840047621]
 layout_mode = 0
 offset_right = 531.0
 offset_bottom = 66.0
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.958734, 0.5909437, 0.21333742, 1)
+theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 36
-alignment = 0
+flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/HBoxContainer2" unique_id=420338200]
+[node name="Row12" type="Panel" parent="main_container/board_container" unique_id=377302498]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row12" unique_id=420338200]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_370nd")
 
-[node name="HBoxContainer3" type="Panel" parent="main_container/board_container" unique_id=559765025]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Button" type="Button" parent="main_container/board_container/HBoxContainer3" unique_id=1480514913]
+[node name="Button" type="Button" parent="main_container/board_container/Row12" unique_id=2011065713]
 layout_mode = 0
 offset_right = 531.0
 offset_bottom = 66.0
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.958734, 0.5909437, 0.21333742, 1)
+theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 36
-alignment = 0
+flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/HBoxContainer3" unique_id=1652902451]
+[node name="Row11" type="Panel" parent="main_container/board_container" unique_id=559765025]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row11" unique_id=1652902451]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("4_kvfss")
 
-[node name="HBoxContainer4" type="Panel" parent="main_container/board_container" unique_id=85371662]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Button" type="Button" parent="main_container/board_container/HBoxContainer4" unique_id=1619714111]
+[node name="Button" type="Button" parent="main_container/board_container/Row11" unique_id=284152110]
 layout_mode = 0
 offset_right = 531.0
 offset_bottom = 66.0
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.958734, 0.5909437, 0.21333742, 1)
+theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 36
-alignment = 0
+flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/HBoxContainer4" unique_id=1918034332]
+[node name="Row10" type="Panel" parent="main_container/board_container" unique_id=85371662]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row10" unique_id=1918034332]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_370nd")
 
-[node name="HBoxContainer5" type="Panel" parent="main_container/board_container" unique_id=1946474717]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Button" type="Button" parent="main_container/board_container/HBoxContainer5" unique_id=535162952]
+[node name="Button" type="Button" parent="main_container/board_container/Row10" unique_id=512778505]
 layout_mode = 0
 offset_right = 531.0
 offset_bottom = 66.0
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.958734, 0.5909437, 0.21333742, 1)
+theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 36
-alignment = 0
+flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/HBoxContainer5" unique_id=1538556993]
+[node name="Row9" type="Panel" parent="main_container/board_container" unique_id=1946474717]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row9" unique_id=1538556993]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("4_kvfss")
 
-[node name="HBoxContainer6" type="Panel" parent="main_container/board_container" unique_id=1196125770]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Button" type="Button" parent="main_container/board_container/HBoxContainer6" unique_id=2023096934]
+[node name="Button" type="Button" parent="main_container/board_container/Row9" unique_id=1955238380]
 layout_mode = 0
 offset_right = 531.0
 offset_bottom = 66.0
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.958734, 0.5909437, 0.21333742, 1)
+theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 36
-alignment = 0
+flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/HBoxContainer6" unique_id=1757366194]
+[node name="Row8" type="Panel" parent="main_container/board_container" unique_id=1196125770]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row8" unique_id=1757366194]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_370nd")
 
-[node name="HBoxContainer7" type="Panel" parent="main_container/board_container" unique_id=1134687611]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Button" type="Button" parent="main_container/board_container/HBoxContainer7" unique_id=1621813621]
+[node name="Button" type="Button" parent="main_container/board_container/Row8" unique_id=1183913839]
 layout_mode = 0
 offset_right = 531.0
 offset_bottom = 66.0
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.958734, 0.5909437, 0.21333742, 1)
+theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 36
-alignment = 0
+flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/HBoxContainer7" unique_id=50455575]
+[node name="Row7" type="Panel" parent="main_container/board_container" unique_id=1134687611]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row7" unique_id=50455575]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("4_kvfss")
 
-[node name="HBoxContainer8" type="Panel" parent="main_container/board_container" unique_id=400625392]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Button" type="Button" parent="main_container/board_container/HBoxContainer8" unique_id=1584626232]
+[node name="Button" type="Button" parent="main_container/board_container/Row7" unique_id=1019831637]
 layout_mode = 0
 offset_right = 531.0
 offset_bottom = 66.0
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.958734, 0.5909437, 0.21333742, 1)
+theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 36
-alignment = 0
+flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/HBoxContainer8" unique_id=716034033]
+[node name="Row6" type="Panel" parent="main_container/board_container" unique_id=400625392]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row6" unique_id=716034033]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_370nd")
 
-[node name="HBoxContainer9" type="Panel" parent="main_container/board_container" unique_id=739291564]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Button" type="Button" parent="main_container/board_container/HBoxContainer9" unique_id=1508205169]
+[node name="Button" type="Button" parent="main_container/board_container/Row6" unique_id=1536397518]
 layout_mode = 0
 offset_right = 531.0
 offset_bottom = 66.0
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.958734, 0.5909437, 0.21333742, 1)
+theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 36
-alignment = 0
+flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/HBoxContainer9" unique_id=288707336]
+[node name="Row5" type="Panel" parent="main_container/board_container" unique_id=739291564]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row5" unique_id=288707336]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("4_kvfss")
 
-[node name="HBoxContainer10" type="Panel" parent="main_container/board_container" unique_id=49406910]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Button" type="Button" parent="main_container/board_container/HBoxContainer10" unique_id=1296089318]
+[node name="Button" type="Button" parent="main_container/board_container/Row5" unique_id=1729812468]
 layout_mode = 0
 offset_right = 531.0
 offset_bottom = 66.0
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.958734, 0.5909437, 0.21333742, 1)
+theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 36
-alignment = 0
+flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/HBoxContainer10" unique_id=1307663838]
+[node name="Row4" type="Panel" parent="main_container/board_container" unique_id=49406910]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row4" unique_id=1307663838]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_370nd")
 
-[node name="HBoxContainer11" type="Panel" parent="main_container/board_container" unique_id=1954041186]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Button" type="Button" parent="main_container/board_container/HBoxContainer11" unique_id=736870863]
+[node name="Button" type="Button" parent="main_container/board_container/Row4" unique_id=935340951]
 layout_mode = 0
 offset_right = 531.0
 offset_bottom = 66.0
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.958734, 0.5909437, 0.21333742, 1)
+theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 36
-alignment = 0
+flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/HBoxContainer11" unique_id=1784997322]
+[node name="Row3" type="Panel" parent="main_container/board_container" unique_id=1954041186]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row3" unique_id=1784997322]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("4_kvfss")
 
-[node name="HBoxContainer12" type="Panel" parent="main_container/board_container" unique_id=1876368359]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Button" type="Button" parent="main_container/board_container/HBoxContainer12" unique_id=620791648]
+[node name="Button" type="Button" parent="main_container/board_container/Row3" unique_id=661467723]
 layout_mode = 0
 offset_right = 531.0
 offset_bottom = 66.0
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.958734, 0.5909437, 0.21333742, 1)
+theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 36
-alignment = 0
+flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/HBoxContainer12" unique_id=427650176]
+[node name="Row2" type="Panel" parent="main_container/board_container" unique_id=1876368359]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row2" unique_id=427650176]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_370nd")
 
-[node name="HBoxContainer13" type="Panel" parent="main_container/board_container" unique_id=62097218]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Button" type="Button" parent="main_container/board_container/HBoxContainer13" unique_id=1989064563]
+[node name="Button" type="Button" parent="main_container/board_container/Row2" unique_id=1799242350]
 layout_mode = 0
 offset_right = 531.0
 offset_bottom = 66.0
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.958734, 0.5909437, 0.21333742, 1)
+theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 36
-alignment = 0
+flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/HBoxContainer13" unique_id=2032201999]
+[node name="Row1" type="Panel" parent="main_container/board_container" unique_id=62097218]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row1" unique_id=2032201999]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("4_370nd")
+
+[node name="Button" type="Button" parent="main_container/board_container/Row1" unique_id=761979402]
+layout_mode = 0
+offset_right = 531.0
+offset_bottom = 66.0
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.958734, 0.5909437, 0.21333742, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 36
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="sticks_container" type="VBoxContainer" parent="main_container" unique_id=1639010885]
 layout_mode = 2
@@ -425,7 +464,7 @@ expand_icon = true
 [node name="throw_btn" type="Button" parent="main_container/sticks_container/VBoxContainer" unique_id=1089594756]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 0.75
+size_flags_stretch_ratio = 0.25
 text = "THROW"
 
 [node name="bottom_space" type="Control" parent="main_container/sticks_container" unique_id=145791323]

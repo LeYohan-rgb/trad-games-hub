@@ -296,23 +296,41 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="message_label" type="Label" parent="Control" unique_id=1451112485]
+[node name="Panel" type="Panel" parent="Control" unique_id=1790838518]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = 46.0
-offset_bottom = -151.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -335.0
+offset_top = -123.5
+offset_right = 335.0
+offset_bottom = -1.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="message_label" type="Label" parent="Control/Panel" unique_id=1451112485]
+custom_minimum_size = Vector2(720, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -22.5
+offset_right = 0.5
+offset_bottom = 22.5
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 32
-text = "Who makes the first move?"
+text = "You must play a hole with more than one stone!"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
 
 [node name="first_plr_choser" type="HBoxContainer" parent="Control" unique_id=1821482371]
-visible = false
 layout_mode = 0
 offset_left = 91.0
 offset_top = 226.0

@@ -4,7 +4,7 @@ signal game_resumed
 
 @onready var player_1_label = $player_1_panel/Label
 @onready var player_2_label = $player_2_panel/Label
-@onready var message_label = $Control/message_label
+@onready var message_label = $Control/Panel/message_label
 
 @onready var plr_1_stones_lbl = $HBoxContainer/adjiboto_boat_1/Label
 @onready var plr_2_stones_lbl = $HBoxContainer/adjiboto_boat_2/Label

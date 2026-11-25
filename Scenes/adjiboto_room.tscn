@@ -88,55 +88,58 @@ theme_override_font_sizes/font_size = 32
 icon = ExtResource("2_p61nw")
 expand_icon = true
 
-[node name="pause_panel" type="VBoxContainer" parent="Control2" unique_id=1228387858]
+[node name="CanvasLayer" type="CanvasLayer" parent="Control2" unique_id=692338725]
+layer = 2
+
+[node name="pause_panel" type="VBoxContainer" parent="Control2/CanvasLayer" unique_id=1228387858]
 visible = false
-layout_mode = 1
+z_index = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -231.0
-offset_top = -86.5
+offset_top = -362.0
 offset_right = 231.0
-offset_bottom = 86.5
+offset_bottom = -189.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="quit_game_btn" type="Button" parent="Control2/pause_panel" unique_id=1306577378]
+[node name="quit_game_btn" type="Button" parent="Control2/CanvasLayer/pause_panel" unique_id=1306577378]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 32
 text = "QUIT GAME"
 
-[node name="resign_btn" type="Button" parent="Control2/pause_panel" unique_id=1746206388]
+[node name="resign_btn" type="Button" parent="Control2/CanvasLayer/pause_panel" unique_id=1746206388]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 32
 text = "RESIGN"
 
-[node name="winning_panel" type="VBoxContainer" parent="Control2" unique_id=1888657374]
-layout_mode = 1
+[node name="winning_panel" type="VBoxContainer" parent="Control2/CanvasLayer" unique_id=1888657374]
+visible = false
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -319.0
-offset_top = -83.5
+offset_top = -359.0
 offset_right = 308.0
-offset_bottom = 139.5
+offset_bottom = -136.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="Control2/winning_panel" unique_id=1365997708]
+[node name="Panel" type="Panel" parent="Control2/CanvasLayer/winning_panel" unique_id=1365997708]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 3.0
 
-[node name="winning_lbl" type="Label" parent="Control2/winning_panel/Panel" unique_id=434715294]
+[node name="winning_lbl" type="Label" parent="Control2/CanvasLayer/winning_panel/Panel" unique_id=434715294]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -149,17 +152,17 @@ text = "PLAYER 1 WINS!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Control2/winning_panel" unique_id=2030828834]
+[node name="HBoxContainer" type="HBoxContainer" parent="Control2/CanvasLayer/winning_panel" unique_id=2030828834]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="win_quit_game_btn" type="Button" parent="Control2/winning_panel/HBoxContainer" unique_id=99227714]
+[node name="win_quit_game_btn" type="Button" parent="Control2/CanvasLayer/winning_panel/HBoxContainer" unique_id=99227714]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 25
 text = "QUIT GAME"
 
-[node name="replay_btn" type="Button" parent="Control2/winning_panel/HBoxContainer" unique_id=1566190729]
+[node name="replay_btn" type="Button" parent="Control2/CanvasLayer/winning_panel/HBoxContainer" unique_id=1566190729]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 25
@@ -353,11 +356,23 @@ text = "PLAYER 1"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=708826155]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=572933584]
+modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
 [connection signal="pressed" from="Control2/pause_button" to="." method="_on_pause_button_pressed"]
-[connection signal="pressed" from="Control2/pause_panel/quit_game_btn" to="." method="_on_quit_game_btn_pressed"]
-[connection signal="pressed" from="Control2/pause_panel/resign_btn" to="." method="_on_resign_btn_pressed"]
-[connection signal="pressed" from="Control2/winning_panel/HBoxContainer/win_quit_game_btn" to="." method="_on_win_quit_game_btn_pressed"]
-[connection signal="pressed" from="Control2/winning_panel/HBoxContainer/replay_btn" to="." method="_on_replay_btn_pressed"]
+[connection signal="pressed" from="Control2/CanvasLayer/pause_panel/quit_game_btn" to="." method="_on_quit_game_btn_pressed"]
+[connection signal="pressed" from="Control2/CanvasLayer/pause_panel/resign_btn" to="." method="_on_resign_btn_pressed"]
+[connection signal="pressed" from="Control2/CanvasLayer/winning_panel/HBoxContainer/win_quit_game_btn" to="." method="_on_win_quit_game_btn_pressed"]
+[connection signal="pressed" from="Control2/CanvasLayer/winning_panel/HBoxContainer/replay_btn" to="." method="_on_replay_btn_pressed"]
 [connection signal="performed_move_on_hole" from="HBoxContainer/holes_container" to="." method="_on_holes_container_performed_move_on_hole"]
 [connection signal="pressed" from="HBoxContainer/holes_container/btn_2_5" to="HBoxContainer/holes_container" method="_on_btn_2_5_pressed"]
 [connection signal="pressed" from="HBoxContainer/holes_container/btn_2_4" to="HBoxContainer/holes_container" method="_on_btn_2_4_pressed"]

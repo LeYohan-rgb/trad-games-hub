@@ -9,20 +9,22 @@ signal game_resumed
 @onready var plr_1_stones_lbl = $HBoxContainer/adjiboto_boat_1/Label
 @onready var plr_2_stones_lbl = $HBoxContainer/adjiboto_boat_2/Label
 @onready var turn_lbl = $Control2/turn_panel/turn_lbl
-@onready var pause_panel = $Control2/pause_panel
+@onready var pause_panel = $Control2/CanvasLayer/pause_panel
 @onready var pause_btn = $Control2/pause_button
 @onready var disconnected_lbl = $player_2_panel/disconnected_lbl
-@onready var winning_panel = $Control2/winning_panel
-@onready var winning_lbl = $Control2/winning_panel/Panel/winning_lbl
-@onready var win_quit_game_btn = $Control2/winning_panel/HBoxContainer/win_quit_game_btn
+@onready var winning_panel = $Control2/CanvasLayer/winning_panel
+@onready var winning_lbl = $Control2/CanvasLayer/winning_panel/Panel/winning_lbl
+@onready var win_quit_game_btn = $Control2/CanvasLayer/winning_panel/HBoxContainer/win_quit_game_btn
 @onready var player_choser = $Control/first_plr_choser
-@onready var replay_btn = $Control2/winning_panel/HBoxContainer/replay_btn
+@onready var replay_btn = $Control2/CanvasLayer/winning_panel/HBoxContainer/replay_btn
 @onready var player_choser_player_2_btn = $Control/first_plr_choser/plr_chosen_btn
 @onready var player_choser_player_1_btn = $Control/first_plr_choser/bot_btn
+@onready var entire_screen = $CanvasLayer/ColorRect
 
 @onready var plr_2_stones_bg = $HBoxContainer/adjiboto_boat_2/ColorRect
 @onready var plr_1_stones_bg = $HBoxContainer/adjiboto_boat_1/ColorRect
 
+var entire_screen_fade_out = 0.25
 var modulate_color_1 = "e8dc0e"
 var modulate_color_2 = "00f3fd"
 var catch_modulate_color = "ff0000"
@@ -74,7 +76,7 @@ var game_paused = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	
+
 	if Global.game_mode == 1:
 		set_up()
 		
@@ -90,6 +92,7 @@ func _process(delta: float) -> void:
 		go_to_player_disconnected_announce()
 
 func set_up():
+	entire_screen.hide()
 	winning_panel.hide()
 	
 	if Global.game_mode == 1:
@@ -502,9 +505,11 @@ func end_game():
 		end_the_game_and_enter_end_screen(return_whosever_turn_it_is())
 		
 func end_the_game_and_enter_end_screen(outcome : int):
+	entire_screen.hide()
 	pause_panel.hide()
 	pause_btn.hide()
 	winning_panel.show()
+	entire_screen.show()
 	
 	if Global.game_mode == 1:
 		if outcome == 0:
@@ -667,12 +672,15 @@ func update_turn_counter():
 
 func _on_pause_button_pressed() -> void:
 	if is_pausing_game:
+		entire_screen.hide()
 		pause_panel.hide()
 		is_pausing_game = false
 		pause_btn.icon = load("res://Graphics/general_icons/pause_icon.png")
 		return
 	
 	is_pausing_game = true
+	entire_screen.show()
+	entire_screen.modulate.a = entire_screen_fade_out
 	pause_panel.show()
 	pause_btn.icon = load("res://Graphics/general_icons/resume_icon.png")
 	
@@ -690,6 +698,7 @@ func _on_resign_btn_pressed() -> void:
 		
 	is_pausing_game = false
 	game_paused = true
+	entire_screen.hide()
 	pause_panel.hide()
 	pause_btn.icon = load("res://Graphics/general_icons/pause_icon.png")
 	
@@ -747,6 +756,8 @@ func reset_all_variables():
 	replay_btn.text = "PLAY AGAIN"
 	win_quit_game_btn.show()
 	win_quit_game_btn.text = "QUIT GAME"
+	entire_screen.hide()
+	entire_screen.modulate.a = entire_screen_fade_out
 	pause_panel.hide()
 	pause_btn.icon = load("res://Graphics/general_icons/pause_icon.png")
 	holes_used_in_first_stage = []
@@ -1222,8 +1233,10 @@ func resign_signal_bot():
 	await get_tree().create_timer(2.0).timeout
 	message_label.text = "The BOT wins the game!"
 	await get_tree().create_timer(2.0).timeout
+	entire_screen.hide()
 	pause_panel.hide()
 	pause_btn.hide()
 	winning_panel.show()
+	entire_screen.show()
 	winning_lbl.text = "THE BOT WINS!"
 	winning_lbl.add_theme_color_override("font_color", Color(modulate_color_2))

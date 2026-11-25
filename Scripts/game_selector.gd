@@ -17,6 +17,7 @@ var category_index = 0
 
 @onready var game_buttons = {
 	"Adjiboto" : $ScrollContainer/display_list/adjiboto_container,
+	"Bul" : $ScrollContainer/display_list/bul_container
 }
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -131,3 +132,13 @@ func _on_region_sort_btn_item_selected(index: int) -> void:
 func _on_category_sort_btn_item_selected(index: int) -> void:
 	category_index = index
 	sort_everything()
+
+
+func _on_pul_btn_pressed() -> void:
+	Global.playing_game = 2
+	get_tree().change_scene_to_file("res://Scenes/choosing_game_mode.tscn")
+
+
+func _on_pul_desc_pressed() -> void:
+	game_showing = 2
+	show_desc_box(2)

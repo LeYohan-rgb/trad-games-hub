@@ -223,14 +223,26 @@ size_flags_stretch_ratio = 0.25
 theme_override_font_sizes/font_size = 25
 text = "DESCRIPTION"
 
-[node name="Button2" type="Button" parent="ScrollContainer/display_list" unique_id=630218704]
+[node name="bul_container" type="VBoxContainer" parent="ScrollContainer/display_list" unique_id=1876271309]
 custom_minimum_size = Vector2(0, 175)
 layout_mode = 2
 size_flags_vertical = 3
 offset_transform_enabled = true
 offset_transform_scale = Vector2(0.75, 0.75)
+
+[node name="pul_btn" type="Button" parent="ScrollContainer/display_list/bul_container" unique_id=1834727826]
+layout_mode = 2
+size_flags_vertical = 3
+offset_transform_enabled = true
 theme_override_font_sizes/font_size = 64
-text = "Komikan"
+text = "Bul"
+
+[node name="pul_desc" type="Button" parent="ScrollContainer/display_list/bul_container" unique_id=138777960]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.25
+theme_override_font_sizes/font_size = 25
+text = "DESCRIPTION"
 
 [node name="Button3" type="Button" parent="ScrollContainer/display_list" unique_id=740658616]
 custom_minimum_size = Vector2(0, 175)
@@ -365,5 +377,7 @@ autowrap_mode = 2
 [connection signal="item_selected" from="VBoxContainer/HBoxContainer/category_sort_btn" to="." method="_on_category_sort_btn_item_selected"]
 [connection signal="pressed" from="ScrollContainer/display_list/adjiboto_container/Adjiboto_btn" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="ScrollContainer/display_list/adjiboto_container/adjiboto_desc" to="." method="_on_adjiboto_desc_pressed"]
+[connection signal="pressed" from="ScrollContainer/display_list/bul_container/pul_btn" to="." method="_on_pul_btn_pressed"]
+[connection signal="pressed" from="ScrollContainer/display_list/bul_container/pul_desc" to="." method="_on_pul_desc_pressed"]
 [connection signal="pressed" from="desc_box/Panel2/HBoxContainer/game_rules_btn" to="." method="_on_game_rules_btn_pressed"]
 [connection signal="pressed" from="desc_box/Panel2/HBoxContainer/history_btn" to="." method="_on_history_btn_pressed"]

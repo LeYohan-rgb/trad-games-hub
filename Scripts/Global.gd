@@ -7,14 +7,20 @@ var players :Array[String] = []
 var is_debugging : bool = false #ORIGIANL PROPORTION WAS 720 X 1280
 
 var list_of_available_games = [
-	"Adjiboto"
+	"Adjiboto",
+	"Bul"
 ]
 
 var game_dictionary : Dictionary = {
 	"Adjiboto" : {
 		"period": ["Modern"],
 		"region": ["America"],
-		"category": ["Board", "Sow"],
+		"category": ["Board", "Sow", "Two rows"],
+	},
+	"Bul" : {
+		"period": ["Modern"],
+		"region": ["America"],
+		"category": ["Board", "War", "Replacement", "Eliminate", "All"],
 	},
 }
 
@@ -50,6 +56,7 @@ var category_index : Dictionary = {
 
 var game_names : Dictionary = {
 	1: "Adjiboto",
+	2: "Bul",
 }
 
 var game_rules : Dictionary = {
@@ -67,6 +74,7 @@ In the first ten turns, each player must play each of their five holes in any or
 WINNING CONDITION:
 A player wins when their opponent can no longer play on their turn (none of their holes has more than one stone). However, if the opponent can refill all of their holes with ten stones with the stones they have captured, the game ends in a draw. (For example, if an opponent has captured 45 stones and each of their holes has one stone each, the game ends in a draw).
 ",
+2: "Idk"
 }
 
 var game_history : Dictionary = {
@@ -80,7 +88,8 @@ REFERENCE FOR THE GAME RULES:
 90. Adjiboto, an African Game of the Bush-Negroes of Dutch Guiana (Melville J. Herskovits, Vol. 29 (Jul., 1929), pp. 122-127)
 
 REFERENCE FOR THE GAME HISTORY:
-https://mancala.fandom.com/wiki/Adji-boto"
+https://mancala.fandom.com/wiki/Adji-boto",
+2: "Idk"
 }
 
 #1 - ADJIBOTO

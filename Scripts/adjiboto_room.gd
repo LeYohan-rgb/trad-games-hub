@@ -303,7 +303,7 @@ func update_game_state(hole_num, player, plr_interface):
 
 func loop_through_holes(hole_num, plr, plr_interface, stones_removed):
 	#DEBUG VALUE: 0.01 MAX
-	var time_per_stone = clamp(0.1, 5.0 / stones_removed, max_time_per_stone)
+	var time_per_stone = clamp(max_time_per_stone / 50.0, (max_time_per_stone * 10.0) / stones_removed, max_time_per_stone)
 	if Global.is_debugging:
 		time_per_stone = 0.01
 	
@@ -617,20 +617,22 @@ func go_to_next_turn():
 
 	if Global.is_debugging:
 		pass
-#		if game_state["game_turn"] == 12:
-#			game_state["player_2_stones"] = 30
-#			plr_2_stones_lbl.text = str(30)
-#			game_state[1] = 1
-#			game_holes[1].text = '1'
-#			game_state[3] = 20
-#			game_holes[3].text = '20'
-#			game_state[2] = 1
-#			game_holes[2].text = '1'
-#			game_state[5] = 2
-#			game_holes[5].text = '2'
-#			for i in range(6,11):
-#				game_state[i] = 0
-#				game_holes[i].text = '0'
+		if game_state["game_turn"] == 12:
+			game_state["player_1_stones"] = 30
+			game_state["player_2_stones"] = 60
+			plr_2_stones_lbl.text = str(60)
+			if multiplayer.is_server():
+				plr_2_stones_lbl.text = str(60)
+				plr_1_stones_lbl.text = str(30)
+				for i in range(6,11):
+					game_state[i] = 0
+					game_holes[i].text = '0'
+			else:
+				plr_1_stones_lbl.text = str(60)
+				plr_2_stones_lbl.text = str(30)
+				for i in range(1,6):
+					game_state[i] = 0
+					game_holes[i].text = '0'
 	
 	
 	game_state["game_turn"] += 1
@@ -754,6 +756,8 @@ func reset_all_variables():
 	replay_agreement = [false, false]
 	for i in range(1, 11):
 		game_holes[i].text = "10"
+	for i in range(1, 6):
+		game_holes[i].self_modulate.a = 1
 	game_state = {1: 10, 2: 10, 3: 10, 4: 10, 5: 10, 6: 10, 7: 10, 8: 10, 9: 10, 10: 10, "turn": 0, "player_1_stones": 0, "player_2_stones": 0, "game_turn": 1,}
 	is_pausing_game = false
 	game_paused = false

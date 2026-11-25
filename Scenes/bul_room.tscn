@@ -2,8 +2,10 @@
 
 [ext_resource type="Script" uid="uid://baby5xptbu4aj" path="res://Scripts/bul_room.gd" id="1_2eaeg"]
 [ext_resource type="Texture2D" uid="uid://bgu3dya37klo2" path="res://Graphics/bul_game/null_piece.png" id="2_drqac"]
+[ext_resource type="Texture2D" uid="uid://ljg4q5xejvsq" path="res://Graphics/bul_game/client_pieces_6.png" id="2_i7i8d"]
 [ext_resource type="Texture2D" uid="uid://ud8p3ts34nga" path="res://Graphics/general_icons/pause_icon.png" id="3_dg6wr"]
 [ext_resource type="Texture2D" uid="uid://qhsmtpa68gsr" path="res://Graphics/bul_game/stick_up.png" id="3_woo1q"]
+[ext_resource type="Texture2D" uid="uid://c7kyk67lj8h4f" path="res://Graphics/bul_game/host_pieces_6.png" id="4_370nd"]
 [ext_resource type="Texture2D" uid="uid://bouwt5rcwl453" path="res://Graphics/bul_game/stick_down.png" id="4_karr0"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jague"]
@@ -86,17 +88,24 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 3.0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="main_container/board_container" unique_id=1774660678]
+[node name="HBoxContainer" type="Panel" parent="main_container/board_container" unique_id=114139248]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Button" type="Button" parent="main_container/board_container/HBoxContainer" unique_id=313218323]
-layout_mode = 2
+[node name="Button" type="Button" parent="main_container/board_container/HBoxContainer" unique_id=613915924]
+layout_mode = 0
+offset_right = 531.0
+offset_bottom = 66.0
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 36
-icon = ExtResource("2_drqac")
+alignment = 0
 icon_alignment = 1
 expand_icon = true
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/HBoxContainer" unique_id=1532766503]
+position = Vector2(265.5, 33)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_i7i8d")
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="main_container/board_container" unique_id=690085727]
 layout_mode = 2
@@ -230,17 +239,24 @@ icon = ExtResource("2_drqac")
 icon_alignment = 1
 expand_icon = true
 
-[node name="HBoxContainer13" type="HBoxContainer" parent="main_container/board_container" unique_id=2117686252]
+[node name="HBoxContainer13" type="Panel" parent="main_container/board_container" unique_id=62097218]
 layout_mode = 2
 size_flags_vertical = 3
 
 [node name="Button" type="Button" parent="main_container/board_container/HBoxContainer13" unique_id=1989064563]
-layout_mode = 2
+layout_mode = 0
+offset_right = 531.0
+offset_bottom = 66.0
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 36
-icon = ExtResource("2_drqac")
+alignment = 0
 icon_alignment = 1
 expand_icon = true
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/HBoxContainer13" unique_id=2032201999]
+position = Vector2(265.5, 33)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_370nd")
 
 [node name="sticks_container" type="VBoxContainer" parent="main_container" unique_id=1639010885]
 layout_mode = 2

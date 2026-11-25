@@ -143,6 +143,18 @@ func _on_holes_container_performed_move_on_hole(hole_num: Variant) -> void:
 		#THE CLIENT PLAYED!
 	
 func is_it_your_turn(plr : String) -> bool:
+	if Global.game_mode == 1:
+		if plr == "host":
+			if bot_turn == game_state["turn"]:
+				return false
+			else:
+				return true
+		else:
+			if bot_turn == game_state["turn"]:
+				return true
+			else:
+				return false
+			
 	if plr == "host":
 		if multiplayer_turn == game_state["turn"]:
 			return true
@@ -190,10 +202,16 @@ func illegal_move_message():
 		game_resumed.emit()
 		return
 		
-	message_label.text = "It's " + Global.players[game_state["turn"]] + "'s turn!"
+	message_label.text = "It's " + Global.players[return_whosever_turn_it_is()] + "'s turn!"
 	game_paused = false
 	game_resumed.emit()
 	
+func return_whosever_turn_it_is() -> int:
+	if multiplayer_turn == game_state["turn"]:
+		return 0
+	else:
+		return 1
+
 func illegal_move_message_first_stage():
 	game_paused = true
 	message_label.text = "You must play each of the holes before playing the same hole!"
@@ -205,7 +223,7 @@ func illegal_move_message_first_stage():
 		game_resumed.emit()
 		return
 		
-	message_label.text = "It's " + Global.players[game_state["turn"]] + "'s turn!"
+	message_label.text = "It's " + Global.players[return_whosever_turn_it_is()] + "'s turn!"
 	game_paused = false
 	game_resumed.emit()
 
@@ -243,6 +261,7 @@ func get_stone_by_index(player, plr_interface, hole_num):
 			return mod_10_index(5 + hole_num)
 		else:
 			return hole_num
+
 func get_stone(player, plr_interface, hole_num):
 	if plr_interface == 0:
 		if player == 0:
@@ -273,7 +292,6 @@ func update_game_state(hole_num, player, plr_interface):
 			game_state[5 + hole_num] = 1
 			game_holes[5 + hole_num].text = str(1)
 	else:
-		print("THIS IS RUNNING")
 		if player == 0:
 			message_label.text = Global.players[player] + " distributed 1 out of " + str(game_state[5 + hole_num] - 1) + " stones!"
 			game_state[5 + hole_num] = 1
@@ -288,7 +306,8 @@ func loop_through_holes(hole_num, plr, plr_interface, stones_removed):
 	var time_per_stone = clamp(0.1, 5.0 / stones_removed, max_time_per_stone)
 	if Global.is_debugging:
 		time_per_stone = 0.01
-	var modulate_color = modulate_color_1 if game_state["turn"] == 0 else modulate_color_2
+	
+	var modulate_color = modulate_color_1 if is_it_your_turn("host") else modulate_color_2
 	var ending_hole
 	
 	for i in range(stones_removed):
@@ -318,7 +337,7 @@ func loop_through_holes(hole_num, plr, plr_interface, stones_removed):
 			if Global.game_mode == 1:
 				message_label.text = return_player_or_bot_str(plr, true) + " captures " + str(stones_catched) + " stones!"
 			else:
-				message_label.text = Global.players[game_state["turn"]] + " captures " + str(stones_catched) + " stones!"
+				message_label.text = Global.players[return_whosever_turn_it_is()] + " captures " + str(stones_catched) + " stones!"
 				
 			await get_tree().create_timer(1.0).timeout
 			
@@ -364,7 +383,7 @@ func check_if_legal_moves_left():
 			go_to_next_turn() #still not yet botosized
 		return
 	#if the current turn is the 1st player, check if THE CLIENT has moves left
-	if game_state["turn"] == 0:
+	if is_it_your_turn("host"):
 		if multiplayer.is_server():
 			for i in range(6,11): #For the host POV, check if the client has moves left
 				if game_state[i] >= 2:
@@ -392,7 +411,7 @@ func check_if_legal_moves_left():
 func calculate_stones_left():
 	
 	var stones_remaining : int = 0
-	if game_state["turn"] == 0: #WE CALCULATE THE CLIENT'S BALLS
+	if is_it_your_turn("host"): #WE CALCULATE THE CLIENT'S BALLS
 		if multiplayer.is_server(): #Calculate the client's balls
 			for i in range(6, 11):
 				stones_remaining += game_state[i]
@@ -412,9 +431,9 @@ func calculate_stones_left():
 	return (50 - stones_remaining)
 	
 func refill_time():
-	var modulate_color = modulate_color_2 if game_state["turn"] == 0 else modulate_color_1
+	var modulate_color = modulate_color_2 if is_it_your_turn("host") else modulate_color_1
 	for i in range(5):
-		if game_state["turn"] == 0: #WE REFILL THE CLIENT'S BALLS
+		if is_it_your_turn("host"): #WE REFILL THE CLIENT'S BALLS
 			
 			if multiplayer.is_server(): #refill client (the other)
 				game_state["player_2_stones"] -= (10 - game_state[5 + 1 + i])
@@ -452,9 +471,7 @@ func refill_time():
 				game_holes[5 + i + 1].modulate = modulate_color # change color accordingly
 				await get_tree().create_timer(0.5).timeout
 				game_holes[5 + i + 1].modulate = "ffffff"
-	
-
-	
+		
 func end_game():
 	
 	if Global.game_mode == 1:
@@ -480,9 +497,9 @@ func end_game():
 	else:
 		message_label.text = "They do not have enough stones to refill all of their holes!"
 		await get_tree().create_timer(2.0).timeout
-		message_label.text = Global.players[game_state["turn"]] + " wins the game!"
+		message_label.text = Global.players[return_whosever_turn_it_is()] + " wins the game!"
 		await get_tree().create_timer(2.0).timeout
-		end_the_game_and_enter_end_screen(game_state["turn"])
+		end_the_game_and_enter_end_screen(return_whosever_turn_it_is())
 		
 func end_the_game_and_enter_end_screen(outcome : int):
 	pause_panel.hide()
@@ -521,7 +538,7 @@ func end_the_game_and_enter_end_screen(outcome : int):
 
 func modulate_player_boat(on_or_off):
 	if on_or_off == 0: #if 0, modulate!
-		if game_state["turn"] == 0:
+		if is_it_your_turn("host"):
 			if multiplayer.is_server():
 				plr_2_stones_bg.self_modulate.a = 0.5
 			else:
@@ -532,7 +549,7 @@ func modulate_player_boat(on_or_off):
 			else:
 				plr_2_stones_bg.self_modulate.a = 0.5
 	else: #if not, then un-modulate.
-		if game_state["turn"] == 0:
+		if is_it_your_turn("host"):
 			if multiplayer.is_server():
 				plr_2_stones_bg.self_modulate.a = 1
 			else:
@@ -544,13 +561,15 @@ func modulate_player_boat(on_or_off):
 				plr_2_stones_bg.self_modulate.a = 1
 		
 func return_opp_player_index_from_one_to_two() -> String:
-	if game_state["turn"] == 0:
+	#for game state, player_1_stones is the host. for the node, player_1_stones is POV.
+	#Here, we want the game_state.
+	if is_it_your_turn("host"): #if my turn is the host, then I need... yes, the client!
 		return "2"
-	else:
-		return "2"
+	else: #If my turn is the client, then I need the host.
+		return "1"
 		
 func opposite_turn():
-	if game_state["turn"] == 0:
+	if is_it_your_turn("host"):
 		return 1
 	else:
 		return 0
@@ -573,7 +592,7 @@ func catched_stones_by_plr(stones_catched):
 				plr_2_stones_lbl.text = str(int(plr_2_stones_lbl.text) + stones_catched)
 		return
 	
-	if game_state["turn"] == 0:
+	if is_it_your_turn("host"):
 		if multiplayer.is_server():
 			game_state["player_1_stones"] += stones_catched
 			plr_1_stones_lbl.text = str(int(plr_1_stones_lbl.text) + stones_catched)
@@ -626,7 +645,7 @@ func go_to_next_turn():
 		if game_state["turn"] == bot_turn:
 			bot_move()
 	else:
-		message_label.text = "It's " + Global.players[game_state["turn"]] + "'s turn!"
+		message_label.text = "It's " + Global.players[return_whosever_turn_it_is()] + "'s turn!"
 	game_paused = false
 	game_resumed.emit()
 

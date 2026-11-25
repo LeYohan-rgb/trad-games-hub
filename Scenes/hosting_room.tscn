@@ -98,6 +98,7 @@ theme_override_font_sizes/font_size = 36
 text = "Not Connected"
 horizontal_alignment = 1
 vertical_alignment = 1
+autowrap_mode = 2
 
 [node name="Control" type="Control" parent="VBoxContainer" unique_id=1331930800]
 layout_mode = 2

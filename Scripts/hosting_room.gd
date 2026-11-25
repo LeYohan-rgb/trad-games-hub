@@ -70,7 +70,8 @@ func _on_host_button_pressed() -> void:
 	join_button.hide()
 	host_button.text = "Leave Room"
 	leave_room = true
-	Global.players.append(Global.player_name)
+	Global.players[0] = Global.player_name
+	Global.players_game_modes[0] = Global.playing_game
 
 
 func _on_join_button_pressed() -> void:
@@ -97,12 +98,14 @@ func _on_connected_to_server():
 	is_connecting = false
 	host_button.text = "Leave Room"
 	status_label.text = "Successfully connected!"
-	register_player.rpc_id(1, Global.player_name)
+	register_player.rpc(Global.player_name, Global.playing_game)
 	
 @rpc("any_peer", "call_remote", "reliable")
-func register_player(player_name):
+func register_player(player_name, playing_game):
 	var id = multiplayer.get_remote_sender_id()
-	Global.players.append(player_name)
+	Global.players[1] = player_name
+	
+	Global.players_game_modes[1] = playing_game
 	status_label.text = player_name + " joined the room!"
 	
 
@@ -121,29 +124,38 @@ func _on_peer_connected(id : int):
 	
 func _on_peer_disconnected(id : int):
 	start_game_btn.hide()
-	if Global.players.size() > 1:
-		status_label.text = Global.players[1] + " disconnected!"
-		Global.players.pop_back()
+	status_label.text = Global.players[1] + " disconnected!"
+	Global.players[1] = ""
 	connected_to_room = false
 	
 
 func appear_button_to_play_game():
 	start_game_btn.show()
 
-
-func _on_start_game_button_pressed() -> void:
+@rpc("any_peer", "call_local", "reliable")
+func uncompatible_games():
+	status_label.text = "Cannot start game: incompatible games selected."
 	
-	update_global_player_array.rpc(Global.players)
+func _on_start_game_button_pressed() -> void:
+	if Global.players_game_modes[0] != Global.players_game_modes[1]: #IF SELECTED DIFFERENT GAMES, DO NOT START
+		uncompatible_games.rpc()
+		return
+	
+	update_global_player_array.rpc(Global.players, Global.players_game_modes)
 	begin_game.rpc(Global.playing_game)
 
 @rpc("any_peer", "call_local", "reliable")
 func begin_game(playing_game_index):
 	if playing_game_index == 1: #ADJIBOTO
 		get_tree().change_scene_to_file("res://Scenes/adjiboto_room.tscn")
+	if playing_game_index == 2: #BUL
+		get_tree().change_scene_to_file("res://Scenes/bul_room.tscn")
 		
 @rpc("any_peer", "call_local", "reliable")
-func update_global_player_array(player_array):
+func update_global_player_array(player_array, player_game_modes):
 	Global.players = player_array
+	Global.players_game_modes = player_game_modes
+	print(Global.players)
 	
 func _on_server_disconnected():
 	leave_current_room()

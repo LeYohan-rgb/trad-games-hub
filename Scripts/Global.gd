@@ -3,7 +3,8 @@ extends Node
 var player_name : String = "Player 1"
 var game_mode : int = 0 #O IS ONLINE, 1 IS BOT
 var playing_game : int = 0
-var players :Array[String] = []
+var players :Array[String] = ["", ""]
+var players_game_modes : Array = [0, 0]
 var is_debugging : bool = false #ORIGIANL PROPORTION WAS 720 X 1280
 
 var list_of_available_games = [

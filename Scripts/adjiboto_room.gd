@@ -774,6 +774,7 @@ func reset_all_variables():
 	game_paused = false
 	if not going_to_replay:
 		Global.players = []
+		Global.players_game_modes = []
 	going_to_replay = false
 	Global.after_leaving_a_game()
 

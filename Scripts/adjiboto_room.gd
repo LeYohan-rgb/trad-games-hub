@@ -17,6 +17,8 @@ signal game_resumed
 @onready var win_quit_game_btn = $Control2/winning_panel/HBoxContainer/win_quit_game_btn
 @onready var player_choser = $Control/first_plr_choser
 @onready var replay_btn = $Control2/winning_panel/HBoxContainer/replay_btn
+@onready var player_choser_player_2_btn = $Control/first_plr_choser/plr_chosen_btn
+@onready var player_choser_player_1_btn = $Control/first_plr_choser/bot_btn
 
 @onready var plr_2_stones_bg = $HBoxContainer/adjiboto_boat_2/ColorRect
 @onready var plr_1_stones_bg = $HBoxContainer/adjiboto_boat_1/ColorRect
@@ -26,7 +28,8 @@ var modulate_color_2 = "00f3fd"
 var catch_modulate_color = "ff0000"
 var opposite_player_disconnected : bool = false
 var plr_disconnected_index : int = 0
-var bot_wait_time : float = 5.0
+var bot_wait_time : float = 3.0
+var max_time_per_stone : float = 0.25
 
 
 var going_to_replay : bool = false
@@ -34,6 +37,7 @@ var holes_used_in_first_stage = []
 var holes_used_in_first_stage_bot = []
 var replay_agreement = [false, false]
 var bot_turn : int = 0
+var multiplayer_turn : int = 0
 
 @onready var game_holes= {
 	1: $HBoxContainer/holes_container/btn_1_1,
@@ -96,13 +100,21 @@ func set_up():
 		player_choser.show()
 		player_1_label.text = Global.player_name
 		player_2_label.text = "BOT"
+		player_choser_player_1_btn.text = "BOT"
+		player_choser_player_2_btn.text = Global.player_name
 		return
 		
-	message_label.text = "It's " + Global.players[0] + "'s turn!"
 	if multiplayer.is_server():
+		game_paused = true
+		message_label.text = "Who makes the first move?"
 		player_1_label.text = Global.players[0]
 		player_2_label.text = Global.players[1]
+		player_choser_player_1_btn.text = Global.players[0]
+		player_choser_player_2_btn.text = Global.players[1]
+		player_choser.show()
 	else:
+		game_paused = true
+		message_label.text = "Waiting for the host to select the first player..."
 		player_1_label.text = Global.players[1]
 		player_2_label.text = Global.players[0]
 
@@ -122,13 +134,28 @@ func _on_holes_container_performed_move_on_hole(hole_num: Variant) -> void:
 		else:
 			return
 			
-	if multiplayer.is_server() and game_state["turn"] == 0 and game_paused == false:
+	if multiplayer.is_server() and is_it_your_turn("host") and game_paused == false:
 		is_move_legal(hole_num, 0)
 			
 		#THE HOST PLAYED!
-	if not multiplayer.is_server() and game_state["turn"] == 1 and game_paused == false:
+	if not multiplayer.is_server() and is_it_your_turn("client") and game_paused == false:
 		is_move_legal(hole_num, 1)
 		#THE CLIENT PLAYED!
+	
+func is_it_your_turn(plr : String) -> bool:
+	if plr == "host":
+		if multiplayer_turn == game_state["turn"]:
+			return true
+		else:
+			return false
+			
+	if plr == "client":
+		if multiplayer_turn != game_state["turn"]:
+			return true
+		else:
+			return false
+			
+	return true
 	
 
 func is_move_legal(hole_num, player):
@@ -258,7 +285,7 @@ func update_game_state(hole_num, player, plr_interface):
 
 func loop_through_holes(hole_num, plr, plr_interface, stones_removed):
 	#DEBUG VALUE: 0.01 MAX
-	var time_per_stone = clamp(0.1, 5.0 / stones_removed, 0.5)
+	var time_per_stone = clamp(0.1, 5.0 / stones_removed, max_time_per_stone)
 	if Global.is_debugging:
 		time_per_stone = 0.01
 	var modulate_color = modulate_color_1 if game_state["turn"] == 0 else modulate_color_2
@@ -811,24 +838,62 @@ func before_new_match():
 	reset_all_variables()
 	set_up()
 	
+@rpc("any_peer", "call_local", "reliable")
+func set_up_multiplayer_first_turn(whose_turn : int, was_manual : bool):
+	player_choser.hide()
+	multiplayer_turn = whose_turn
+	if was_manual:
+		message_label.text = Global.players[whose_turn] + " was chosen as the first player manually!"
+		await get_tree().create_timer(2.0).timeout
+		game_paused = false
+	else:
+		message_label.text = Global.players[whose_turn] + " was chosen as the first player randomly!"
+		await get_tree().create_timer(2.0).timeout
+		game_paused = false
+	message_label.text = "It's " + Global.players[whose_turn] + "'s turn!"
+	
+		
+
+		
 #---------------------BOT FUNCTIONS----------------------
 
 func _on_bot_btn_pressed() -> void:
-	bot_turn = 0
-	set_up_first_game_turn_bot(bot_turn)
+	if Global.game_mode == 1:
+		bot_turn = 0
+		set_up_first_game_turn_bot(bot_turn)
+	else:
+		#CHECK IF DISCONNECTED FOR SOME REASON
+		if opposite_player_disconnected:
+			return
+		
+		set_up_multiplayer_first_turn.rpc(0, true)
 
 
 func _on_randomize_plr_btn_pressed() -> void:
 	var choices = [0, 1]
 	choices.shuffle()
 	
-	bot_turn = choices[0]
-	set_up_first_game_turn_bot(bot_turn)
+	if Global.game_mode == 1:
+		bot_turn = choices[0]
+		set_up_first_game_turn_bot(bot_turn)
+	else:
+		#CHECK IF DISCONNECTED FOR SOME REASON
+		if opposite_player_disconnected:
+			return
+		
+		set_up_multiplayer_first_turn.rpc(choices[0], false)
 
 
 func _on_plr_chosen_btn_pressed() -> void:
-	bot_turn = 1
-	set_up_first_game_turn_bot(bot_turn)
+	if Global.game_mode == 1:
+		bot_turn = 1
+		set_up_first_game_turn_bot(bot_turn)
+	else:
+		#CHECK IF DISCONNECTED FOR SOME REASON
+		if opposite_player_disconnected:
+			return
+		
+		set_up_multiplayer_first_turn.rpc(1, true)
 	
 func set_up_first_game_turn_bot(turn : int):
 	player_choser.hide()

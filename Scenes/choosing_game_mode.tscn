@@ -93,6 +93,7 @@ text = "BOT"
 autowrap_mode = 2
 
 [node name="Button" type="Button" parent="display_list" unique_id=1759756371]
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 offset_transform_enabled = true

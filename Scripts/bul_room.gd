@@ -23,7 +23,8 @@ var game_state : Dictionary = { #THE GAME STATE IS RELATIVE. [no, my_or_opp, dir
 	12: [0, "none", true],
 	13: [6, "opp", true],
 	"my_captured" : 0,
-	"opp_captured" : 0
+	"opp_captured" : 0,
+	"game_turn" : 1
 }
 
 @onready var row_nodes : Dictionary = { #THIS IS RELATIVE TOO
@@ -54,6 +55,8 @@ var game_paused = false
 var can_throw_the_sticks = false
 var thrown_first_sticks = [false, false]
 var thrown_first_sticks_amount = [0, 0]
+var has_thrown_sticks_on_their_turn = false #the throw before moving
+var is_host_first_player = false
 var game_started = false
 
 # Called when the node enters the scene tree for the first time.
@@ -87,7 +90,8 @@ func set_up():
 			can_throw_the_sticks = true
 		else:
 			message_lbl.text = "Waiting for " + client_or_host_player_name_str("host") + " to throw the sticks..."
-
+		game_paused = false
+		
 func return_is_the_host_str() -> String:
 	if multiplayer.is_server():
 		return "host"
@@ -121,6 +125,8 @@ func return_white_or_black_mode_2(num) -> String:
 		return "white"
 		
 func reset_all_variables():
+	has_thrown_sticks_on_their_turn = false
+	is_host_first_player = false
 	opp_player_disconnected = false
 	opp_landing_score.text = ""
 	my_landing_score.text = ""
@@ -143,7 +149,8 @@ func reset_all_variables():
 	12: [0, "none", true],
 	13: [6, "opp", true],
 	"my_captured" : 0,
-	"opp_captured" : 0
+	"opp_captured" : 0,
+	"game_turn" : 1
 })
 	
 	
@@ -187,6 +194,9 @@ func _on_throw_btn_pressed() -> void:
 	if can_throw_the_sticks == false:
 		return
 		
+	if game_paused == true:
+		return
+		
 	throw_sticks_animation.rpc(return_random_stick_array())
 
 func return_random_stick_array() -> Array:
@@ -212,6 +222,7 @@ func client_or_host_player_name_str(str) -> String:
 @rpc("any_peer", "call_local", "reliable")
 func throw_sticks_animation(my_array):
 	can_throw_the_sticks = false
+	game_paused = true
 	
 	if Global.game_mode == 0: #FOR ONLINE MULT
 		for i in range(1, 5):
@@ -226,7 +237,7 @@ func throw_sticks_animation(my_array):
 		if total_sum == 0:
 			total_sum = 5
 			
-		if game_started == false and thrown_first_sticks[0] == false:
+		if game_started == false and thrown_first_sticks[0] == false: #the host throws first before starting the game
 			message_lbl.text = client_or_host_player_name_str("host") + " landed a " + str(total_sum) + "!"
 			if multiplayer.is_server():
 				my_landing_score.text = str(total_sum)
@@ -240,19 +251,83 @@ func throw_sticks_animation(my_array):
 			else:
 				can_throw_the_sticks = true
 				message_lbl.text = "Throw the sticks!"
+			game_paused = false
+			return
 
-		if game_started == false and thrown_first_sticks[0] == true:
+		if game_started == false and thrown_first_sticks[0] == true: #the client throws second before starting the game
 			message_lbl.text = client_or_host_player_name_str("client") + " landed a " + str(total_sum) + "!"
 			if multiplayer.is_server():
 				opp_landing_score.text = str(total_sum)
 			else:
 				my_landing_score.text = str(total_sum)
-			thrown_first_sticks[0] = true
-			thrown_first_sticks_amount[0] = total_sum
+			thrown_first_sticks[1] = true
+			thrown_first_sticks_amount[1] = total_sum
 			await get_tree().create_timer(2.0).timeout
-			if multiplayer.is_server():
-				message_lbl.text = "Waiting for " + client_or_host_player_name_str("client") + " to throw the sticks..."
-			else:
-				can_throw_the_sticks = true
-				message_lbl.text = "Throw the sticks!"
 			
+			#DECIDE WHO GOES FIRST
+			if thrown_first_sticks_amount[0] == thrown_first_sticks_amount[1]:
+				message_lbl.text = "Both players landed the first score!"
+				await get_tree().create_timer(2.0).timeout
+				var random_player_chosen = return_random_int_0_to_1()
+				if random_player_chosen == 0: #host was chosen
+					is_host_first_player = true
+					if multiplayer.is_server():
+						opp_landing_score.text = ""
+					else:
+						my_landing_score.text = ""
+					message_lbl.text = client_or_host_player_name_str("host") + " was randomly chosen as the first player."
+					await get_tree().create_timer(2.0).timeout
+					opp_landing_score.text = ""
+					my_landing_score.text = ""
+					message_lbl.text = "It's " + client_or_host_player_name_str("host") + "'s turn!"
+					can_throw_the_sticks = true
+				else:
+					is_host_first_player = false
+					if multiplayer.is_server():
+						my_landing_score.text = ""
+					else:
+						opp_landing_score.text = ""
+					message_lbl.text = client_or_host_player_name_str("client") + " was randomly chosen as the first player."
+					await get_tree().create_timer(2.0).timeout
+					opp_landing_score.text = ""
+					my_landing_score.text = ""
+					message_lbl.text = "It's " + client_or_host_player_name_str("host") + "'s turn!"
+				game_paused = false
+				game_started = true
+			else:
+				if thrown_first_sticks_amount[0] > thrown_first_sticks_amount[1]: #host goes first
+					is_host_first_player = true
+					message_lbl.text = client_or_host_player_name_str("host") + " landed the highest score!"
+					if multiplayer.is_server():
+						opp_landing_score.text = ""
+					else:
+						my_landing_score.text = ""
+					await get_tree().create_timer(2.0).timeout
+					opp_landing_score.text = ""
+					my_landing_score.text = ""
+					message_lbl.text = "It's " + client_or_host_player_name_str("host") + "'s turn!"
+					if multiplayer.is_server():
+						can_throw_the_sticks = true
+					game_paused = false
+					game_started = true
+				else:
+					is_host_first_player = false
+					message_lbl.text = client_or_host_player_name_str("client") + " landed the highest score!"
+					if multiplayer.is_server():
+						my_landing_score.text = ""
+					else:
+						opp_landing_score.text = ""
+					await get_tree().create_timer(2.0).timeout
+					opp_landing_score.text = ""
+					my_landing_score.text = ""
+					message_lbl.text = "It's " + client_or_host_player_name_str("client") + "'s turn!"
+					if not multiplayer.is_server():
+						can_throw_the_sticks = true
+					game_paused = false
+					game_started = true
+			
+			
+func return_random_int_0_to_1():
+	var random_array = [0,1]
+	random_array.shuffle()
+	return random_array[0]

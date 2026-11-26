@@ -1,0 +1,50 @@
+{
+	"categories": [
+		{
+			"uuid": "786662be-e154-46c3-bf2c-7d7a223a64eb",
+			"title": "Task",
+			"color": "569eff"
+		}
+	],
+	"stages": [
+		{
+			"uuid": "abc8d45e-d374-4e2e-97aa-e6b62cc4571a",
+			"title": "Todo",
+			"tasks": [
+				"068b470b-dec5-43b1-b997-7964a7e3316b"
+			]
+		},
+		{
+			"uuid": "01adc647-5641-4e87-9b61-1a3854cf34cd",
+			"title": "Doing",
+			"tasks": []
+		},
+		{
+			"uuid": "ae2936bf-3937-4acc-9c3b-d0d8edb0cac2",
+			"title": "Done",
+			"tasks": []
+		}
+	],
+	"tasks": [
+		{
+			"uuid": "068b470b-dec5-43b1-b997-7964a7e3316b",
+			"title": "Check if plr has valid moves after throwing sticks",
+			"description": "",
+			"category": "786662be-e154-46c3-bf2c-7d7a223a64eb",
+			"steps": []
+		}
+	],
+	"layout": {
+		"columns": [
+			[
+				"abc8d45e-d374-4e2e-97aa-e6b62cc4571a"
+			],
+			[
+				"01adc647-5641-4e87-9b61-1a3854cf34cd"
+			],
+			[
+				"ae2936bf-3937-4acc-9c3b-d0d8edb0cac2"
+			]
+		]
+	}
+}

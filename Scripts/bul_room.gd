@@ -362,6 +362,9 @@ func throw_sticks_animation(my_array, some_random_int):
 		else:
 			opp_landing_score.text = str(total_sum)
 			await get_tree().create_timer(2.0).timeout
+			
+		#NEED TO CHECK IF DOES NOT HAVE ANY LEGAL MOVES TO PERFORM WITH THAT
+			
 		message_lbl.text = "It's " + client_or_host_player_name_str(whose_turn_is_it_str()) + "'s turn!"
 		game_paused = false
 		
@@ -410,9 +413,15 @@ func is_my_move_legal(my_row):
 	if (game_state[my_row][0]) == 0:
 		return
 		
-	
 	#if a piece reaches their homebase, they dont ricochet.
 	var target_index_movement = return_target_index(my_row, game_state)
+	
+	#cannot land on an occupied row by yourself
+	if (game_state[target_index_movement][0] > 0 and target_index_movement[0] != 1 and target_index_movement[0][1] == "my"):
+		illegal_move_message(1)
+		return
+		
+	
 		
 func return_target_index(row, state):
 	var moves = stick_amount_turn
@@ -431,6 +440,17 @@ func return_target_index(row, state):
 			target_index_array[0] = row - moves
 			
 	return target_index_array
+	
+func illegal_move_message(ilegal_msg):
+	game_paused = true
+	if ilegal_msg == 1: #cannot land on an occupied row
+		message_lbl.text = "You cannot have more than piece on the same row!"
+		
+		
+	await get_tree().create_timer(2.0).timeout
+	message_lbl.text = "It's " + client_or_host_player_name_str(whose_turn_is_it_str()) + "'s turn!"
+	game_paused = false
+		
 	
 	
 var game_state_2 : Dictionary = { #THE GAME STATE IS RELATIVE. [no, my_or_opp, direction] true -> enemy base.

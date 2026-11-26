@@ -32,7 +32,7 @@ project/assembly_name="trad-games-hub"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://.godot/scenetime/plugin.cfg", "res://addons/godot_super-wakatime/plugin.cfg")
+enabled=PackedStringArray("res://.godot/scenetime/plugin.cfg", "res://addons/godot_super-wakatime/plugin.cfg", "res://addons/kanban_tasks/plugin.cfg")
 
 [physics]
 

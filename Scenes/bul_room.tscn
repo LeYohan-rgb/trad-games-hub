@@ -60,10 +60,9 @@ grow_vertical = 2
 
 [node name="Label" type="Label" parent="opp_player_panel/turn_panel" unique_id=752983366]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = 9
 anchor_bottom = 1.0
-grow_horizontal = 2
+offset_right = 149.0
 grow_vertical = 2
 theme_override_font_sizes/font_size = 32
 text = "TURN 1"
@@ -656,10 +655,12 @@ vertical_alignment = 1
 
 [node name="pause_btn" type="Button" parent="my_player_panel" unique_id=951257510]
 layout_mode = 1
-anchors_preset = 9
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 603.0
-offset_right = 721.0
+offset_left = -108.0
+grow_horizontal = 0
 grow_vertical = 2
 offset_transform_enabled = true
 offset_transform_scale = Vector2(0.7, 0.7)

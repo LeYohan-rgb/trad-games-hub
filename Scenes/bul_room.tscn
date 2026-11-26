@@ -93,7 +93,15 @@ size_flags_stretch_ratio = 3.0
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row13" unique_id=1532766503]
+[node name="CenterContainer" type="CenterContainer" parent="main_container/board_container/Row13" unique_id=1674284787]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row13/CenterContainer" unique_id=1532766503]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("2_i7i8d")
@@ -115,7 +123,15 @@ expand_icon = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row12" unique_id=420338200]
+[node name="CenterContainer" type="CenterContainer" parent="main_container/board_container/Row12" unique_id=1640203576]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row12/CenterContainer" unique_id=420338200]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_370nd")
@@ -137,7 +153,15 @@ expand_icon = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row11" unique_id=1652902451]
+[node name="CenterContainer" type="CenterContainer" parent="main_container/board_container/Row11" unique_id=2023645907]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row11/CenterContainer" unique_id=1652902451]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("4_kvfss")
@@ -159,7 +183,15 @@ expand_icon = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row10" unique_id=1918034332]
+[node name="CenterContainer" type="CenterContainer" parent="main_container/board_container/Row10" unique_id=882348950]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row10/CenterContainer" unique_id=1918034332]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_370nd")
@@ -181,7 +213,15 @@ expand_icon = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row9" unique_id=1538556993]
+[node name="CenterContainer" type="CenterContainer" parent="main_container/board_container/Row9" unique_id=401852015]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row9/CenterContainer" unique_id=1538556993]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("4_kvfss")
@@ -203,7 +243,15 @@ expand_icon = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row8" unique_id=1757366194]
+[node name="CenterContainer" type="CenterContainer" parent="main_container/board_container/Row8" unique_id=427337314]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row8/CenterContainer" unique_id=1757366194]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_370nd")
@@ -225,7 +273,15 @@ expand_icon = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row7" unique_id=50455575]
+[node name="CenterContainer" type="CenterContainer" parent="main_container/board_container/Row7" unique_id=1367591079]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row7/CenterContainer" unique_id=50455575]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("4_kvfss")
@@ -247,7 +303,15 @@ expand_icon = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row6" unique_id=716034033]
+[node name="CenterContainer" type="CenterContainer" parent="main_container/board_container/Row6" unique_id=732286556]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row6/CenterContainer" unique_id=716034033]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_370nd")
@@ -269,7 +333,15 @@ expand_icon = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row5" unique_id=288707336]
+[node name="CenterContainer" type="CenterContainer" parent="main_container/board_container/Row5" unique_id=1540351509]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row5/CenterContainer" unique_id=288707336]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("4_kvfss")
@@ -291,7 +363,15 @@ expand_icon = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row4" unique_id=1307663838]
+[node name="CenterContainer" type="CenterContainer" parent="main_container/board_container/Row4" unique_id=997975856]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row4/CenterContainer" unique_id=1307663838]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_370nd")
@@ -313,7 +393,15 @@ expand_icon = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row3" unique_id=1784997322]
+[node name="CenterContainer" type="CenterContainer" parent="main_container/board_container/Row3" unique_id=882220188]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row3/CenterContainer" unique_id=1784997322]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("4_kvfss")
@@ -335,7 +423,15 @@ expand_icon = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row2" unique_id=427650176]
+[node name="CenterContainer" type="CenterContainer" parent="main_container/board_container/Row2" unique_id=466100591]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row2/CenterContainer" unique_id=427650176]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_370nd")
@@ -357,7 +453,15 @@ expand_icon = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row1" unique_id=2032201999]
+[node name="CenterContainer" type="CenterContainer" parent="main_container/board_container/Row1" unique_id=350998591]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row1/CenterContainer" unique_id=2032201999]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("4_370nd")
@@ -383,6 +487,19 @@ size_flags_stretch_ratio = 0.5
 [node name="top_space" type="Control" parent="main_container/sticks_container" unique_id=670730087]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="opp_player_score" type="Label" parent="main_container/sticks_container/top_space" unique_id=1742300709]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_outline_color = Color(0.95686275, 0.5921569, 0.21176471, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 64
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="main_container/sticks_container" unique_id=435335863]
 layout_mode = 2
@@ -471,6 +588,19 @@ text = "THROW"
 layout_mode = 2
 size_flags_vertical = 3
 
+[node name="my_player_score" type="Label" parent="main_container/sticks_container/bottom_space" unique_id=1462967202]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_outline_color = Color(0.95686275, 0.5921569, 0.21176471, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 64
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Control" type="Control" parent="main_container" unique_id=69727538]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -531,3 +661,5 @@ offset_transform_scale = Vector2(0.7, 0.7)
 theme_override_styles/normal = SubResource("StyleBoxEmpty_dg6wr")
 icon = ExtResource("3_dg6wr")
 expand_icon = true
+
+[connection signal="pressed" from="main_container/sticks_container/VBoxContainer/throw_btn" to="." method="_on_throw_btn_pressed"]

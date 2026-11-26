@@ -4,6 +4,9 @@ extends VBoxContainer
 @onready var opp_plr_lbl = $opp_player_panel/opp_plr_lbl
 @onready var message_lbl = $message_container/message_panel/message_label
 
+#nodes
+@onready var my_landing_score = $main_container/sticks_container/bottom_space/my_player_score
+@onready var opp_landing_score = $main_container/sticks_container/top_space/opp_player_score
 
 var game_state : Dictionary = { #THE GAME STATE IS RELATIVE. [no, my_or_opp, direction] true -> enemy base.
 	1: [6, "my", true],
@@ -18,7 +21,7 @@ var game_state : Dictionary = { #THE GAME STATE IS RELATIVE. [no, my_or_opp, dir
 	10: [0, "none", true],
 	11: [0, "none", true],
 	12: [0, "none", true],
-	13: [0, "none", true],
+	13: [6, "opp", true],
 	"my_captured" : 0,
 	"opp_captured" : 0
 }
@@ -39,7 +42,20 @@ var game_state : Dictionary = { #THE GAME STATE IS RELATIVE. [no, my_or_opp, dir
 	13: $main_container/board_container/Row13
 }
 
+@onready var stick_nodes : Dictionary = {
+	1: $main_container/sticks_container/VBoxContainer/HBoxContainer/stick_1,
+	2: $main_container/sticks_container/VBoxContainer/HBoxContainer/stick_2,
+	3: $main_container/sticks_container/VBoxContainer/HBoxContainer2/stick_3,
+	4: $main_container/sticks_container/VBoxContainer/HBoxContainer2/stick_4,
+}
+
+var opp_player_disconnected = false
 var game_paused = false
+var can_throw_the_sticks = false
+var thrown_first_sticks = [false, false]
+var thrown_first_sticks_amount = [0, 0]
+var game_started = false
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	set_up()
@@ -49,10 +65,10 @@ func _ready() -> void:
 		multiplayer.server_disconnected.connect(_on_server_disconnected)
 
 func _on_peer_disconnected():
-	pass
+	opp_player_disconnected = true
 
 func _on_server_disconnected():
-	pass
+	opp_player_disconnected = true
 	
 func set_up():
 	game_paused = true
@@ -63,6 +79,14 @@ func set_up():
 	opp_plr_lbl.text = return_my_or_opp_plr_string("opp")
 	
 	message_lbl.text = "Let's select the first player!"
+	await get_tree().create_timer(2.0).timeout
+	
+	if Global.game_mode == 0:
+		if multiplayer.is_server():
+			message_lbl.text = "Throw the sticks!"
+			can_throw_the_sticks = true
+		else:
+			message_lbl.text = "Waiting for " + client_or_host_player_name_str("host") + " to throw the sticks..."
 
 func return_is_the_host_str() -> String:
 	if multiplayer.is_server():
@@ -75,13 +99,20 @@ func return_is_the_host_str() -> String:
 func set_up_the_board(current_game_state): #everything dealing with game state is relative
 	if Global.game_mode == 0:
 		for i in range(1,14):
-			if i in [1, 13]:
-				row_nodes[i].get_node("Sprite2D").texture = load("res://Graphics/bul_game/" + return_is_the_host_str() +  "_pieces_" + str(current_game_state[i][0]) + ".png")
+			if i == 1:
+				row_nodes[i].get_node("CenterContainer/Sprite2D").texture = load("res://Graphics/bul_game/" + return_my_or_opp_plr_host_or_client_str("my") +  "_pieces_" + str(current_game_state[i][0]) + ".png")
+				continue
+			if i == 13:
+				row_nodes[i].get_node("CenterContainer/Sprite2D").texture = load("res://Graphics/bul_game/" + return_my_or_opp_plr_host_or_client_str("opp")  +  "_pieces_" + str(current_game_state[i][0]) + ".png")
 			else:
 				if current_game_state[i][0] >= 1:
-					row_nodes[i].get_node("Sprite2D").texture = load("res://Graphics/bul_game/" + return_white_or_black_mode_2(i) +"_row_1_" + return_is_the_host_str() + ".png")
+					if current_game_state[i][0] != 1:
+						row_nodes[i].get_node("Button").text = str(current_game_state[i][0])
+					else:
+						row_nodes[i].get_node("Button").text = ""
+					row_nodes[i].get_node("CenterContainer/Sprite2D").texture = load("res://Graphics/bul_game/" + return_white_or_black_mode_2(i) +"_row_1_" + return_my_or_opp_plr_host_or_client_str(current_game_state[i][1]) + ".png")
 				else:
-					row_nodes[i].get_node("Sprite2D").texture = load("res://Graphics/bul_game/" + return_white_or_black_mode_2(i) + "_row_0.png")
+					row_nodes[i].get_node("CenterContainer/Sprite2D").texture = load("res://Graphics/bul_game/" + return_white_or_black_mode_2(i) + "_row_0.png")
 
 func return_white_or_black_mode_2(num) -> String:
 	if num % 2 == 0:
@@ -90,7 +121,31 @@ func return_white_or_black_mode_2(num) -> String:
 		return "white"
 		
 func reset_all_variables():
+	opp_player_disconnected = false
+	opp_landing_score.text = ""
+	my_landing_score.text = ""
+	thrown_first_sticks = [false, false]
+	game_started = false
 	game_paused = false
+	can_throw_the_sticks = false
+	set_up_the_board({
+	1: [6, "my", true],
+	2: [0, "none", true],
+	3: [0, "none", true],
+	4: [0, "none", true],
+	5: [0, "none", true],
+	6: [0, "none", true],
+	7: [0, "none", true],
+	8: [0, "none", true],
+	9: [0, "none", true],
+	10: [0, "none", true],
+	11: [0, "none", true],
+	12: [0, "none", true],
+	13: [6, "opp", true],
+	"my_captured" : 0,
+	"opp_captured" : 0
+})
+	
 	
 
 func return_my_or_opp_plr_string(str) -> String:
@@ -107,7 +162,97 @@ func return_my_or_opp_plr_string(str) -> String:
 				return Global.players[0]
 			
 	return ""
+	
+func return_my_or_opp_plr_host_or_client_str(str) -> String:
+	if Global.game_mode == 0:
+		if multiplayer.is_server():
+			if str == "my":
+				return "host"
+			else:
+				return "client"
+		else:
+			if str == "my":
+				return "client"
+			else:
+				return "host"
+			
+	return ""
 			
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
+
+
+func _on_throw_btn_pressed() -> void:
+	if can_throw_the_sticks == false:
+		return
+		
+	throw_sticks_animation.rpc(return_random_stick_array())
+
+func return_random_stick_array() -> Array:
+	var random_up_down_array = [0, 0, 0, 0] #IF ITS 1 ITS UP. IF ITS 0 ITS DOWN
+	for i in range(4):
+		random_up_down_array[i] = randi_range(0, 1)
+		
+	return random_up_down_array
+	
+func return_int_1_to_4_host_or_client(num) -> int:
+	#4 -> 1, 2 -> 3, 3 -> 2, 4 -> 1
+	if multiplayer.is_server():
+		return num
+	else:
+		return 5 - num
+		
+func client_or_host_player_name_str(str) -> String:
+	if str == "host":
+		return Global.players[0]
+	else:
+		return Global.players[1]
+	
+@rpc("any_peer", "call_local", "reliable")
+func throw_sticks_animation(my_array):
+	can_throw_the_sticks = false
+	
+	if Global.game_mode == 0: #FOR ONLINE MULT
+		for i in range(1, 5):
+			if my_array[i - 1] == 0:
+				stick_nodes[return_int_1_to_4_host_or_client(i)].icon = load("res://Graphics/bul_game/stick_down.png")
+			else:
+				stick_nodes[return_int_1_to_4_host_or_client(i)].icon = load("res://Graphics/bul_game/stick_up.png")
+		
+		var total_sum = 0 #SUM OF THE POINTS
+		for i in range(4):
+			total_sum += my_array[i]
+		if total_sum == 0:
+			total_sum = 5
+			
+		if game_started == false and thrown_first_sticks[0] == false:
+			message_lbl.text = client_or_host_player_name_str("host") + " landed a " + str(total_sum) + "!"
+			if multiplayer.is_server():
+				my_landing_score.text = str(total_sum)
+			else:
+				opp_landing_score.text = str(total_sum)
+			thrown_first_sticks[0] = true
+			thrown_first_sticks_amount[0] = total_sum
+			await get_tree().create_timer(2.0).timeout
+			if multiplayer.is_server():
+				message_lbl.text = "Waiting for " + client_or_host_player_name_str("client") + " to throw the sticks..."
+			else:
+				can_throw_the_sticks = true
+				message_lbl.text = "Throw the sticks!"
+
+		if game_started == false and thrown_first_sticks[0] == true:
+			message_lbl.text = client_or_host_player_name_str("client") + " landed a " + str(total_sum) + "!"
+			if multiplayer.is_server():
+				opp_landing_score.text = str(total_sum)
+			else:
+				my_landing_score.text = str(total_sum)
+			thrown_first_sticks[0] = true
+			thrown_first_sticks_amount[0] = total_sum
+			await get_tree().create_timer(2.0).timeout
+			if multiplayer.is_server():
+				message_lbl.text = "Waiting for " + client_or_host_player_name_str("client") + " to throw the sticks..."
+			else:
+				can_throw_the_sticks = true
+				message_lbl.text = "Throw the sticks!"
+			

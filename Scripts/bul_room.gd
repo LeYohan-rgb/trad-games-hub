@@ -59,6 +59,8 @@ var stick_amount_turn = 0
 var has_thrown_sticks_on_their_turn = false #the throw before moving
 var is_host_first_player = false
 var game_started = false
+var host_modulate_color = "ffffc8"
+var client_modulate_color = "c8ffff"
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -190,16 +192,28 @@ func _process(delta: float) -> void:
 	pass
 
 func is_it_your_turn_player() -> bool:
-	if is_host_first_player: #host plays first, client second
-		if game_state["game_turn"] % 2 == 1: #if the host is first player, and the turn is odd, true
-			return true
+	if is_host_first_player: #host plays first, plays on odd turns, client second
+		if multiplayer.is_server():
+			if game_state["game_turn"] % 2 == 0:
+				return false
+			else:
+				return true
 		else:
-			return false #if the host is first player, and the turn is even, false
-	else: #host plays second, client first
-		if game_state["game_turn"] % 2 == 0: #if the client is 1st player, and the turn is even, false
-			return false
+			if game_state["game_turn"] % 2 == 0:
+				return true
+			else:
+				return false
+	else: #host plays second, plays on even, client second
+		if multiplayer.is_server():
+			if game_state["game_turn"] % 2 == 0:
+				return true
+			else:
+				return false
 		else:
-			return true #if the client is 1st player, and the turn is odd, true
+			if game_state["game_turn"] % 2 == 0:
+				return false
+			else:
+				return true
 	return false
 			
 func is_it_my_turn() -> bool:
@@ -403,6 +417,7 @@ func _on_board_container_pressed_row(row_pressed: Variant) -> void:
 		
 	#CHECK IF TURN
 	if Global.game_mode == 0:
+		print(is_it_my_turn(), multiplayer.is_server())
 		if is_it_my_turn():
 			is_my_move_legal(row_pressed)
 			return
@@ -413,19 +428,45 @@ func is_my_move_legal(my_row):
 	if (game_state[my_row][0]) == 0:
 		return
 		
+	#you cant play an enemy row
+	if (game_state[my_row][1] == "opp"):
+		return
+		
 	#if a piece reaches their homebase, they dont ricochet.
 	var target_index_movement = return_target_index(my_row, game_state)
 	
 	#cannot land on an occupied row by yourself
-	if (game_state[target_index_movement][0] > 0 and target_index_movement[0] != 1 and target_index_movement[0][1] == "my"):
+	if (game_state[target_index_movement[0]][0] > 0 and target_index_movement[0] != 1 and target_index_movement[0][1] == "my"):
 		illegal_move_message(1)
 		return
 		
+	#PERFORM MOVE!
+	perform_move.rpc(target_index_movement, whose_turn_is_it_str())
+
+@rpc("any_peer", "call_local", "reliable")
+func perform_move(movement_array : Array, player_who_moved : String):
+	#THIS FUNCTION IS FOR MULTIPLAYER OK?
+	game_paused = true
 	
-		
+	#HIGHLIGHT THE ROW
+	modulate_row(movement_array[0], player_who_moved)
+			
+func modulate_row(row, player_who_moved):
+	if multiplayer.is_server():
+		if player_who_moved == "host": #host moved on their turn
+			row_nodes[row].get_node("CenterContainer/Sprite2D").modulate = host_modulate_color
+		else: #client moved on hosts turn
+			row_nodes[14 - row].get_node("CenterContainer/Sprite2D").modulate = client_modulate_color
+	else:
+		if player_who_moved == "host": #host moved on clients turn
+			row_nodes[14 -row].get_node("CenterContainer/Sprite2D").modulate = host_modulate_color
+		else: #client moved on their turn
+			row_nodes[row].get_node("CenterContainer/Sprite2D").modulate = client_modulate_color
+			
+	
 func return_target_index(row, state):
 	var moves = stick_amount_turn
-	var target_index_array = [row, true]
+	var target_index_array = [row, true, moves]
 	if state[row][2] == true: #moving front
 		if row + moves >= 13:
 			target_index_array[0] = 24 - moves - row
@@ -435,6 +476,7 @@ func return_target_index(row, state):
 	else: #moving backwards
 		if row - moves <= 1:
 			target_index_array[0] = 1
+			target_index_array[2] = 1
 			target_index_array[1] = true
 		else:
 			target_index_array[0] = row - moves

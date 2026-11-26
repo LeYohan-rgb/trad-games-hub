@@ -9,6 +9,9 @@
 [ext_resource type="Texture2D" uid="uid://c7kyk67lj8h4f" path="res://Graphics/bul_game/host_pieces_6.png" id="4_370nd"]
 [ext_resource type="Texture2D" uid="uid://bouwt5rcwl453" path="res://Graphics/bul_game/stick_down.png" id="4_karr0"]
 [ext_resource type="Texture2D" uid="uid://bpiw1tv0xfjvl" path="res://Graphics/bul_game/white_row_0.png" id="4_kvfss"]
+[ext_resource type="Texture2D" uid="uid://da58x3j40lnt7" path="res://Graphics/bul_game/white_row_1_client.png" id="4_p2k36"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kvfss"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jague"]
 
@@ -348,7 +351,7 @@ grow_vertical = 2
 [node name="Sprite2D" type="Sprite2D" parent="main_container/board_container/Row5/CenterContainer" unique_id=288707336]
 position = Vector2(265.5, 33)
 scale = Vector2(0.5, 0.5)
-texture = ExtResource("4_kvfss")
+texture = ExtResource("4_p2k36")
 
 [node name="Button" type="Button" parent="main_container/board_container/Row5" unique_id=1729812468]
 layout_mode = 0
@@ -359,6 +362,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0.958734, 0.5909437, 0.21333742, 1)
 theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 36
+theme_override_styles/pressed = SubResource("StyleBoxFlat_kvfss")
 flat = true
 icon_alignment = 1
 expand_icon = true

@@ -155,7 +155,6 @@ func begin_game(playing_game_index):
 func update_global_player_array(player_array, player_game_modes):
 	Global.players = player_array
 	Global.players_game_modes = player_game_modes
-	print(Global.players)
 	
 func _on_server_disconnected():
 	leave_current_room()

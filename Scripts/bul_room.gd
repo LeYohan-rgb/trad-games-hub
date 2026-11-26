@@ -387,3 +387,23 @@ func return_random_int_0_to_1():
 	var random_array = [0,1]
 	random_array.shuffle()
 	return random_array[0]
+
+
+func _on_board_container_pressed_row(row_pressed: Variant) -> void:
+	if game_paused:
+		return
+		
+	#CHECK IF THE PLAYER DISCONNECTED
+	if opp_player_disconnected:
+		message_lbl.text = "..."
+		return
+		
+	#CHECK IF TURN
+	if Global.game_mode == 0:
+		if is_it_my_turn():
+			is_my_move_legal(row_pressed)
+			return
+		
+
+func is_my_move_legal(my_row):
+	pass

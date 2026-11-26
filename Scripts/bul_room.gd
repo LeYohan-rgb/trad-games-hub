@@ -10,11 +10,11 @@ extends VBoxContainer
 
 var game_state : Dictionary = { #THE GAME STATE IS RELATIVE. [no, my_or_opp, direction] true -> enemy base.
 	1: [6, "my", true],
-	2: [0, "none", true],
-	3: [0, "none", true],
-	4: [0, "none", true],
-	5: [0, "none", true],
-	6: [0, "none", true],
+	2: [1, "opp", false],
+	3: [1, "opp", false],
+	4: [1, "opp", false],
+	5: [1, "opp", false],
+	6: [1, "opp", false],
 	7: [0, "none", true],
 	8: [0, "none", true],
 	9: [0, "none", true],
@@ -61,6 +61,7 @@ var is_host_first_player = false
 var game_started = false
 var host_modulate_color = "ffffc8"
 var client_modulate_color = "c8ffff"
+var capture_modulate_color = "ffc8c8"
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -321,7 +322,8 @@ func throw_sticks_animation(my_array, some_random_int):
 					opp_landing_score.text = ""
 					my_landing_score.text = ""
 					message_lbl.text = "It's " + client_or_host_player_name_str("host") + "'s turn!"
-					can_throw_the_sticks = true
+					if multiplayer.is_server():
+						can_throw_the_sticks = true
 				else:
 					is_host_first_player = false
 					if multiplayer.is_server():
@@ -333,6 +335,8 @@ func throw_sticks_animation(my_array, some_random_int):
 					opp_landing_score.text = ""
 					my_landing_score.text = ""
 					message_lbl.text = "It's " + client_or_host_player_name_str("client") + "'s turn!"
+					if not multiplayer.is_server():
+						can_throw_the_sticks = true
 				game_paused = false
 				game_started = true
 			else:
@@ -406,7 +410,6 @@ func return_random_int_0_to_1():
 	random_array.shuffle()
 	return random_array[0]
 
-
 func _on_board_container_pressed_row(row_pressed: Variant) -> void:
 	if game_paused:
 		return
@@ -441,22 +444,70 @@ func is_my_move_legal(my_row):
 	var target_index_movement = return_target_index(my_row, game_state)
 	
 	#cannot land on an occupied row by yourself
-	if (game_state[target_index_movement[0]][0] > 0 and target_index_movement[0] != 1 and target_index_movement[0][1] == "my"):
+	#if it landed on an occupied row, that is NOT the homebase, that is MY own
+	if (game_state[target_index_movement[0]][0] > 0 and target_index_movement[0] != 1 and game_state[target_index_movement[0]][1] == "my"):
 		illegal_move_message(1)
 		return
 		
 	#PERFORM MOVE!
-	perform_move.rpc(target_index_movement, whose_turn_is_it_str())
+	perform_move.rpc(my_row, target_index_movement, whose_turn_is_it_str())
 
 @rpc("any_peer", "call_local", "reliable")
-func perform_move(movement_array : Array, player_who_moved : String):
+func perform_move(previous_pos : int, movement_array : Array, player_who_moved : String):
 	#THIS FUNCTION IS FOR MULTIPLAYER OK?
 	game_paused = true
 	
 	#HIGHLIGHT THE ROW
-	modulate_row(movement_array[0], player_who_moved)
+	modulate_row(movement_array[0], player_who_moved, previous_pos, movement_array)
+	
+	#UPDATE_THE_GAME_STATE
+	update_game_state(previous_pos, movement_array, player_who_moved)
 			
-func modulate_row(row, player_who_moved):
+func update_game_state(previous_pos, movement_array, player_who_moved):
+	var new_row_moved = movement_array[0]
+	var new_dir = movement_array[2]
+	var no_rows_moved = movement_array[1]
+	
+	if multiplayer.is_server():
+		if player_who_moved == "host": #host is changing the board due to a state THEY made
+			game_state[previous_pos][0] = 0
+			game_state[previous_pos][1] = "none"
+			game_state[previous_pos][2] = true
+			if game_state[new_row_moved][0] > 0: #they catched it
+				pass
+			else:
+				game_state[new_row_moved][0] += 1
+			
+			
+		else: #chost changes due to a state THE CLIENt made
+			pass
+	else:
+		if player_who_moved == "host": #host moved on clients turn
+			pass
+		else: #client moved on their turn
+			pass
+	
+func modulate_row(row, player_who_moved, previous_pos, movement_array):
+	if multiplayer.is_server():
+		if player_who_moved == "host": #host moved on their turn
+			if game_state[row][1] == "opp":
+				row_nodes[row].get_node("CenterContainer/Sprite2D").modulate = capture_modulate_color
+				return
+		else: #client moved on hosts turn
+			if game_state[row][1] == "my":
+				row_nodes[14 - row].get_node("CenterContainer/Sprite2D").modulate = capture_modulate_color
+				return
+	else:
+		if player_who_moved == "host": #host moved on clients turn
+			if game_state[row][1] == "my":
+				row_nodes[14 -row].get_node("CenterContainer/Sprite2D").modulate = capture_modulate_color
+				return
+		else: #client moved on their turn
+			if game_state[row][1] == "opp":
+				row_nodes[row].get_node("CenterContainer/Sprite2D").modulate = capture_modulate_color
+				return
+		
+		
 	if multiplayer.is_server():
 		if player_who_moved == "host": #host moved on their turn
 			row_nodes[row].get_node("CenterContainer/Sprite2D").modulate = host_modulate_color

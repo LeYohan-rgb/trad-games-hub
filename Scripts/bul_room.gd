@@ -1,7 +1,7 @@
 extends VBoxContainer
 
-@onready var my_plr_lbl = $my_player_panel/my_plr_lbl
-@onready var opp_plr_lbl = $opp_player_panel/opp_plr_lbl
+@onready var my_plr_lbl = $my_player_panel/HBoxContainer/my_plr_lbl
+@onready var opp_plr_lbl = $opp_player_panel/HBoxContainer/opp_plr_lbl
 @onready var message_lbl = $message_container/message_panel/message_label
 
 #nodes
@@ -231,6 +231,7 @@ func _on_throw_btn_pressed() -> void:
 		return
 		
 	if Global.game_mode == 0:
+		prints(is_it_my_turn(), multiplayer.is_server())
 		if is_it_my_turn() and not has_thrown_sticks_on_their_turn:
 			throw_sticks_animation.rpc(return_random_stick_array(), return_random_int_0_to_1())
 			return
@@ -415,9 +416,13 @@ func _on_board_container_pressed_row(row_pressed: Variant) -> void:
 		message_lbl.text = "..."
 		return
 		
+	#if have not throw sticks, IGNORE
+	if not has_thrown_sticks_on_their_turn:
+		return
+		
 	#CHECK IF TURN
 	if Global.game_mode == 0:
-		print(is_it_my_turn(), multiplayer.is_server())
+		prints(is_it_my_turn(), multiplayer.is_server())
 		if is_it_my_turn():
 			is_my_move_legal(row_pressed)
 			return

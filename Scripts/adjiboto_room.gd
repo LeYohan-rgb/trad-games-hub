@@ -110,6 +110,7 @@ func set_up():
 		
 	if multiplayer.is_server():
 		game_paused = true
+		player_choser.show()
 		message_label.text = "Who makes the first move?"
 		player_1_label.text = Global.players[0]
 		player_2_label.text = Global.players[1]
@@ -118,6 +119,7 @@ func set_up():
 		player_choser.show()
 	else:
 		game_paused = true
+		player_choser.hide()
 		message_label.text = "Waiting for the host to select the first player..."
 		player_1_label.text = Global.players[1]
 		player_2_label.text = Global.players[0]

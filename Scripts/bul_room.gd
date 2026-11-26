@@ -55,6 +55,7 @@ var game_paused = false
 var can_throw_the_sticks = false
 var thrown_first_sticks = [false, false]
 var thrown_first_sticks_amount = [0, 0]
+var stick_amount_turn = 0
 var has_thrown_sticks_on_their_turn = false #the throw before moving
 var is_host_first_player = false
 var game_started = false
@@ -125,6 +126,7 @@ func return_white_or_black_mode_2(num) -> String:
 		return "white"
 		
 func reset_all_variables():
+	stick_amount_turn = 0
 	has_thrown_sticks_on_their_turn = false
 	is_host_first_player = false
 	opp_player_disconnected = false
@@ -153,8 +155,6 @@ func reset_all_variables():
 	"game_turn" : 1
 })
 	
-	
-
 func return_my_or_opp_plr_string(str) -> String:
 	if Global.game_mode == 0:
 		if multiplayer.is_server():
@@ -189,13 +189,37 @@ func return_my_or_opp_plr_host_or_client_str(str) -> String:
 func _process(delta: float) -> void:
 	pass
 
-
+func is_it_your_turn_player() -> bool:
+	if is_host_first_player:
+		if game_state["game_turn"] % 2 == 1: #if the host is first player, and the turn is odd, true
+			return true
+		else:
+			return false #if the host is first player, and the turn is even, false
+	else:
+		if game_state["game_turn"] % 2 == 0: #if the client is 2nd player, and the turn is even, true
+			return true
+		else:
+			return false #if the client is 2nd player, and the turn is odd, false
+	return false
+			
+func is_it_my_turn() -> bool:
+	if multiplayer.is_server() and is_it_your_turn_player():
+		return true
+	if not multiplayer.is_server() and is_it_your_turn_player():
+		return true
+	return false
+	
 func _on_throw_btn_pressed() -> void:
 	if can_throw_the_sticks == false:
 		return
 		
 	if game_paused == true:
 		return
+		
+	if Global.game_mode == 0:
+		if is_it_my_turn() and not has_thrown_sticks_on_their_turn:
+			throw_sticks_animation.rpc(return_random_stick_array())
+			return
 		
 	throw_sticks_animation.rpc(return_random_stick_array())
 
@@ -326,7 +350,36 @@ func throw_sticks_animation(my_array):
 					game_paused = false
 					game_started = true
 			
-			
+		message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " landed a " + str(total_sum) + "!"
+		if multiplayer.is_server() == is_it_host(whose_turn_is_it_str()):
+			my_landing_score.text = str(total_sum)
+			await get_tree().create_timer(2.0).timeout
+			has_thrown_sticks_on_their_turn = true
+			stick_amount_turn = total_sum
+		else:
+			opp_landing_score.text = str(total_sum)
+			await get_tree().create_timer(2.0).timeout
+		message_lbl.text = "It's " + client_or_host_player_name_str(whose_turn_is_it_str()) + "'s turn!"
+		game_paused = false
+		
+func is_it_host(str) -> bool:
+	if str == "host":
+		return true
+	else:
+		return false
+		
+func whose_turn_is_it_str() -> String:
+	if is_host_first_player:
+		if game_state["game_turn"] % 2 == 1: #if the host is first player, and the turn is odd, it is THE HOST
+			return "host"
+		else:
+			return "client" #if the host is first player, and the turn is even, false
+	else:
+		if game_state["game_turn"] % 2 == 0: #if the client is 2nd player, and the turn is even, it is THE CLIENT
+			return "client"
+		else:
+			return "host" #if the client is 2nd player, and the turn is odd, false
+
 func return_random_int_0_to_1():
 	var random_array = [0,1]
 	random_array.shuffle()

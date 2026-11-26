@@ -21,7 +21,7 @@ var game_state : Dictionary = { #THE GAME STATE IS RELATIVE. [no, my_or_opp, dir
 	10: [0, "none", true],
 	11: [0, "none", true],
 	12: [0, "none", true],
-	13: [6, "opp", true],
+	13: [6, "opp", false],
 	"my_captured" : 0,
 	"opp_captured" : 0,
 	"game_turn" : 1
@@ -149,7 +149,7 @@ func reset_all_variables():
 	10: [0, "none", true],
 	11: [0, "none", true],
 	12: [0, "none", true],
-	13: [6, "opp", true],
+	13: [6, "opp", false],
 	"my_captured" : 0,
 	"opp_captured" : 0,
 	"game_turn" : 1
@@ -406,4 +406,48 @@ func _on_board_container_pressed_row(row_pressed: Variant) -> void:
 		
 
 func is_my_move_legal(my_row):
-	pass
+	#you cant play on an empty row
+	if (game_state[my_row][0]) == 0:
+		return
+		
+	
+	#if a piece reaches their homebase, they dont ricochet.
+	var target_index_movement = return_target_index(my_row, game_state)
+		
+func return_target_index(row, state):
+	var moves = stick_amount_turn
+	var target_index_array = [row, true]
+	if state[row][2] == true: #moving front
+		if row + moves >= 13:
+			target_index_array[0] = 24 - moves - row
+			target_index_array[1] = false
+		else:
+			target_index_array[0] = row + moves
+	else: #moving backwards
+		if row - moves <= 1:
+			target_index_array[0] = 1
+			target_index_array[1] = true
+		else:
+			target_index_array[0] = row - moves
+			
+	return target_index_array
+	
+	
+var game_state_2 : Dictionary = { #THE GAME STATE IS RELATIVE. [no, my_or_opp, direction] true -> enemy base.
+	1: [6, "my", true],
+	2: [0, "none", true],
+	3: [0, "none", true],
+	4: [0, "none", true],
+	5: [0, "none", true],
+	6: [0, "none", true],
+	7: [0, "none", true],
+	8: [0, "none", true],
+	9: [0, "none", true],
+	10: [0, "none", true],
+	11: [0, "none", true],
+	12: [0, "none", true],
+	13: [6, "opp", true],
+	"my_captured" : 0,
+	"opp_captured" : 0,
+	"game_turn" : 1
+}

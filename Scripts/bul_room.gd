@@ -190,16 +190,16 @@ func _process(delta: float) -> void:
 	pass
 
 func is_it_your_turn_player() -> bool:
-	if is_host_first_player:
+	if is_host_first_player: #host plays first, client second
 		if game_state["game_turn"] % 2 == 1: #if the host is first player, and the turn is odd, true
 			return true
 		else:
 			return false #if the host is first player, and the turn is even, false
-	else:
-		if game_state["game_turn"] % 2 == 0: #if the client is 2nd player, and the turn is even, true
-			return true
+	else: #host plays second, client first
+		if game_state["game_turn"] % 2 == 0: #if the client is 1st player, and the turn is even, false
+			return false
 		else:
-			return false #if the client is 2nd player, and the turn is odd, false
+			return true #if the client is 1st player, and the turn is odd, true
 	return false
 			
 func is_it_my_turn() -> bool:
@@ -218,10 +218,10 @@ func _on_throw_btn_pressed() -> void:
 		
 	if Global.game_mode == 0:
 		if is_it_my_turn() and not has_thrown_sticks_on_their_turn:
-			throw_sticks_animation.rpc(return_random_stick_array())
+			throw_sticks_animation.rpc(return_random_stick_array(), return_random_int_0_to_1())
 			return
 		
-	throw_sticks_animation.rpc(return_random_stick_array())
+	throw_sticks_animation.rpc(return_random_stick_array(), return_random_int_0_to_1())
 
 func return_random_stick_array() -> Array:
 	var random_up_down_array = [0, 0, 0, 0] #IF ITS 1 ITS UP. IF ITS 0 ITS DOWN
@@ -244,7 +244,7 @@ func client_or_host_player_name_str(str) -> String:
 		return Global.players[1]
 	
 @rpc("any_peer", "call_local", "reliable")
-func throw_sticks_animation(my_array):
+func throw_sticks_animation(my_array, some_random_int):
 	can_throw_the_sticks = false
 	game_paused = true
 	
@@ -292,7 +292,9 @@ func throw_sticks_animation(my_array):
 			if thrown_first_sticks_amount[0] == thrown_first_sticks_amount[1]:
 				message_lbl.text = "Both players landed the first score!"
 				await get_tree().create_timer(2.0).timeout
-				var random_player_chosen = return_random_int_0_to_1()
+				var random_player_chosen = some_random_int
+				if Global.is_debugging:
+					random_player_chosen = 1
 				if random_player_chosen == 0: #host was chosen
 					is_host_first_player = true
 					if multiplayer.is_server():
@@ -315,7 +317,7 @@ func throw_sticks_animation(my_array):
 					await get_tree().create_timer(2.0).timeout
 					opp_landing_score.text = ""
 					my_landing_score.text = ""
-					message_lbl.text = "It's " + client_or_host_player_name_str("host") + "'s turn!"
+					message_lbl.text = "It's " + client_or_host_player_name_str("client") + "'s turn!"
 				game_paused = false
 				game_started = true
 			else:
@@ -349,6 +351,7 @@ func throw_sticks_animation(my_array):
 						can_throw_the_sticks = true
 					game_paused = false
 					game_started = true
+			return
 			
 		message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " landed a " + str(total_sum) + "!"
 		if multiplayer.is_server() == is_it_host(whose_turn_is_it_str()):
@@ -375,10 +378,10 @@ func whose_turn_is_it_str() -> String:
 		else:
 			return "client" #if the host is first player, and the turn is even, false
 	else:
-		if game_state["game_turn"] % 2 == 0: #if the client is 2nd player, and the turn is even, it is THE CLIENT
-			return "client"
+		if game_state["game_turn"] % 2 == 0: #if the client is 1st player, and the turn is even, it is THE HOST
+			return "host"
 		else:
-			return "host" #if the client is 2nd player, and the turn is odd, false
+			return "client" #if the client is 1st player, and the turn is odd, IT IS CLIENT
 
 func return_random_int_0_to_1():
 	var random_array = [0,1]

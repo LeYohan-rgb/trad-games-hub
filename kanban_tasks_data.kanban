@@ -12,7 +12,8 @@
 			"title": "Todo",
 			"tasks": [
 				"068b470b-dec5-43b1-b997-7964a7e3316b",
-				"7e0a2e50-bf7e-4955-a516-2f6f67709d3e"
+				"7e0a2e50-bf7e-4955-a516-2f6f67709d3e",
+				"5faf8530-7de8-4fca-911d-0c787540ebf1"
 			]
 		},
 		{
@@ -37,6 +38,13 @@
 		{
 			"uuid": "7e0a2e50-bf7e-4955-a516-2f6f67709d3e",
 			"title": "Fix the direction issue",
+			"description": "",
+			"category": "786662be-e154-46c3-bf2c-7d7a223a64eb",
+			"steps": []
+		},
+		{
+			"uuid": "5faf8530-7de8-4fca-911d-0c787540ebf1",
+			"title": "fix tipo : you cannot have more than piece",
 			"description": "",
 			"category": "786662be-e154-46c3-bf2c-7d7a223a64eb",
 			"steps": []

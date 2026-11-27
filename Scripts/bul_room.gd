@@ -330,7 +330,7 @@ func throw_sticks_animation(my_array, some_random_int):
 			
 			#DECIDE WHO GOES FIRST
 			if thrown_first_sticks_amount[0] == thrown_first_sticks_amount[1]:
-				message_lbl.text = "Both players landed the first score!"
+				message_lbl.text = "Both players landed the same score!"
 				await get_tree().create_timer(2.0).timeout
 				var random_player_chosen = some_random_int
 				if Global.is_debugging:
@@ -484,11 +484,11 @@ func perform_move(previous_pos : int, movement_array : Array, player_who_moved :
 	modulate_row(movement_array[0], player_who_moved, previous_pos, movement_array)
 	
 	#UPDATE_THE_GAME_STATE
-	update_game_state(previous_pos, movement_array, player_who_moved)
+	await update_game_state(previous_pos, movement_array, player_who_moved)
 	set_up_the_board(game_state)
 	
 	#MESSAGE
-	message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " moved " + str(movement_array[2]) + " " + return_plural_rows(movement_array[2]) + " " + return_dir_up_or_down(movement_array[1], player_who_moved) + "!"
+	message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " moved " + str(movement_array[2]) + " " + return_plural_rows(movement_array[2]) + " " + return_dir_up_or_down(movement_array[0], player_who_moved) + "!"
 	await get_tree().create_timer(2.0).timeout
 	
 	reset_modulate_rows()
@@ -506,29 +506,25 @@ func return_plural_rows(num):
 	else:
 		return "rows"
 		
-func return_dir_up_or_down(dir, player_who_moved) -> String:
+func return_dir_up_or_down(row, player_who_moved) -> String:
+	var new_dir : bool
 	if multiplayer.is_server():
-		if player_who_moved == "host":
-			return bool_to_dir(dir)
-		else:
-			return opp_dir(dir)
+		if player_who_moved == "host": #host is changing the board due to a state THEY made
+			new_dir = game_state[row][2]
+				
+		else: #host changes the board due to a state THE CLIENt made
+			new_dir = game_state[14 - row][2]
 	else:
-		if player_who_moved == "host":
-			return opp_dir(dir)
-		else:
-			return bool_to_dir(dir)
+		if player_who_moved == "host": #host moved on clients POV
+			new_dir = game_state[14 - row][2]
+		else: #client moved on their turn
+			new_dir = game_state[row][2]
 			
-func bool_to_dir(dir : bool) -> String:
-	if dir:
+	if new_dir:
 		return "up"
 	else:
 		return "down"
-		
-func opp_dir(dir : bool) -> String:
-	if dir:
-		return "down"
-	else:
-		return "up"
+			
 
 func go_to_next_turn() -> void:
 	if Global.game_mode == 0:
@@ -557,15 +553,15 @@ func update_game_state(previous_pos, movement_array, player_who_moved):
 	
 	if multiplayer.is_server():
 		if player_who_moved == "host": #host is changing the board due to a state THEY made
-			change_game_state_my_POV(previous_pos, new_row_moved, new_dir)
+			await change_game_state_my_POV(previous_pos, new_row_moved, new_dir)
 				
 		else: #host changes the board due to a state THE CLIENt made
-			change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir)
+			await change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir)
 	else:
 		if player_who_moved == "host": #host moved on clients POV
-			change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir)
+			await change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir)
 		else: #client moved on their turn
-			change_game_state_my_POV(previous_pos, new_row_moved, new_dir)
+			await change_game_state_my_POV(previous_pos, new_row_moved, new_dir)
 			
 func change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir):
 	var stack_amount = 0
@@ -605,7 +601,8 @@ func change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir):
 	else: #simply landed on it
 		game_state[14 - new_row_moved][0] += 1
 		game_state[14 - new_row_moved][1] = "opp"
-		game_state[14 - new_row_moved][2] = new_dir
+		game_state[14 - new_row_moved][2] = not new_dir
+		prints("opposite POV!", not new_dir)
 				
 func change_game_state_my_POV(previous_pos, new_row_moved, new_dir):
 	var stack_amount = 0

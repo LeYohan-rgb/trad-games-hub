@@ -9,19 +9,19 @@ extends VBoxContainer
 @onready var opp_landing_score = $main_container/sticks_container/top_space/opp_player_score
 
 var game_state : Dictionary = { #THE GAME STATE IS RELATIVE. [no, my_or_opp, direction] true -> enemy base.
-	1: [6, "my", true],
-	2: [0, "none", true],
-	3: [0, "none", true],
-	4: [0, "none", true],
-	5: [0, "none", true],
-	6: [0, "none", true],
-	7: [0, "none", true],
-	8: [0, "none", true],
-	9: [0, "none", true],
-	10: [0, "none", true],
-	11: [0, "none", true],
-	12: [0, "none", true],
-	13: [6, "opp", false],
+	1: [6, "my", true, ["my", "my", "my", "my", "my", "my"]],
+	2: [0, "none", true, []],
+	3: [0, "none", true, []],
+	4: [0, "none", true, []],
+	5: [0, "none", true, []],
+	6: [0, "none", true, []],
+	7: [0, "none", true, []],
+	8: [0, "none", true, []],
+	9: [0, "none", true, []],
+	10: [0, "none", true, []],
+	11: [0, "none", true, []],
+	12: [0, "none", true, []],
+	13: [6, "opp", false, ["opp", "opp", "opp", "opp", "opp", "opp"]],
 	"my_captured" : 0,
 	"opp_captured" : 0,
 	"game_turn" : 1
@@ -134,7 +134,6 @@ func set_up_the_board(current_game_state): #everything dealing with game state i
 				if current_game_state[i][0] >= 1:
 					if current_game_state[i][0] != 1:
 						row_nodes[i].get_node("Button").text = str(current_game_state[i][0])
-						prints(current_game_state[i][0], "the captured pieces should move this...", i)
 					else:
 						row_nodes[i].get_node("Button").text = ""
 					row_nodes[i].get_node("CenterContainer/Sprite2D").texture = load("res://Graphics/bul_game/" + return_white_or_black_mode_2(i) +"_row_1_" + return_my_or_opp_plr_host_or_client_str(current_game_state[i][1]) + ".png")
@@ -143,10 +142,10 @@ func set_up_the_board(current_game_state): #everything dealing with game state i
 					row_nodes[i].get_node("CenterContainer/Sprite2D").texture = load("res://Graphics/bul_game/" + return_white_or_black_mode_2(i) + "_row_0.png")
 		
 		for i in range(current_game_state["my_captured"]):
-			my_captured_pieces[i + 1].icon = load("res://Graphics/bul_game/" + return_my_or_opp_plr_host_or_client_str("my") +  "_piece.png")
+			my_captured_pieces[i + 1].icon = load("res://Graphics/bul_game/" + return_my_or_opp_plr_host_or_client_str("opp") +  "_piece.png")
 
 		for i in range(current_game_state["opp_captured"]):
-			my_captured_pieces[i + 1].icon = load("res://Graphics/bul_game/" + return_my_or_opp_plr_host_or_client_str("opp") +  "_piece.png")
+			opp_captured_pieces[i + 1].icon = load("res://Graphics/bul_game/" + return_my_or_opp_plr_host_or_client_str("my") +  "_piece.png")
 
 func return_white_or_black_mode_2(num) -> String:
 	if num % 2 == 0:
@@ -566,13 +565,18 @@ func update_game_state(previous_pos, movement_array, player_who_moved):
 			
 func change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir):
 	var stack_amount = 0
+	var stacked_strings = []
 	
 	if 14 - previous_pos == 13: #they just left the homebase
+		stacked_strings = ["opp"]
 		stack_amount = 1
 		game_state[14 - previous_pos][0] -= 1
+		game_state[14 - previous_pos][3].pop_back()
 	else:
+		stacked_strings = game_state[14 - previous_pos][3]
 		stack_amount = game_state[14 - previous_pos][0]
 		game_state[14 - previous_pos][0] = 0
+		game_state[14 - previous_pos][3] = []
 		
 		
 	
@@ -592,27 +596,37 @@ func change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir):
 		
 		#DID IT REACH THE HOMEBASE?
 		if 14 - new_row_moved == 13:
-			game_state[14 - new_row_moved][0] += 1
+			game_state[14 - new_row_moved][0] += stacked_strings.count("opp")
 			game_state[14 - new_row_moved][2] = false
+			for i in range(stacked_strings.count("opp")):
+				game_state[14 - new_row_moved][3].append("opp")
+			game_state["opp_captured"] += stacked_strings.count("my")
 		else:
+			game_state[14 - new_row_moved][3].append_array(stacked_strings)
 			game_state[14 - new_row_moved][0] += stack_amount
 			game_state[14 - new_row_moved][2] = true
-			game_state["opp_captured"] += int(ceil(stack_amount / 2.0))
 			
 	else: #simply landed on it
-		game_state[14 - new_row_moved][0] += 1
+		game_state[14 - new_row_moved][3].append_array(stacked_strings)
+		game_state[14 - new_row_moved][0] += stack_amount
+		game_state[14 - new_row_moved][1] = "opp"
 		game_state[14 - new_row_moved][1] = "opp"
 		game_state[14 - new_row_moved][2] = not new_dir
 				
 func change_game_state_my_POV(previous_pos, new_row_moved, new_dir):
 	var stack_amount = 0
+	var stacked_strings = []
 	
 	if previous_pos == 1: #they just left the homebase
+		stacked_strings = ["my"]
 		stack_amount = 1
 		game_state[previous_pos][0] -= 1
+		game_state[previous_pos][3].pop_back()
 	else:
+		stacked_strings = game_state[previous_pos][3]
 		stack_amount = game_state[previous_pos][0]
 		game_state[previous_pos][0] = 0
+		game_state[previous_pos][3] = []
 		
 		
 	
@@ -632,15 +646,19 @@ func change_game_state_my_POV(previous_pos, new_row_moved, new_dir):
 		
 		#DID IT REACH THE HOMEBASE?
 		if new_row_moved == 1:
-			game_state[new_row_moved][0] += 1
+			game_state[new_row_moved][0] += stacked_strings.count("my")
 			game_state[new_row_moved][2] = true
+			for i in range(stacked_strings.count("my")):
+				game_state[new_row_moved][3].append("my")
+			game_state["my_captured"] += stacked_strings.count("opp")
 		else:
+			game_state[new_row_moved][3].append_array(stacked_strings)
 			game_state[new_row_moved][0] += stack_amount
 			game_state[new_row_moved][2] = false
-			game_state["my_captured"] += int(ceil(stack_amount / 2.0))
 			
 	else: #simply landed on it
-		game_state[new_row_moved][0] += 1
+		game_state[new_row_moved][3].append_array(stacked_strings)
+		game_state[new_row_moved][0] += stack_amount
 		game_state[new_row_moved][1] = "my"
 		game_state[new_row_moved][2] = new_dir
 	
@@ -679,12 +697,15 @@ func modulate_row(row, player_who_moved, previous_pos, movement_array):
 func return_target_index(row, state):
 	var moves = stick_amount_turn
 	var target_index_array = [row, true, moves]
+	#at the first movement, it was indeed false. however, the direction label in the message didnt mark it as such
+	#indeed, at the second movement, it becomes true for some reason.
 	if state[row][2] == true: #moving front
 		if row + moves >= 13:
 			target_index_array[0] = 24 - moves - row
 			target_index_array[1] = false
 		else:
 			target_index_array[0] = row + moves
+			target_index_array[1] = true
 	else: #moving backwards
 		if row - moves <= 1:
 			target_index_array[0] = 1
@@ -692,13 +713,14 @@ func return_target_index(row, state):
 			target_index_array[1] = true
 		else:
 			target_index_array[0] = row - moves
+			target_index_array[1] = false
 			
 	return target_index_array
 	
 func illegal_move_message(ilegal_msg):
 	game_paused = true
 	if ilegal_msg == 1: #cannot land on an occupied row
-		message_lbl.text = "You cannot have more than piece on the same row!"
+		message_lbl.text = "You cannot have more than one piece on the same row!"
 		
 		
 	await get_tree().create_timer(2.0).timeout

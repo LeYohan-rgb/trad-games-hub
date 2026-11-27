@@ -68,6 +68,8 @@ var game_state : Dictionary = { #THE GAME STATE IS RELATIVE. [no, my_or_opp, dir
 	4: $main_container/sticks_container/VBoxContainer/HBoxContainer2/stick_4,
 }
 
+@onready var skip_btn = $main_container/sticks_container/top_space/skip_debug_btn
+
 var opp_player_disconnected = false
 var game_paused = false
 var can_throw_the_sticks = false
@@ -88,7 +90,13 @@ func _ready() -> void:
 	if Global.game_mode == 0:
 		multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 		multiplayer.server_disconnected.connect(_on_server_disconnected)
+		
+		if Global.is_debugging:
+			appear_skip_btn()
 
+func appear_skip_btn():
+	skip_btn.show()
+	
 func _on_peer_disconnected():
 	opp_player_disconnected = true
 
@@ -333,8 +341,6 @@ func throw_sticks_animation(my_array, some_random_int):
 				message_lbl.text = "Both players landed the same score!"
 				await get_tree().create_timer(2.0).timeout
 				var random_player_chosen = some_random_int
-				if Global.is_debugging:
-					random_player_chosen = 1
 				if random_player_chosen == 0: #host was chosen
 					is_host_first_player = true
 					if multiplayer.is_server():
@@ -453,7 +459,6 @@ func _on_board_container_pressed_row(row_pressed: Variant) -> void:
 			is_my_move_legal(row_pressed)
 			return
 		
-
 func is_my_move_legal(my_row):
 	#you cant play on an empty row
 	if (game_state[my_row][0]) == 0:
@@ -468,17 +473,28 @@ func is_my_move_legal(my_row):
 	
 	#cannot land on an occupied row by yourself
 	#if it landed on an occupied row, that is NOT the homebase, that is MY own
-	if (game_state[target_index_movement[0]][0] > 0 and target_index_movement[0] != 1 and game_state[target_index_movement[0]][1] == "my"):
+	if (can_you_ocupy_the_row(my_row, target_index_movement[0]) and target_index_movement[0] != 1 and game_state[target_index_movement[0]][1] == "my"):
 		illegal_move_message(1)
 		return
 		
 	#PERFORM MOVE!
 	perform_move.rpc(my_row, target_index_movement, whose_turn_is_it_str())
+	
+func can_you_ocupy_the_row(my_row, landed_row) -> bool:
+	if game_state[landed_row][0] > 0:
+		if my_row == landed_row: #if its landing on the same one
+			return false #this is NOT illegal
+		else:
+			return true 
+	else: #the landed row is empty
+		return false
 
 @rpc("any_peer", "call_local", "reliable")
 func perform_move(previous_pos : int, movement_array : Array, player_who_moved : String):
 	#THIS FUNCTION IS FOR MULTIPLAYER OK?
 	game_paused = true
+	var previous_direction = return_dir_up_or_down(previous_pos, player_who_moved)
+	var did_you_captured = return_did_you_capture_and_amount(movement_array[0], player_who_moved)
 	
 	#HIGHLIGHT THE ROW
 	modulate_row(movement_array[0], player_who_moved, previous_pos, movement_array)
@@ -487,16 +503,58 @@ func perform_move(previous_pos : int, movement_array : Array, player_who_moved :
 	await update_game_state(previous_pos, movement_array, player_who_moved)
 	set_up_the_board(game_state)
 	
-	#MESSAGE
-	message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " moved " + str(movement_array[2]) + " " + return_plural_rows(movement_array[2]) + " " + return_dir_up_or_down(movement_array[0], player_who_moved) + "!"
+	#captured
+	if did_you_captured[0]:
+		message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " captured " + str(did_you_captured[1]) + " " + return_plural_pieces(did_you_captured[1]) + " from " + client_or_host_player_name_str(return_opposite_host_or_client_str(whose_turn_is_it_str())) + "!"
+	
+	#MESSAGE (need to fix: when captures, and returns to homebase)
+	elif true:
+		message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " moved " + str(movement_array[2]) + " " + return_plural_rows(movement_array[2]) + " " + previous_direction + "!"
+	
+	else:
+		message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " moved " + str(movement_array[2]) + " " + return_plural_rows(movement_array[2]) + " " + previous_direction + "!"
+	
 	await get_tree().create_timer(2.0).timeout
 	
 	reset_modulate_rows()
 	
-	prints(game_state, "is_host?", multiplayer.is_server())
-	
 	#GO TO NEXT TURN
 	go_to_next_turn()
+	
+func return_opposite_host_or_client_str(str) -> String:
+	if str == "host":
+		return "client"
+	else:
+		return "host"
+
+func return_plural_pieces(piece):
+	if piece == 1:
+		return "piece"
+	else:
+		return "pieces"
+		
+func return_did_you_capture_and_amount(row, player_who_moved) -> Array:
+	var return_arr = [false, 0]
+	if multiplayer.is_server():
+		if player_who_moved == "host": #host is changing the board due to a state THEY made
+			if game_state[row][1] == "opp":
+				return_arr[0] = true
+				return_arr[1] = game_state[row][3].count("opp")
+		else: #host changes the board due to a state THE CLIENt made
+			if game_state[14 - row][1] == "my":
+				return_arr[0] = true
+				return_arr[1] = game_state[row][3].count("my")
+	else:
+		if player_who_moved == "host": #host moved on clients POV
+			if game_state[14 - row][1] == "my":
+				return_arr[0] = true
+				return_arr[1] = game_state[row][3].count("my")
+		else: #client moved on their turn
+			if game_state[row][1] == "opp":
+				return_arr[0] = true
+				return_arr[1] = game_state[row][3].count("opp")
+				
+	return return_arr
 	
 func reset_modulate_rows():
 	for i in range(1, 14):
@@ -528,6 +586,7 @@ func return_dir_up_or_down(row, player_who_moved) -> String:
 		return "down"
 			
 
+@rpc("any_peer", "call_local", "reliable")
 func go_to_next_turn() -> void:
 	if Global.game_mode == 0:
 		game_state["game_turn"] += 1
@@ -732,3 +791,7 @@ var game_state_2 : Dictionary = { #THE GAME STATE IS RELATIVE. [no, my_or_opp, d
 	"opp_captured" : 0,
 	"game_turn" : 1
 }
+
+
+func _on_skip_debug_btn_pressed() -> void:
+	go_to_next_turn.rpc()

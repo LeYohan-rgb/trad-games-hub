@@ -732,12 +732,25 @@ func opp_plr(num):
 func quit_game_btn():
 	reset_all_variables()
 	
-	announce_disconnected_player.rpc()
-	multiplayer.multiplayer_peer.close()
-	multiplayer.multiplayer_peer = null
+	if Global.game_mode == 0:
+		announce_disconnected_player.rpc()
+		multiplayer.multiplayer_peer.close()
+		multiplayer.multiplayer_peer = null
 	get_tree().change_scene_to_file("res://Scenes/game_selector.tscn")
 	
 func _on_quit_game_btn_pressed() -> void:
+	if Global.game_mode == 1:
+		if game_paused == true:
+			if game_started == false:
+				quit_game_btn()
+				return
+			else:
+				return
+				
+		quit_game_btn()
+		return
+		
+		
 	if game_paused == true:
 		if game_started == false and opposite_player_disconnected:
 			quit_game_btn()

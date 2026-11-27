@@ -12,7 +12,9 @@
 			"title": "Todo",
 			"tasks": [
 				"068b470b-dec5-43b1-b997-7964a7e3316b",
-				"5faf8530-7de8-4fca-911d-0c787540ebf1"
+				"654c880c-3f02-40e2-967e-b60e12e5c61f",
+				"f55b10a3-1c52-42f6-87a8-8062a5d88ca2",
+				"01d2282c-4ff8-4b42-9f8a-0b14168fae05"
 			]
 		},
 		{
@@ -24,7 +26,8 @@
 			"uuid": "ae2936bf-3937-4acc-9c3b-d0d8edb0cac2",
 			"title": "Done",
 			"tasks": [
-				"7e0a2e50-bf7e-4955-a516-2f6f67709d3e"
+				"7e0a2e50-bf7e-4955-a516-2f6f67709d3e",
+				"5faf8530-7de8-4fca-911d-0c787540ebf1"
 			]
 		}
 	],
@@ -46,6 +49,27 @@
 		{
 			"uuid": "5faf8530-7de8-4fca-911d-0c787540ebf1",
 			"title": "fix tipo : you cannot have more than piece",
+			"description": "",
+			"category": "786662be-e154-46c3-bf2c-7d7a223a64eb",
+			"steps": []
+		},
+		{
+			"uuid": "654c880c-3f02-40e2-967e-b60e12e5c61f",
+			"title": "you cannot loop back",
+			"description": "",
+			"category": "786662be-e154-46c3-bf2c-7d7a223a64eb",
+			"steps": []
+		},
+		{
+			"uuid": "f55b10a3-1c52-42f6-87a8-8062a5d88ca2",
+			"title": "captured stacks are still broken",
+			"description": "",
+			"category": "786662be-e154-46c3-bf2c-7d7a223a64eb",
+			"steps": []
+		},
+		{
+			"uuid": "01d2282c-4ff8-4b42-9f8a-0b14168fae05",
+			"title": "when the user quits the game in bot, they dont quit",
 			"description": "",
 			"category": "786662be-e154-46c3-bf2c-7d7a223a64eb",
 			"steps": []

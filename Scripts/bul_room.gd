@@ -493,6 +493,8 @@ func perform_move(previous_pos : int, movement_array : Array, player_who_moved :
 	
 	reset_modulate_rows()
 	
+	prints(game_state, "is_host?", multiplayer.is_server())
+	
 	#GO TO NEXT TURN
 	go_to_next_turn()
 	
@@ -571,45 +573,36 @@ func change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir):
 		stacked_strings = ["opp"]
 		stack_amount = 1
 		game_state[14 - previous_pos][0] -= 1
+		game_state[14 - previous_pos][1] = "opp"
+		game_state[14 - previous_pos][2] = false
 		game_state[14 - previous_pos][3].pop_back()
 	else:
 		stacked_strings = game_state[14 - previous_pos][3]
 		stack_amount = game_state[14 - previous_pos][0]
 		game_state[14 - previous_pos][0] = 0
+		game_state[14 - previous_pos][1] = "none"
+		game_state[14 - previous_pos][2] = true
 		game_state[14 - previous_pos][3] = []
 		
 		
 	
-	if game_state[14 - previous_pos][0] == 0: #if they left it empty, its none
-		game_state[14 - previous_pos][1] = "none"
-		game_state[14 - previous_pos][2] = true
-	else: #if its the homebase, stays them
-		game_state[14 - previous_pos][1] = "opp"
-		game_state[14 - previous_pos][2] = false
-	
-	if 14 - previous_pos == 13: #the homebase stays the homebase even when empty
-		game_state[14 - previous_pos][1] = "opp"
-		game_state[14 - previous_pos][2] = false
-		
-	if game_state[14 - new_row_moved][0] > 0: #they catched it
+	if 14 - new_row_moved == 13: #the homebase stays the homebase even when empty
+		game_state[14 - new_row_moved][0] += stacked_strings.count("opp")
 		game_state[14 - new_row_moved][1] = "opp"
+		game_state[14 - new_row_moved][2] = false
+		for i in range(stacked_strings.count("opp")):
+			game_state[14 - new_row_moved][3].append("opp")
+		game_state["opp_captured"] += stacked_strings.count("my")
 		
-		#DID IT REACH THE HOMEBASE?
-		if 14 - new_row_moved == 13:
-			game_state[14 - new_row_moved][0] += stacked_strings.count("opp")
-			game_state[14 - new_row_moved][2] = false
-			for i in range(stacked_strings.count("opp")):
-				game_state[14 - new_row_moved][3].append("opp")
-			game_state["opp_captured"] += stacked_strings.count("my")
-		else:
-			game_state[14 - new_row_moved][3].append_array(stacked_strings)
-			game_state[14 - new_row_moved][0] += stack_amount
-			game_state[14 - new_row_moved][2] = true
+	elif game_state[14 - new_row_moved][0] > 0: #they catched it
+		game_state[14 - new_row_moved][1] = "opp"
+		game_state[14 - new_row_moved][3].append_array(stacked_strings)
+		game_state[14 - new_row_moved][0] += stack_amount
+		game_state[14 - new_row_moved][2] = true
 			
 	else: #simply landed on it
 		game_state[14 - new_row_moved][3].append_array(stacked_strings)
 		game_state[14 - new_row_moved][0] += stack_amount
-		game_state[14 - new_row_moved][1] = "opp"
 		game_state[14 - new_row_moved][1] = "opp"
 		game_state[14 - new_row_moved][2] = not new_dir
 				
@@ -621,40 +614,32 @@ func change_game_state_my_POV(previous_pos, new_row_moved, new_dir):
 		stacked_strings = ["my"]
 		stack_amount = 1
 		game_state[previous_pos][0] -= 1
+		game_state[previous_pos][1] = "my"
+		game_state[previous_pos][2] = true
 		game_state[previous_pos][3].pop_back()
 	else:
 		stacked_strings = game_state[previous_pos][3]
 		stack_amount = game_state[previous_pos][0]
 		game_state[previous_pos][0] = 0
+		game_state[previous_pos][1] = "none"
+		game_state[previous_pos][2] = true
 		game_state[previous_pos][3] = []
 		
 		
 	
-	if game_state[previous_pos][0] == 0: #if they left it empty, its none
-		game_state[previous_pos][1] = "none"
-		game_state[previous_pos][2] = true
-	else: #if its the homebase, stays them
-		game_state[previous_pos][1] = "my"
-		game_state[previous_pos][2] = true
-	
-	if previous_pos == 1: #the homebase stays the homebase even when empty
-		game_state[previous_pos][1] = "my"
-		game_state[previous_pos][2] = true
-		
-	if game_state[new_row_moved][0] > 0: #they catched it
+	if new_row_moved == 1: #the homebase stays the homebase even when empty
+		game_state[new_row_moved][0] += stacked_strings.count("my")
 		game_state[new_row_moved][1] = "my"
+		game_state[new_row_moved][2] = true
+		for i in range(stacked_strings.count("my")):
+			game_state[new_row_moved][3].append("my")
+		game_state["my_captured"] += stacked_strings.count("opp")
 		
-		#DID IT REACH THE HOMEBASE?
-		if new_row_moved == 1:
-			game_state[new_row_moved][0] += stacked_strings.count("my")
-			game_state[new_row_moved][2] = true
-			for i in range(stacked_strings.count("my")):
-				game_state[new_row_moved][3].append("my")
-			game_state["my_captured"] += stacked_strings.count("opp")
-		else:
-			game_state[new_row_moved][3].append_array(stacked_strings)
-			game_state[new_row_moved][0] += stack_amount
-			game_state[new_row_moved][2] = false
+	elif game_state[new_row_moved][0] > 0: #they catched it
+		game_state[new_row_moved][1] = "my"
+		game_state[new_row_moved][3].append_array(stacked_strings)
+		game_state[new_row_moved][0] += stack_amount
+		game_state[new_row_moved][2] = false
 			
 	else: #simply landed on it
 		game_state[new_row_moved][3].append_array(stacked_strings)

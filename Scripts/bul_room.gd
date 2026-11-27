@@ -10,11 +10,11 @@ extends VBoxContainer
 
 var game_state : Dictionary = { #THE GAME STATE IS RELATIVE. [no, my_or_opp, direction] true -> enemy base.
 	1: [6, "my", true],
-	2: [1, "opp", false],
-	3: [1, "opp", false],
-	4: [1, "opp", false],
-	5: [1, "opp", false],
-	6: [1, "opp", false],
+	2: [0, "none", true],
+	3: [0, "none", true],
+	4: [0, "none", true],
+	5: [0, "none", true],
+	6: [0, "none", true],
 	7: [0, "none", true],
 	8: [0, "none", true],
 	9: [0, "none", true],
@@ -425,7 +425,6 @@ func _on_board_container_pressed_row(row_pressed: Variant) -> void:
 		
 	#CHECK IF TURN
 	if Global.game_mode == 0:
-		prints(is_it_my_turn(), multiplayer.is_server())
 		if is_it_my_turn():
 			is_my_move_legal(row_pressed)
 			return
@@ -462,30 +461,64 @@ func perform_move(previous_pos : int, movement_array : Array, player_who_moved :
 	
 	#UPDATE_THE_GAME_STATE
 	update_game_state(previous_pos, movement_array, player_who_moved)
+	set_up_the_board(game_state)
 			
 func update_game_state(previous_pos, movement_array, player_who_moved):
+	#MUST TRANSLATE. every parameter is in the POV of the one who made the move.
+	
+	#previous pos is the row they clicked. movement_array[0] the row they landed. [1] the ownership. [2] the dir.
 	var new_row_moved = movement_array[0]
-	var new_dir = movement_array[2]
-	var no_rows_moved = movement_array[1]
+	var new_dir = movement_array[1]
+	var no_rows_moved = movement_array[2]
 	
 	if multiplayer.is_server():
 		if player_who_moved == "host": #host is changing the board due to a state THEY made
-			game_state[previous_pos][0] = 0
-			game_state[previous_pos][1] = "none"
-			game_state[previous_pos][2] = true
-			if game_state[new_row_moved][0] > 0: #they catched it
-				pass
-			else:
-				game_state[new_row_moved][0] += 1
-			
-			
-		else: #chost changes due to a state THE CLIENt made
-			pass
+			change_game_state_my_POV(previous_pos, new_row_moved, new_dir)
+				
+		else: #host changes the board due to a state THE CLIENt made
+			change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir)
 	else:
-		if player_who_moved == "host": #host moved on clients turn
-			pass
+		if player_who_moved == "host": #host moved on clients POV
+			change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir)
 		else: #client moved on their turn
-			pass
+			change_game_state_my_POV(previous_pos, new_row_moved, new_dir)
+			
+func change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir):
+	game_state[14 - previous_pos][0] -= 1
+	
+	if game_state[14 - previous_pos][0] == 0: #if they left it empty, its none
+		game_state[14 - previous_pos][1] = "none"
+		game_state[14 - previous_pos][2] = true
+	else: #if its the homebase, stays them
+		game_state[14 - previous_pos][1] = "opp"
+		game_state[14 - previous_pos][2] = false
+		
+	if game_state[14 - new_row_moved][0] > 0: #they catched it
+		game_state[14 - new_row_moved][0] += 1
+		game_state[14 - new_row_moved][1] = "opp"
+		game_state[14 - new_row_moved][2] = true
+	else: #simply landed on it
+		game_state[14 - new_row_moved][0] += 1
+		game_state[14 - new_row_moved][1] = "opp"
+		game_state[14 - new_row_moved][2] = new_dir
+				
+func change_game_state_my_POV(previous_pos, new_row_moved, new_dir):
+	game_state[previous_pos][0] -= 1
+	
+	if game_state[previous_pos][0] == 0: #if they left it empty, its none
+		game_state[previous_pos][1] = "none"
+	else: #if its the homebase, stays my
+		game_state[previous_pos][1] = "my"
+	game_state[previous_pos][2] = true
+	
+	if game_state[new_row_moved][0] > 0: #they catched it
+		game_state[new_row_moved][0] += 1
+		game_state[new_row_moved][1] = "my"
+		game_state[new_row_moved][2] = false #if they catched, heading towards homebase
+	else: #simply landed on it
+		game_state[new_row_moved][0] += 1
+		game_state[new_row_moved][1] = "my"
+		game_state[new_row_moved][2] = new_dir
 	
 func modulate_row(row, player_who_moved, previous_pos, movement_array):
 	if multiplayer.is_server():
@@ -532,7 +565,7 @@ func return_target_index(row, state):
 	else: #moving backwards
 		if row - moves <= 1:
 			target_index_array[0] = 1
-			target_index_array[2] = 1
+			target_index_array[2] = row - 1
 			target_index_array[1] = true
 		else:
 			target_index_array[0] = row - moves

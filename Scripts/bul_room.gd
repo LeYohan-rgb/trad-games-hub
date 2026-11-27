@@ -484,7 +484,16 @@ func update_game_state(previous_pos, movement_array, player_who_moved):
 			change_game_state_my_POV(previous_pos, new_row_moved, new_dir)
 			
 func change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir):
-	game_state[14 - previous_pos][0] -= 1
+	var stack_amount = 0
+	
+	if game_state[14 - previous_pos] == 13: #they just left the homebase
+		stack_amount = 1
+		game_state[14 - previous_pos][0] -= 1
+	else:
+		stack_amount = game_state[14 - previous_pos][0]
+		game_state[14 - previous_pos][0] = 0
+		
+		
 	
 	if game_state[14 - previous_pos][0] == 0: #if they left it empty, its none
 		game_state[14 - previous_pos][1] = "none"
@@ -492,29 +501,63 @@ func change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir):
 	else: #if its the homebase, stays them
 		game_state[14 - previous_pos][1] = "opp"
 		game_state[14 - previous_pos][2] = false
+	
+	if game_state[14 - previous_pos] == 13: #the homebase stays the homebase even when empty
+		game_state[14 - previous_pos][1] = "opp"
+		game_state[14 - previous_pos][2] = false
 		
 	if game_state[14 - new_row_moved][0] > 0: #they catched it
-		game_state[14 - new_row_moved][0] += 1
 		game_state[14 - new_row_moved][1] = "opp"
-		game_state[14 - new_row_moved][2] = true
+		
+		#DID IT REACH THE HOMEBASE?
+		if game_state[14 - new_row_moved] == 13:
+			game_state[14 - new_row_moved][0] += 1
+			game_state[14 - new_row_moved][2] = false
+		else:
+			game_state[14 - new_row_moved][0] += stack_amount
+			game_state[14 - new_row_moved][2] = true
+			game_state["opp_catured"] += int(ceil(stack_amount / 2.0))
+			
 	else: #simply landed on it
 		game_state[14 - new_row_moved][0] += 1
 		game_state[14 - new_row_moved][1] = "opp"
 		game_state[14 - new_row_moved][2] = new_dir
 				
 func change_game_state_my_POV(previous_pos, new_row_moved, new_dir):
-	game_state[previous_pos][0] -= 1
+	var stack_amount = 0
+	
+	if game_state[previous_pos] == 1: #they just left the homebase
+		stack_amount = 1
+		game_state[previous_pos][0] -= 1
+	else:
+		stack_amount = game_state[previous_pos][0]
+		game_state[previous_pos][0] = 0
+		
+		
 	
 	if game_state[previous_pos][0] == 0: #if they left it empty, its none
 		game_state[previous_pos][1] = "none"
-	else: #if its the homebase, stays my
+		game_state[previous_pos][2] = true
+	else: #if its the homebase, stays them
 		game_state[previous_pos][1] = "my"
-	game_state[previous_pos][2] = true
+		game_state[previous_pos][2] = true
 	
+	if game_state[previous_pos] == 1: #the homebase stays the homebase even when empty
+		game_state[previous_pos][1] = "my"
+		game_state[14 - previous_pos][2] = true
+		
 	if game_state[new_row_moved][0] > 0: #they catched it
-		game_state[new_row_moved][0] += 1
 		game_state[new_row_moved][1] = "my"
-		game_state[new_row_moved][2] = false #if they catched, heading towards homebase
+		
+		#DID IT REACH THE HOMEBASE?
+		if game_state[new_row_moved] == 1:
+			game_state[new_row_moved][0] += 1
+			game_state[new_row_moved][2] = true
+		else:
+			game_state[new_row_moved][0] += stack_amount
+			game_state[new_row_moved][2] = false
+			game_state["my_catured"] += int(ceil(stack_amount / 2.0))
+			
 	else: #simply landed on it
 		game_state[new_row_moved][0] += 1
 		game_state[new_row_moved][1] = "my"
@@ -597,7 +640,7 @@ var game_state_2 : Dictionary = { #THE GAME STATE IS RELATIVE. [no, my_or_opp, d
 	10: [0, "none", true],
 	11: [0, "none", true],
 	12: [0, "none", true],
-	13: [6, "opp", true],
+	13: [6, "opp", false],
 	"my_captured" : 0,
 	"opp_captured" : 0,
 	"game_turn" : 1

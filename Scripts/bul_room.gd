@@ -27,6 +27,24 @@ var game_state : Dictionary = { #THE GAME STATE IS RELATIVE. [no, my_or_opp, dir
 	"game_turn" : 1
 }
 
+@onready var opp_captured_pieces : Dictionary = {
+	1: $opp_player_panel/HBoxContainer/opp_captured_pieces/Button,
+	2: $opp_player_panel/HBoxContainer/opp_captured_pieces/Button2,
+	3: $opp_player_panel/HBoxContainer/opp_captured_pieces/Button3,
+	4: $opp_player_panel/HBoxContainer/opp_captured_pieces/Button4,
+	5: $opp_player_panel/HBoxContainer/opp_captured_pieces/Button5,
+	6: $opp_player_panel/HBoxContainer/opp_captured_pieces/Button6
+}
+
+@onready var my_captured_pieces : Dictionary = {
+	1: $my_player_panel/HBoxContainer/my_captured_pieces/Button,
+	2: $my_player_panel/HBoxContainer/my_captured_pieces/Button2,
+	3: $my_player_panel/HBoxContainer/my_captured_pieces/Button3,
+	4: $my_player_panel/HBoxContainer/my_captured_pieces/Button4,
+	5: $my_player_panel/HBoxContainer/my_captured_pieces/Button5,
+	6: $my_player_panel/HBoxContainer/my_captured_pieces/Button6
+}
+
 @onready var row_nodes : Dictionary = { #THIS IS RELATIVE TOO
 	1: $main_container/board_container/Row1,
 	2: $main_container/board_container/Row2,
@@ -121,6 +139,12 @@ func set_up_the_board(current_game_state): #everything dealing with game state i
 					row_nodes[i].get_node("CenterContainer/Sprite2D").texture = load("res://Graphics/bul_game/" + return_white_or_black_mode_2(i) +"_row_1_" + return_my_or_opp_plr_host_or_client_str(current_game_state[i][1]) + ".png")
 				else:
 					row_nodes[i].get_node("CenterContainer/Sprite2D").texture = load("res://Graphics/bul_game/" + return_white_or_black_mode_2(i) + "_row_0.png")
+		
+		for i in range(current_game_state["my_captured"]):
+			my_captured_pieces[i + 1].icon = load("res://Graphics/bul_game/" + return_my_or_opp_plr_host_or_client_str("my") +  "_piece.png")
+
+		for i in range(current_game_state["opp_captured"]):
+			my_captured_pieces[i + 1].icon = load("res://Graphics/bul_game/" + return_my_or_opp_plr_host_or_client_str("opp") +  "_piece.png")
 
 func return_white_or_black_mode_2(num) -> String:
 	if num % 2 == 0:
@@ -462,6 +486,66 @@ func perform_move(previous_pos : int, movement_array : Array, player_who_moved :
 	#UPDATE_THE_GAME_STATE
 	update_game_state(previous_pos, movement_array, player_who_moved)
 	set_up_the_board(game_state)
+	
+	#MESSAGE
+	message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " moved " + str(movement_array[2]) + " " + return_plural_rows(movement_array[2]) + " " + return_dir_up_or_down(movement_array[1], player_who_moved) + "!"
+	await get_tree().create_timer(2.0).timeout
+	
+	reset_modulate_rows()
+	
+	#GO TO NEXT TURN
+	go_to_next_turn()
+	
+func reset_modulate_rows():
+	for i in range(1, 14):
+		row_nodes[i].get_node("CenterContainer/Sprite2D").modulate = "ffffff"
+	
+func return_plural_rows(num):
+	if num == 1:
+		return "row"
+	else:
+		return "rows"
+		
+func return_dir_up_or_down(dir, player_who_moved) -> String:
+	if multiplayer.is_server():
+		if player_who_moved == "host":
+			return bool_to_dir(dir)
+		else:
+			return opp_dir(dir)
+	else:
+		if player_who_moved == "host":
+			return opp_dir(dir)
+		else:
+			return bool_to_dir(dir)
+			
+func bool_to_dir(dir : bool) -> String:
+	if dir:
+		return "up"
+	else:
+		return "down"
+		
+func opp_dir(dir : bool) -> String:
+	if dir:
+		return "down"
+	else:
+		return "up"
+
+func go_to_next_turn() -> void:
+	if Global.game_mode == 0:
+		game_state["game_turn"] += 1
+	
+		if whose_turn_is_it_str() == "host" and multiplayer.is_server():
+			can_throw_the_sticks = true
+		if whose_turn_is_it_str() == "client" and not multiplayer.is_server():
+			can_throw_the_sticks = true
+			
+		message_lbl.text = "It's " + client_or_host_player_name_str(whose_turn_is_it_str()) + "'s turn!"
+		game_paused = false
+		
+		#reset throwing marks 
+		opp_landing_score.text = ""
+		my_landing_score.text = ""
+		
 			
 func update_game_state(previous_pos, movement_array, player_who_moved):
 	#MUST TRANSLATE. every parameter is in the POV of the one who made the move.
@@ -486,7 +570,7 @@ func update_game_state(previous_pos, movement_array, player_who_moved):
 func change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir):
 	var stack_amount = 0
 	
-	if game_state[14 - previous_pos] == 13: #they just left the homebase
+	if 14 - previous_pos == 13: #they just left the homebase
 		stack_amount = 1
 		game_state[14 - previous_pos][0] -= 1
 	else:
@@ -502,7 +586,7 @@ func change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir):
 		game_state[14 - previous_pos][1] = "opp"
 		game_state[14 - previous_pos][2] = false
 	
-	if game_state[14 - previous_pos] == 13: #the homebase stays the homebase even when empty
+	if 14 - previous_pos == 13: #the homebase stays the homebase even when empty
 		game_state[14 - previous_pos][1] = "opp"
 		game_state[14 - previous_pos][2] = false
 		
@@ -510,13 +594,13 @@ func change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir):
 		game_state[14 - new_row_moved][1] = "opp"
 		
 		#DID IT REACH THE HOMEBASE?
-		if game_state[14 - new_row_moved] == 13:
+		if 14 - new_row_moved == 13:
 			game_state[14 - new_row_moved][0] += 1
 			game_state[14 - new_row_moved][2] = false
 		else:
 			game_state[14 - new_row_moved][0] += stack_amount
 			game_state[14 - new_row_moved][2] = true
-			game_state["opp_catured"] += int(ceil(stack_amount / 2.0))
+			game_state["opp_captured"] += int(ceil(stack_amount / 2.0))
 			
 	else: #simply landed on it
 		game_state[14 - new_row_moved][0] += 1
@@ -526,7 +610,7 @@ func change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir):
 func change_game_state_my_POV(previous_pos, new_row_moved, new_dir):
 	var stack_amount = 0
 	
-	if game_state[previous_pos] == 1: #they just left the homebase
+	if previous_pos == 1: #they just left the homebase
 		stack_amount = 1
 		game_state[previous_pos][0] -= 1
 	else:
@@ -542,21 +626,21 @@ func change_game_state_my_POV(previous_pos, new_row_moved, new_dir):
 		game_state[previous_pos][1] = "my"
 		game_state[previous_pos][2] = true
 	
-	if game_state[previous_pos] == 1: #the homebase stays the homebase even when empty
+	if previous_pos == 1: #the homebase stays the homebase even when empty
 		game_state[previous_pos][1] = "my"
-		game_state[14 - previous_pos][2] = true
+		game_state[previous_pos][2] = true
 		
 	if game_state[new_row_moved][0] > 0: #they catched it
 		game_state[new_row_moved][1] = "my"
 		
 		#DID IT REACH THE HOMEBASE?
-		if game_state[new_row_moved] == 1:
+		if new_row_moved == 1:
 			game_state[new_row_moved][0] += 1
 			game_state[new_row_moved][2] = true
 		else:
 			game_state[new_row_moved][0] += stack_amount
 			game_state[new_row_moved][2] = false
-			game_state["my_catured"] += int(ceil(stack_amount / 2.0))
+			game_state["my_captured"] += int(ceil(stack_amount / 2.0))
 			
 	else: #simply landed on it
 		game_state[new_row_moved][0] += 1
@@ -570,12 +654,12 @@ func modulate_row(row, player_who_moved, previous_pos, movement_array):
 				row_nodes[row].get_node("CenterContainer/Sprite2D").modulate = capture_modulate_color
 				return
 		else: #client moved on hosts turn
-			if game_state[row][1] == "my":
+			if game_state[14 - row][1] == "my":
 				row_nodes[14 - row].get_node("CenterContainer/Sprite2D").modulate = capture_modulate_color
 				return
 	else:
 		if player_who_moved == "host": #host moved on clients turn
-			if game_state[row][1] == "my":
+			if game_state[14 - row][1] == "my":
 				row_nodes[14 -row].get_node("CenterContainer/Sprite2D").modulate = capture_modulate_color
 				return
 		else: #client moved on their turn
@@ -595,7 +679,6 @@ func modulate_row(row, player_who_moved, previous_pos, movement_array):
 		else: #client moved on their turn
 			row_nodes[row].get_node("CenterContainer/Sprite2D").modulate = client_modulate_color
 			
-	
 func return_target_index(row, state):
 	var moves = stick_amount_turn
 	var target_index_array = [row, true, moves]

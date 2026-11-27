@@ -134,10 +134,12 @@ func set_up_the_board(current_game_state): #everything dealing with game state i
 				if current_game_state[i][0] >= 1:
 					if current_game_state[i][0] != 1:
 						row_nodes[i].get_node("Button").text = str(current_game_state[i][0])
+						prints(current_game_state[i][0], "the captured pieces should move this...", i)
 					else:
 						row_nodes[i].get_node("Button").text = ""
 					row_nodes[i].get_node("CenterContainer/Sprite2D").texture = load("res://Graphics/bul_game/" + return_white_or_black_mode_2(i) +"_row_1_" + return_my_or_opp_plr_host_or_client_str(current_game_state[i][1]) + ".png")
 				else:
+					row_nodes[i].get_node("Button").text = ""
 					row_nodes[i].get_node("CenterContainer/Sprite2D").texture = load("res://Graphics/bul_game/" + return_white_or_black_mode_2(i) + "_row_0.png")
 		
 		for i in range(current_game_state["my_captured"]):
@@ -256,7 +258,6 @@ func _on_throw_btn_pressed() -> void:
 		return
 		
 	if Global.game_mode == 0:
-		prints(is_it_my_turn(), multiplayer.is_server())
 		if is_it_my_turn() and not has_thrown_sticks_on_their_turn:
 			throw_sticks_animation.rpc(return_random_stick_array(), return_random_int_0_to_1())
 			return
@@ -602,7 +603,6 @@ func change_game_state_opposite_POV(previous_pos, new_row_moved, new_dir):
 		game_state[14 - new_row_moved][0] += 1
 		game_state[14 - new_row_moved][1] = "opp"
 		game_state[14 - new_row_moved][2] = not new_dir
-		prints("opposite POV!", not new_dir)
 				
 func change_game_state_my_POV(previous_pos, new_row_moved, new_dir):
 	var stack_amount = 0

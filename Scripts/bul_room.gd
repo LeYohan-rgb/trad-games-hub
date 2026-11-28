@@ -495,6 +495,7 @@ func perform_move(previous_pos : int, movement_array : Array, player_who_moved :
 	game_paused = true
 	var previous_direction = return_dir_up_or_down(previous_pos, player_who_moved)
 	var did_you_captured = return_did_you_capture_and_amount(movement_array[0], player_who_moved)
+	var returned_to_homebase_with_pieces = did_you_returned_to_homebase_with_pieces(previous_pos, movement_array[0], player_who_moved)
 	
 	#HIGHLIGHT THE ROW
 	modulate_row(movement_array[0], player_who_moved, previous_pos, movement_array)
@@ -507,10 +508,13 @@ func perform_move(previous_pos : int, movement_array : Array, player_who_moved :
 	if did_you_captured[0]:
 		message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " captured " + str(did_you_captured[1]) + " " + return_plural_pieces(did_you_captured[1]) + " from " + client_or_host_player_name_str(return_opposite_host_or_client_str(whose_turn_is_it_str())) + "!"
 	
-	#MESSAGE (need to fix: when captures, and returns to homebase)
-	elif true:
-		message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " moved " + str(movement_array[2]) + " " + return_plural_rows(movement_array[2]) + " " + previous_direction + "!"
-	
+	#returned to homebase
+	elif returned_to_homebase_with_pieces[0]:
+		if returned_to_homebase_with_pieces[1] > 0: #returned and captured
+			message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " imprisoned " + str(did_you_captured[1]) + " " + return_plural_rows(did_you_captured[1]) + "!"
+		else: #didnt capture
+			message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " returned a piece to their homebase."
+			
 	else:
 		message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " moved " + str(movement_array[2]) + " " + return_plural_rows(movement_array[2]) + " " + previous_direction + "!"
 	
@@ -520,6 +524,29 @@ func perform_move(previous_pos : int, movement_array : Array, player_who_moved :
 	
 	#GO TO NEXT TURN
 	go_to_next_turn()
+	
+func did_you_returned_to_homebase_with_pieces(previous_pos, row, player_who_moved) -> Array:
+	var return_arr = [false, 0]
+	if multiplayer.is_server():
+		if player_who_moved == "host": #host is changing the board due to a state THEY made
+			if game_state[row] == 1:
+				return_arr[0] = true
+				return_arr[1] = game_state[previous_pos][3].count("opp")
+		else: #host changes the board due to a state THE CLIENt made
+			if game_state[14 - row] == 13:
+				return_arr[0] = true
+				return_arr[1] = game_state[14 - previous_pos][3].count("my")
+	else:
+		if player_who_moved == "host": #host moved on clients POV
+			if game_state[14 - row] == 13:
+				return_arr[0] = true
+				return_arr[1] = game_state[14 - previous_pos][3].count("my")
+		else: #client moved on their turn
+			if game_state[row] == 1:
+				return_arr[0] = true
+				return_arr[1] = game_state[previous_pos][3].count("opp")
+	
+	return return_arr
 	
 func return_opposite_host_or_client_str(str) -> String:
 	if str == "host":

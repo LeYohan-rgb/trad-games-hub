@@ -11,13 +11,15 @@
 			"uuid": "abc8d45e-d374-4e2e-97aa-e6b62cc4571a",
 			"title": "Todo",
 			"tasks": [
-				"068b470b-dec5-43b1-b997-7964a7e3316b"
+				"c7d0e971-3b65-4ba0-84eb-8a825cfbcae7"
 			]
 		},
 		{
 			"uuid": "01adc647-5641-4e87-9b61-1a3854cf34cd",
 			"title": "Doing",
-			"tasks": []
+			"tasks": [
+				"068b470b-dec5-43b1-b997-7964a7e3316b"
+			]
 		},
 		{
 			"uuid": "ae2936bf-3937-4acc-9c3b-d0d8edb0cac2",
@@ -94,6 +96,13 @@
 		{
 			"uuid": "28429b7c-ac77-495d-9579-31b84809205a",
 			"title": "captured 0 pieces",
+			"description": "",
+			"category": "786662be-e154-46c3-bf2c-7d7a223a64eb",
+			"steps": []
+		},
+		{
+			"uuid": "c7d0e971-3b65-4ba0-84eb-8a825cfbcae7",
+			"title": "add a label for the game selected in HOSTING room",
 			"description": "",
 			"category": "786662be-e154-46c3-bf2c-7d7a223a64eb",
 			"steps": []

@@ -76,6 +76,7 @@ var can_throw_the_sticks = false
 var thrown_first_sticks = [false, false]
 var thrown_first_sticks_amount = [0, 0]
 var stick_amount_turn = 0
+var no_legal_moves = [false, false] #host, client
 var has_thrown_sticks_on_their_turn = false #the throw before moving
 var is_host_first_player = false
 var game_started = false
@@ -412,10 +413,51 @@ func throw_sticks_animation(my_array, some_random_int):
 			opp_landing_score.text = str(total_sum)
 			await get_tree().create_timer(2.0).timeout
 			
-		#NEED TO CHECK IF DOES NOT HAVE ANY LEGAL MOVES TO PERFORM WITH THAT
-			
+		if multiplayer.is_server() == is_it_host(whose_turn_is_it_str()):
+			if check_if_can_legally_move(): 
+				announce_cannot_move.rpc(true)
+			else:
+				announce_cannot_move.rpc(false)
+
+func assign_int_to_host_or_client(str) -> int:
+	if str == "host":
+		return 0
+	else:
+		return 1
+		
+@rpc("any_peer", "call_local", "reliable")
+func announce_cannot_move(announce_no_legal_moves : bool):
+	if announce_no_legal_moves:
+		game_paused = true
+		message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " has no legal moves!"
+		no_legal_moves[assign_int_to_host_or_client(whose_turn_is_it_str())] = true
+		await get_tree().create_timer(2.0).timeout
+		
+		#TODO, THIS IS WHAT HAPPENS WHEN BOTH PLAYERS CANNOT MOVE
+		if no_legal_moves == [true, true]:
+			pass
+		else:
+			go_to_next_turn()
+	else:
+		no_legal_moves[assign_int_to_host_or_client(whose_turn_is_it_str())] = false
 		message_lbl.text = "It's " + client_or_host_player_name_str(whose_turn_is_it_str()) + "'s turn!"
 		game_paused = false
+	
+		
+func check_if_can_legally_move() -> bool:
+	var movable_rows = []
+	var there_is_no_row_that_can_move = true
+	for i in range(1, 13):
+		if game_state[i][1] == "my":
+			movable_rows.append(i)
+			
+	for row in movable_rows:
+		if is_my_move_legal_checker(row): #when this is LEGAL, then the array becomes false
+			there_is_no_row_that_can_move = false
+			
+	return there_is_no_row_that_can_move
+			
+	
 		
 func is_it_host(str) -> bool:
 	if str == "host":
@@ -479,6 +521,26 @@ func is_my_move_legal(my_row):
 		
 	#PERFORM MOVE!
 	perform_move.rpc(my_row, target_index_movement, whose_turn_is_it_str())
+	
+func is_my_move_legal_checker(my_row) -> bool:
+	#you cant play on an empty row
+	if (game_state[my_row][0]) == 0:
+		return false
+		
+	#you cant play an enemy row
+	if (game_state[my_row][1] == "opp"):
+		return false
+		
+	#if a piece reaches their homebase, they dont ricochet.
+	var target_index_movement = return_target_index(my_row, game_state)
+	
+	#cannot land on an occupied row by yourself
+	#if it landed on an occupied row, that is NOT the homebase, that is MY own
+	if (can_you_ocupy_the_row(my_row, target_index_movement[0]) and target_index_movement[0] != 1 and game_state[target_index_movement[0]][1] == "my"):
+		return false
+		
+	#PERFORM MOVE!
+	return true
 	
 func can_you_ocupy_the_row(my_row, landed_row) -> bool:
 	if game_state[landed_row][0] > 0:

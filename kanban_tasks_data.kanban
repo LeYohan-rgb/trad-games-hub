@@ -12,7 +12,9 @@
 			"title": "Todo",
 			"tasks": [
 				"068b470b-dec5-43b1-b997-7964a7e3316b",
-				"d8683efa-39b8-41e3-b397-37f9c01bf5aa"
+				"d8683efa-39b8-41e3-b397-37f9c01bf5aa",
+				"d2e2b567-e4e5-4c1d-bdde-ae596586cee8",
+				"9c304b3b-c1f6-47f6-859b-ed83feec08a7"
 			]
 		},
 		{
@@ -54,13 +56,6 @@
 			"steps": []
 		},
 		{
-			"uuid": "654c880c-3f02-40e2-967e-b60e12e5c61f",
-			"title": "you cannot loop back",
-			"description": "",
-			"category": "786662be-e154-46c3-bf2c-7d7a223a64eb",
-			"steps": []
-		},
-		{
 			"uuid": "f55b10a3-1c52-42f6-87a8-8062a5d88ca2",
 			"title": "captured stacks are still broken",
 			"description": "",
@@ -77,6 +72,20 @@
 		{
 			"uuid": "d8683efa-39b8-41e3-b397-37f9c01bf5aa",
 			"title": "error in direction messages: when returning to the base, and capture",
+			"description": "",
+			"category": "786662be-e154-46c3-bf2c-7d7a223a64eb",
+			"steps": []
+		},
+		{
+			"uuid": "d2e2b567-e4e5-4c1d-bdde-ae596586cee8",
+			"title": "\"imprisoned 0 rows\"",
+			"description": "",
+			"category": "786662be-e154-46c3-bf2c-7d7a223a64eb",
+			"steps": []
+		},
+		{
+			"uuid": "9c304b3b-c1f6-47f6-859b-ed83feec08a7",
+			"title": "-5 rows up and 8 rows down!!",
 			"description": "",
 			"category": "786662be-e154-46c3-bf2c-7d7a223a64eb",
 			"steps": []

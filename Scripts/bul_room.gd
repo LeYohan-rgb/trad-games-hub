@@ -496,6 +496,8 @@ func perform_move(previous_pos : int, movement_array : Array, player_who_moved :
 	var previous_direction = return_dir_up_or_down(previous_pos, player_who_moved)
 	var did_you_captured = return_did_you_capture_and_amount(movement_array[0], player_who_moved)
 	var returned_to_homebase_with_pieces = did_you_returned_to_homebase_with_pieces(previous_pos, movement_array[0], player_who_moved)
+	var made_a_loop = did_you_make_a_loop(previous_pos, movement_array, player_who_moved)
+	#[false, 0, 0]
 	
 	#HIGHLIGHT THE ROW
 	modulate_row(movement_array[0], player_who_moved, previous_pos, movement_array)
@@ -503,6 +505,8 @@ func perform_move(previous_pos : int, movement_array : Array, player_who_moved :
 	#UPDATE_THE_GAME_STATE
 	await update_game_state(previous_pos, movement_array, player_who_moved)
 	set_up_the_board(game_state)
+	
+	var new_direction = return_dir_up_or_down(movement_array[0], player_who_moved)
 	
 	#captured
 	if did_you_captured[0]:
@@ -516,7 +520,10 @@ func perform_move(previous_pos : int, movement_array : Array, player_who_moved :
 			message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " returned a piece to their homebase."
 			
 	else:
-		message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " moved " + str(movement_array[2]) + " " + return_plural_rows(movement_array[2]) + " " + previous_direction + "!"
+		if made_a_loop and made_a_loop[1] != 0:
+			message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " moved " + str(made_a_loop[1]) + " " + return_plural_rows(made_a_loop[1]) + " " + previous_direction + " and " + str(made_a_loop[2]) + return_plural_rows(made_a_loop[2]) + " " + return_opp_dir(previous_direction) + "!"
+		else:
+			message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " moved " + str(movement_array[2]) + " " + return_plural_rows(movement_array[2]) + " " + new_direction + "!"
 	
 	await get_tree().create_timer(2.0).timeout
 	
@@ -525,24 +532,61 @@ func perform_move(previous_pos : int, movement_array : Array, player_who_moved :
 	#GO TO NEXT TURN
 	go_to_next_turn()
 	
+func did_you_make_a_loop(previous_pos : int, movement_array : Array, player_who_moved : String) -> Array:
+	var new_dir : bool = movement_array[1]
+	var moves_taken : int = movement_array[2]
+	var new_row : int = movement_array[0]
+	var return_arr : Array = [false, 0, 0] #changed_dir?, movement up, movement down
+	
+	#say I moved 11 -> 10 in three moves
+	
+	if multiplayer.is_server():
+		if player_who_moved == "host": #host is changing the board due to a state THEY made
+			if game_state[previous_pos][2] != new_dir: 
+				return_arr[1] = 12 - previous_pos
+				return_arr[2] = moves_taken - return_arr[1]
+				
+		else: #host changes the board due to a state THE CLIENt made
+			if game_state[14 - previous_pos][2] != not new_dir:
+				return_arr[1] = previous_pos - 2
+				return_arr[2] = moves_taken - return_arr[1]
+				
+	else:
+		if player_who_moved == "host": #host moved on clients POV
+			if game_state[14 - previous_pos][2] != not new_dir:
+				return_arr[1] = previous_pos - 2
+				return_arr[2] = moves_taken - return_arr[1]
+		else: #client moved on their turn
+			if game_state[previous_pos][2] != new_dir: 
+				return_arr[1] = 12 - previous_pos
+				return_arr[2] = moves_taken - return_arr[1]
+	
+	return return_arr
+
+func return_opp_dir(dir) -> String:
+	if dir == "up":
+		return "down"
+	else:
+		return "up"
+		
 func did_you_returned_to_homebase_with_pieces(previous_pos, row, player_who_moved) -> Array:
 	var return_arr = [false, 0]
 	if multiplayer.is_server():
 		if player_who_moved == "host": #host is changing the board due to a state THEY made
-			if game_state[row] == 1:
+			if row == 1:
 				return_arr[0] = true
 				return_arr[1] = game_state[previous_pos][3].count("opp")
 		else: #host changes the board due to a state THE CLIENt made
-			if game_state[14 - row] == 13:
+			if 14 - row == 13:
 				return_arr[0] = true
 				return_arr[1] = game_state[14 - previous_pos][3].count("my")
 	else:
 		if player_who_moved == "host": #host moved on clients POV
-			if game_state[14 - row] == 13:
+			if 14 - row == 13:
 				return_arr[0] = true
 				return_arr[1] = game_state[14 - previous_pos][3].count("my")
 		else: #client moved on their turn
-			if game_state[row] == 1:
+			if row == 1:
 				return_arr[0] = true
 				return_arr[1] = game_state[previous_pos][3].count("opp")
 	
@@ -765,7 +809,7 @@ func modulate_row(row, player_who_moved, previous_pos, movement_array):
 		else: #client moved on their turn
 			row_nodes[row].get_node("CenterContainer/Sprite2D").modulate = client_modulate_color
 			
-func return_target_index(row, state):
+func return_target_index(row, state): #this is RELATIVE
 	var moves = stick_amount_turn
 	var target_index_array = [row, true, moves]
 	#at the first movement, it was indeed false. however, the direction label in the message didnt mark it as such

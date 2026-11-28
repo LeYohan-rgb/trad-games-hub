@@ -493,6 +493,7 @@ func can_you_ocupy_the_row(my_row, landed_row) -> bool:
 func perform_move(previous_pos : int, movement_array : Array, player_who_moved : String):
 	#THIS FUNCTION IS FOR MULTIPLAYER OK?
 	game_paused = true
+	var current_opponent_pieces_holding = return_current_opp_pieces_holding(previous_pos, player_who_moved)
 	var previous_direction = return_dir_up_or_down(previous_pos, player_who_moved)
 	var did_you_captured = return_did_you_capture_and_amount(movement_array[0], player_who_moved)
 	var returned_to_homebase_with_pieces = did_you_returned_to_homebase_with_pieces(previous_pos, movement_array[0], player_who_moved)
@@ -515,7 +516,7 @@ func perform_move(previous_pos : int, movement_array : Array, player_who_moved :
 	#returned to homebase
 	elif returned_to_homebase_with_pieces[0]:
 		if returned_to_homebase_with_pieces[1] > 0: #returned and captured
-			message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " imprisoned " + str(did_you_captured[1]) + " " + return_plural_pieces(did_you_captured[1]) + "!"
+			message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " imprisoned " + str(current_opponent_pieces_holding) + " " + return_plural_pieces(current_opponent_pieces_holding) + "!"
 		else: #didnt capture
 			message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " returned a piece to their homebase."
 			
@@ -532,6 +533,24 @@ func perform_move(previous_pos : int, movement_array : Array, player_who_moved :
 	
 	#GO TO NEXT TURN
 	go_to_next_turn()
+	
+func return_current_opp_pieces_holding(previous_pos, player_who_moved) -> int:
+	var opp_pieces : int = 0
+	
+	if multiplayer.is_server():
+		if player_who_moved == "host": #host is changing the board due to a state THEY made
+			opp_pieces = game_state[previous_pos][3].count("opp")
+				
+		else: #host changes the board due to a state THE CLIENt made
+			opp_pieces = game_state[14 - previous_pos][3].count("my")
+				
+	else:
+		if player_who_moved == "host": #host moved on clients POV
+			opp_pieces = game_state[14 - previous_pos][3].count("my")
+		else: #client moved on their turn
+			opp_pieces = game_state[previous_pos][3].count("opp")
+			
+	return opp_pieces
 	
 func did_you_make_a_loop(previous_pos : int, movement_array : Array, player_who_moved : String) -> Array:
 	#this is not updated
@@ -607,6 +626,7 @@ func return_plural_pieces(piece):
 		return "pieces"
 		
 func return_did_you_capture_and_amount(row, player_who_moved) -> Array:
+	#THIS IS NOT UPDATED. Row is the row the player will target next
 	var return_arr = [false, 0]
 	if multiplayer.is_server():
 		if player_who_moved == "host": #host is changing the board due to a state THEY made
@@ -616,12 +636,12 @@ func return_did_you_capture_and_amount(row, player_who_moved) -> Array:
 		else: #host changes the board due to a state THE CLIENt made
 			if game_state[14 - row][1] == "my":
 				return_arr[0] = true
-				return_arr[1] = game_state[row][3].count("my")
+				return_arr[1] = game_state[14 - row][3].count("my")
 	else:
 		if player_who_moved == "host": #host moved on clients POV
 			if game_state[14 - row][1] == "my":
 				return_arr[0] = true
-				return_arr[1] = game_state[row][3].count("my")
+				return_arr[1] = game_state[14 - row][3].count("my")
 		else: #client moved on their turn
 			if game_state[row][1] == "opp":
 				return_arr[0] = true

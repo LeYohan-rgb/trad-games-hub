@@ -515,17 +515,18 @@ func perform_move(previous_pos : int, movement_array : Array, player_who_moved :
 	#returned to homebase
 	elif returned_to_homebase_with_pieces[0]:
 		if returned_to_homebase_with_pieces[1] > 0: #returned and captured
-			message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " imprisoned " + str(did_you_captured[1]) + " " + return_plural_rows(did_you_captured[1]) + "!"
+			message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " imprisoned " + str(did_you_captured[1]) + " " + return_plural_pieces(did_you_captured[1]) + "!"
 		else: #didnt capture
 			message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " returned a piece to their homebase."
 			
 	else:
 		if made_a_loop and made_a_loop[1] != 0:
-			message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " moved " + str(made_a_loop[1]) + " " + return_plural_rows(made_a_loop[1]) + " " + previous_direction + " and " + str(made_a_loop[2]) + return_plural_rows(made_a_loop[2]) + " " + return_opp_dir(previous_direction) + "!"
+			message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " moved " + str(made_a_loop[1]) + " " + return_plural_rows(made_a_loop[1]) + " " + previous_direction + " and " + str(made_a_loop[2]) + " " + return_plural_rows(made_a_loop[2]) + " " + return_opp_dir(previous_direction) + "!"
 		else:
 			message_lbl.text = client_or_host_player_name_str(whose_turn_is_it_str()) + " moved " + str(movement_array[2]) + " " + return_plural_rows(movement_array[2]) + " " + new_direction + "!"
 	
 	await get_tree().create_timer(2.0).timeout
+	prints(game_state, "is host?", multiplayer.is_server())
 	
 	reset_modulate_rows()
 	
@@ -533,6 +534,7 @@ func perform_move(previous_pos : int, movement_array : Array, player_who_moved :
 	go_to_next_turn()
 	
 func did_you_make_a_loop(previous_pos : int, movement_array : Array, player_who_moved : String) -> Array:
+	#this is not updated
 	var new_dir : bool = movement_array[1]
 	var moves_taken : int = movement_array[2]
 	var new_row : int = movement_array[0]
@@ -548,13 +550,13 @@ func did_you_make_a_loop(previous_pos : int, movement_array : Array, player_who_
 				
 		else: #host changes the board due to a state THE CLIENt made
 			if game_state[14 - previous_pos][2] != not new_dir:
-				return_arr[1] = previous_pos - 2
+				return_arr[1] = 12 - previous_pos
 				return_arr[2] = moves_taken - return_arr[1]
 				
 	else:
 		if player_who_moved == "host": #host moved on clients POV
 			if game_state[14 - previous_pos][2] != not new_dir:
-				return_arr[1] = previous_pos - 2
+				return_arr[1] = 12 - previous_pos
 				return_arr[2] = moves_taken - return_arr[1]
 		else: #client moved on their turn
 			if game_state[previous_pos][2] != new_dir: 
